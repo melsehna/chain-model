@@ -1,0 +1,27 @@
+# HTCondor submit file for mutation rate sensitivity
+#
+# Runs both l=100 (biofilm) and l=2000 (well-mixed) across multiple mu values.
+
+universe = vanilla
+executable = runBatch.sh
+
+request_cpus = 1
+request_memory = 512MB
+request_disk = 200MB
+
++JobDurationCategory = "Medium"
++ProjectName = "PLACEHOLDER_PROJECT"
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = chainModel.py, runBatch.py
+
+output = logs/sensMu_$(Cluster).$(Process).out
+error  = logs/sensMu_$(Cluster).$(Process).err
+log    = logs/sensMu_$(Cluster).$(Process).log
+
+arguments = $(lVal) $(dose) $(seedStart) 200 $(mu) 0.2 sensMu_l$(lVal)_dose$(dose)_mu$(mu)_s$(seedStart).csv
+transfer_output_files = sensMu_l$(lVal)_dose$(dose)_mu$(mu)_s$(seedStart).csv
+transfer_output_remaps = "sensMu_l$(lVal)_dose$(dose)_mu$(mu)_s$(seedStart).csv = results/sensMu_l$(lVal)_dose$(dose)_mu$(mu)_s$(seedStart).csv"
+
+queue lVal, dose, seedStart, mu from sensitivityMuJobs.txt

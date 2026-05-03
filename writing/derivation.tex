@@ -1,0 +1,794 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage[numbers, sort&compress]{natbib}
+
+\geometry{margin=1.2in}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=blue!60!black,
+    urlcolor=blue!60!black
+}
+
+% Notation shortcuts
+\newcommand{\Nzero}{N_0}
+\newcommand{\sEdge}{s_e}
+\newcommand{\sCore}{s_c}
+\newcommand{\bEdge}{b_e}
+\newcommand{\dEdge}{d_e}
+\newcommand{\bCore}{b_c}
+\newcommand{\dCore}{d_c}
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+\title{Spatial rescue in a biofilm under antibiotic treatment:\\
+a stochastic chain model}
+
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Biofilms are spatially structured communities of bacteria in which cells near
+the surface are exposed to antibiotic while interior cells are shielded. We
+study how this structure affects the probability that a resistant mutant arises
+and rescues the population before it goes extinct under lethal antibiotic
+doses. We formulate a stochastic 1D ``chain model'' in which births and deaths
+drive a conveyor-belt flow of cells between a protected core and an exposed
+edge. We derive analytical approximations for the probability of mutant
+appearance as a function of the initial population size, edge width, and
+excess death rate, then validate and extend these results with stochastic
+simulations. \TODO{Fill in main quantitative results once sweeps are complete.}
+\end{abstract}
+
+% --------------------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+% --------------------------------------------------------------------------
+
+Bacteria growing in biofilms are notoriously difficult to eradicate with
+antibiotics~\cite{costerton1999}. One contributing factor is spatial structure:
+cells embedded in a biofilm matrix are shielded from diffusing drug, so only the
+outermost cells experience lethal concentrations. This creates an implicit refuge
+that could, in principle, extend the window during which a resistant mutant can
+arise and establish.
+
+We ask a precise version of this question. Suppose a biofilm is exposed to an
+antibiotic at a dose above the minimum inhibitory concentration (MIC), so that
+surface cells die faster than they can replicate. The biofilm will eventually
+collapse. Can the spatial structure give the population more time---and more
+births---to produce a resistant mutant that rescues the lineage?
+
+We compare two scenarios:
+\begin{enumerate}
+    \item \textbf{Well-mixed:} All $N_0$ cells experience the full antibiotic
+        dose simultaneously.
+    \item \textbf{Biofilm (chain model):} Only the outermost $l$ cells
+        (the ``edge'') are exposed; the remaining $N_0 - l$ cells occupy a
+        protected ``core.''
+\end{enumerate}
+
+The comparison is made under identical total population sizes and mutation
+rates. Any difference in rescue probability is purely a consequence of spatial
+structure.
+
+% --------------------------------------------------------------------------
+\section{Model}
+\label{sec:model}
+% --------------------------------------------------------------------------
+
+\subsection{Population structure}
+
+The biofilm is represented as a 1D array of $N(t)$ cells, indexed from $0$
+(deep interior) to $N(t)-1$ (outermost surface). Two compartments are defined
+by the parameter $l$ (edge width, in cells):
+\begin{align}
+    \text{Core} &= \text{cells } 0, 1, \ldots, b-1, \quad b \equiv \max(0,\, N-l), \\
+    \text{Edge} &= \text{cells } b, b+1, \ldots, N-1.
+\end{align}
+When $N \leq l$ the core is empty and all cells are in the edge. The edge
+always contains exactly $\min(N, l)$ cells; the core contains $\max(0, N-l)$.
+
+\subsection{Birth--death dynamics (Gillespie algorithm)}
+
+Events are drawn via the standard Gillespie algorithm (next-reaction
+method). Each event type fires at a total rate equal to its per-capita rate
+times the number of eligible cells. The per-capita rates are:
+
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+Compartment & Genotype & Birth rate & Death rate & Notes \\
+\midrule
+Edge  & WT & $\bEdge = 1$ & $\dEdge = \text{dose}$ & sweep variable \\
+Edge  & R  & $b_R = 1$    & $d_R = 0.6$             & net positive growth \\
+Core  & WT & $\bCore$     & $\dCore$                & $\bCore = \dCore$ at steady state \\
+Core  & R  & $\bCore$     & $\dCore$                & same as core WT (neutral refuge) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Time is measured in edge generations ($\bEdge \equiv 1$). The default
+parameter values used in simulations are given in Table~\ref{tab:params}.
+
+\textbf{Birth mechanics.} When any cell in compartment $c$ gives birth, a
+daughter is inserted at a uniformly random position within $c$. Because the
+array shifts to accommodate the new cell, the boundary $b = \max(0, N-l)$
+increases by one: every birth in the edge pushes one edge cell into the core,
+and every birth in the core simply enlarges the core.
+
+\textbf{Death mechanics.} When any cell dies it is removed from the array.
+The boundary $b$ decreases by one: every death in the edge exposes one core
+cell to the edge, and every death in the core simply shrinks the core.
+
+\textbf{Conveyor-belt coupling.} The net effect is that cells flow inward
+during edge births and outward during edge deaths. A core-born resistant
+mutant can therefore reach the edge and eventually dominate it---the
+\emph{core-delivery} rescue pathway---even without any directed migration.
+
+\subsection{Mutation}
+
+Resistance is modeled as an irreversible point mutation. With probability
+$\mu$ per replication event, a daughter cell is assigned a new resistant (R)
+lineage rather than inheriting the parent's genotype. Back-mutation is
+ignored. Each de-novo lineage is tracked independently to determine its
+origin compartment, time of appearance, and eventual fate.
+
+\subsection{Rescue condition and simulation termination}
+
+Treatment begins at $t = 0$ with the edge WT death rate jumping to
+$\dEdge = \text{dose}$. Pre-treatment, $\dEdge = \bEdge = 1$ so the
+population is at steady state. A simulation ends when one of the following
+occurs:
+\begin{itemize}
+    \item \textbf{Rescue:} the number of R cells in the edge reaches the
+        threshold $r^* = 10$.
+    \item \textbf{Extinction:} $N = 0$.
+    \item \textbf{Timeout:} a maximum number of events or elapsed time
+        is reached.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{Default simulation parameters.}
+\label{tab:params}
+\begin{tabular}{lll}
+\toprule
+Parameter & Value & Description \\
+\midrule
+$N_0$        & 1000 & Initial population size \\
+$l$          & 100  & Edge width (biofilm); $l = 2000$ for well-mixed control \\
+$\bEdge$     & 1.0  & WT edge birth rate (sets time unit) \\
+$\bCore = \dCore$ & 0.2 & Core birth/death rates (neutral core) \\
+$b_R$        & 1.0  & R edge birth rate \\
+$d_R$        & 0.6  & R edge death rate ($s_R = 0.4$) \\
+$\mu$        & $10^{-4}$ & Mutation probability per birth (main sweep) \\
+$r^*$        & 10   & Rescue threshold (R edge cells) \\
+\midrule
+$\dEdge$     & 1.05--2.80 & Sweep variable (log-spaced in $s = \dEdge - 1$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% --------------------------------------------------------------------------
+\section{Analytical approximations}
+\label{sec:analytics}
+% --------------------------------------------------------------------------
+
+We derive approximate closed-form expressions for the probability that at
+least one resistant mutant arises before the wild-type population goes extinct.
+This is a necessary---but not sufficient---condition for rescue; the
+additional requirements for establishment are analyzed in
+Section~\ref{sec:turnover} and captured fully by the stochastic simulation.
+
+\subsection{Well-mixed population}
+\label{sec:wm_approx}
+
+Consider first a population of $\Nzero$ cells all exposed to the same
+antibiotic dose, with per-capita WT birth and death rates $\bEdge$ and
+$\dEdge$. Define the net per-capita death rate:
+\begin{equation}
+    \sEdge \equiv \dEdge - \bEdge = \text{dose} - 1 > 0.
+\end{equation}
+In the deterministic limit the population declines exponentially:
+\begin{equation}
+    N(t) = \Nzero\, e^{-\sEdge t},
+    \label{eq:wm_traj}
+\end{equation}
+reaching effective extinction ($N = 1$) at time $T = \ln \Nzero / \sEdge$.
+
+Because mutations are replication-linked (probability $\mu$ per birth),
+the total mutation rate at time $t$ is
+\begin{equation}
+    \lambda(t) = \mu\, \bEdge\, N(t).
+\end{equation}
+Mutations arrive as an inhomogeneous Poisson process, so the probability of
+\emph{no} mutant arising by time $T$ is
+\begin{equation}
+    P(\text{no mutant}) = \exp\!\left(-\int_0^T \lambda(t)\, dt\right).
+\end{equation}
+Evaluating the integral:
+\begin{equation}
+    \int_0^T \mu\, \bEdge\, \Nzero\, e^{-\sEdge t}\, dt
+    = \frac{\mu\, \bEdge\, \Nzero}{\sEdge}
+      \left(1 - \frac{1}{\Nzero}\right)
+    \approx \frac{\mu\, \bEdge\, \Nzero}{\sEdge},
+\end{equation}
+where the approximation holds for $\Nzero \gg 1$. Therefore:
+\begin{equation}
+    \boxed{P_{\text{WM}}(\text{mutant before extinction})
+    = 1 - \exp\!\!\left(-\frac{\mu\, \bEdge\, \Nzero}{\sEdge}\right).}
+    \label{eq:p_wm}
+\end{equation}
+
+The dimensionless group $\mu \bEdge \Nzero / \sEdge$ is the expected total
+number of mutations produced over the entire decline. When it is much less
+than one, $P_{\text{WM}} \approx \mu \bEdge \Nzero / \sEdge$; when much
+greater than one, rescue is nearly certain.
+
+\subsection{Biofilm: two-compartment, two-phase analysis}
+\label{sec:biofilm_approx}
+
+In the biofilm, the population dynamics differ from the well-mixed case
+because core and edge cells have different rates and because the edge size
+is fixed at $l$ cells as long as $N > l$.
+
+\subsubsection*{Phase 1: core and edge coexist ($N > l$)}
+
+While $N > l$, the core contains $N - l$ cells and the edge contains $l$
+cells. The expected rate of change of total population size is:
+\begin{equation}
+    \frac{dN}{dt} = (\bCore - \dCore)(N - l) + (\bEdge - \dEdge)\, l
+    = -\sCore (N - l) - \sEdge\, l,
+    \label{eq:dNdt_phase1}
+\end{equation}
+where $\sCore \equiv \dCore - \bCore$. With the default parameters
+$\bCore = \dCore = 0.2$, so $\sCore = 0$, and~\eqref{eq:dNdt_phase1}
+simplifies to:
+\begin{equation}
+    \frac{dN}{dt} = -\sEdge\, l \quad (\sCore = 0),
+    \label{eq:linear_decline}
+\end{equation}
+a \emph{linear} decline at a constant rate $v \equiv \sEdge\, l$ cells per
+unit time. Intuitively, only the $l$ edge cells are dying faster than they
+reproduce; the core maintains itself exactly and acts as a reservoir that
+continuously replenishes the edge. The population reaches $N = l$ at time:
+\begin{equation}
+    T_1 = \frac{\Nzero - l}{\sEdge\, l}.
+    \label{eq:T1}
+\end{equation}
+
+The total mutation rate during Phase~1 is:
+\begin{equation}
+    \lambda_1(t) = \mu\, [\bCore (N(t) - l) + \bEdge\, l]
+    = \mu\, [\bCore (\Nzero - l - \sEdge\, l\, t) + \bEdge\, l].
+\end{equation}
+Integrating over Phase~1:
+\begin{align}
+    \int_0^{T_1} \lambda_1(t)\, dt
+    &= \mu\left[\bCore \frac{(\Nzero - l)^2}{2\,\sEdge\, l}
+       + \bEdge\, l\, T_1\right] \notag \\
+    &= \mu\left[\frac{\bCore(\Nzero - l)^2}{2\,\sEdge\, l}
+       + \frac{\bEdge(\Nzero - l)}{\sEdge}\right].
+    \label{eq:Lambda1}
+\end{align}
+
+\subsubsection*{Phase 2: edge only ($N \leq l$)}
+
+Once the core is exhausted the population follows exponential decline as in
+the well-mixed case, but starting from $N = l$:
+\begin{equation}
+    N(t) = l\, e^{-\sEdge(t - T_1)}, \quad t \geq T_1.
+\end{equation}
+The mutation contribution from Phase~2 is, by direct analogy with
+\eqref{eq:p_wm}:
+\begin{equation}
+    \int_{T_1}^{T_2} \lambda_2(t)\, dt \approx \frac{\mu\, \bEdge\, l}{\sEdge}.
+    \label{eq:Lambda2}
+\end{equation}
+
+\subsubsection*{Combined probability}
+
+Defining the total expected mutation count
+$\Lambda \equiv \Lambda_1 + \Lambda_2$ (the sum of
+\eqref{eq:Lambda1} and \eqref{eq:Lambda2}):
+\begin{equation}
+    \boxed{P_{\text{BF}}(\text{mutant before extinction})
+    = 1 - e^{-\Lambda},}
+    \label{eq:p_bf}
+\end{equation}
+\begin{equation}
+    \Lambda = \mu\left[
+        \frac{\bCore(\Nzero - l)^2}{2\,\sEdge\, l}
+        + \frac{\bEdge(\Nzero - l)}{\sEdge}
+        + \frac{\bEdge\, l}{\sEdge}
+    \right]
+    = \frac{\mu}{\sEdge}\left[
+        \frac{\bCore(\Nzero - l)^2}{2\,l}
+        + \bEdge\, \Nzero
+    \right].
+    \label{eq:Lambda_total}
+\end{equation}
+
+\subsubsection*{Comparison to well-mixed: effect of core birth rate on mutation supply}
+
+The ratio $\Lambda / \Lambda_{\text{WM}}$ quantifies the biofilm's
+mutation-supply advantage:
+\begin{equation}
+    \frac{\Lambda}{\Lambda_{\text{WM}}}
+    = 1 + \frac{\bCore(\Nzero - l)^2}{2\, \bEdge\, \Nzero\, l}.
+    \label{eq:ratio}
+\end{equation}
+This ratio is always $\geq 1$. For the default parameters ($\Nzero = 1000$,
+$l = 100$, $\bCore = \bEdge = 1$) it equals $1 + 4.05 = 5.05$: the biofilm
+expects five times as many mutations as the well-mixed control.
+
+\paragraph{Dormant-core limit ($\bCore \to 0$).}
+Setting $\bCore = 0$ in equation~\eqref{eq:Lambda_total}:
+\begin{equation}
+    \Lambda\big|_{\bCore=0}
+    = \frac{\mu\,\bEdge\,(\Nzero - l)}{\sEdge}
+      + \frac{\mu\,\bEdge\,l}{\sEdge}
+    = \frac{\mu\,\bEdge\,\Nzero}{\sEdge}
+    = \Lambda_{\text{WM}}.
+    \label{eq:dormant_limit}
+\end{equation}
+A completely dormant core ($\bCore = \dCore = 0$) provides \emph{exactly as
+many mutation opportunities as the well-mixed control.} The core extends the
+population's lifetime---core cells are not killed by the antibiotic during
+Phase~1---but without births it contributes zero mutations. The entire
+mutation-supply advantage of the biofilm therefore comes from core births
+alone; the surplus in equation~\eqref{eq:ratio} is exactly zero when
+$\bCore = 0$ and grows linearly with $\bCore$ thereafter.
+
+\subsection{Two effects of core metabolic activity on the core-delivery pathway}
+\label{sec:turnover}
+
+Core metabolic activity---the turnover rate $\rho \equiv \bCore = \dCore$
+at which core cells divide and die---drives a fundamental tension in the
+core-delivery rescue pathway. The mutation-supply analysis above captures
+only one side of it:
+
+\begin{description}
+    \item[Effect 1 (mutation supply, captured by $\Lambda$).]
+    Every core birth is a mutation opportunity. The core-delivery term in
+    $\Lambda$ grows linearly with $\bCore$ (equation~\eqref{eq:ratio}),
+    and vanishes in the dormant limit (equation~\eqref{eq:dormant_limit}).
+
+    \item[Effect 2 (genetic drift, not captured by $\Lambda$).]
+    A resistant lineage born in the core lives in a neutral environment
+    ($b_{R,c} = \bCore$, $d_{R,c} = \dCore$): it has no growth advantage
+    there. It must survive \emph{neutral genetic drift} long enough to be
+    conveyed to the edge by the retreating boundary. Higher turnover means
+    faster drift, so most lineages are lost before delivery.
+\end{description}
+
+We quantify Effect~2 and show how the two combine.
+
+\subsubsection*{Lineage survival under neutral drift in the core}
+
+A mutant born at depth $d$ from the core--edge boundary (i.e.\ $d$
+positions away from being edge-exposed) must wait for the boundary to
+retreat past it. Since the boundary retreats at rate $\sEdge\,l$ cells
+per unit time (equation~\eqref{eq:linear_decline}), the expected waiting
+time is
+\begin{equation}
+    \tau_d \approx \frac{d}{\sEdge\,l}.
+    \label{eq:delivery_time}
+\end{equation}
+During this wait, the lineage undergoes a critical ($\bCore = \dCore$)
+birth-death process. Starting from a single cell, the probability of
+surviving to time $\tau$ is \cite{athreya1972}
+\begin{equation}
+    P(\text{survive to delivery} \mid d)
+    = \frac{1}{1 + \bCore\,\tau_d}
+    = \frac{1}{1 + \bCore\,d\,/\,(\sEdge\,l)}.
+    \label{eq:survival_prob}
+\end{equation}
+Since births are placed at uniformly random depths $d \in [0,\,\Nzero - l]$
+within the core, the mean survival probability over all birth positions is
+\begin{equation}
+    \langle P(\text{survive to delivery}) \rangle
+    = \frac{\ln(1 + \alpha)}{\alpha}, \qquad
+    \alpha \equiv \frac{\bCore\,(\Nzero - l)}{\sEdge\,l},
+    \label{eq:mean_survival}
+\end{equation}
+where $\alpha$ is the dimensionless ratio of core turnover to boundary
+retreat rate. In the two limits:
+\begin{align}
+    \langle P \rangle &\;\to\; 1
+        && \alpha \to 0
+        \;\;\text{(dormant: every lineage survives until delivery)},
+        \label{eq:dormant_survival}\\[4pt]
+    \langle P \rangle &\;\to\; \frac{\ln\alpha}{\alpha} \;\to\; 0
+        && \alpha \to \infty
+        \;\;\text{(very active: most lineages lost to drift)}.
+        \label{eq:active_survival}
+\end{align}
+
+\subsubsection*{Net rate of core lineages reaching the edge}
+
+Multiplying the total core mutation rate by the mean survival probability
+gives the rate at which core mutant lineages are successfully delivered
+to the edge:
+\begin{align}
+    \Gamma_{\text{core}}
+    &= \underbrace{\mu\,\bCore\,(\Nzero - l)}_{\text{Effect 1: mutation rate}}
+       \;\times\;
+       \underbrace{\frac{\ln(1+\alpha)}{\alpha}}_{\text{Effect 2: mean survival}}
+    \notag \\[6pt]
+    &= \mu\,\sEdge\,l\;\ln\!\left(1 + \frac{\bCore(\Nzero-l)}{\sEdge\,l}\right).
+    \label{eq:core_delivery_rate}
+\end{align}
+In the two limits:
+\begin{align}
+    \Gamma_{\text{core}} &\approx \mu\,\bCore\,(\Nzero - l)
+        && \alpha \to 0
+           \;\;\text{(linear in }\bCore\text{; drift negligible)},
+        \label{eq:gamma_dormant}\\[4pt]
+    \Gamma_{\text{core}} &\approx \mu\,\sEdge\,l\;\ln\!\!\left(
+        \frac{\bCore(\Nzero-l)}{\sEdge\,l}\right)
+        && \alpha \to \infty
+           \;\;\text{(logarithmic saturation)}.
+        \label{eq:gamma_active}
+\end{align}
+At high turnover, increasing $\bCore$ yields only logarithmic gains in
+delivered lineages: the additional mutations from faster turnover are
+nearly all eliminated by drift before reaching the edge. Effects~1 and~2
+nearly cancel.
+
+\subsubsection*{Bolus delivery and the rescue threshold}
+
+A lineage that survives to delivery does not arrive at the edge as a
+single cell. For a critical birth-death process conditioned on survival
+to time $\tau$, the expected lineage size at delivery is \cite{athreya1972}
+\begin{equation}
+    \mathbb{E}[\,\text{size} \mid \text{survive}\;\tau\,] = 1 + \bCore\,\tau.
+    \label{eq:bolus_size}
+\end{equation}
+Surviving lineages from an active core therefore arrive as a multi-cell
+\emph{bolus}. The martingale property of critical birth-death processes---the
+expected lineage size including extinct lineages (counted as zero) is
+preserved at all times---implies that Effects~2 and~3 cancel exactly
+\emph{in expectation}:
+\begin{equation}
+    P(\text{survive}) \;\times\; \mathbb{E}[\,\text{size} \mid \text{survive}\,]
+    \;=\;
+    \frac{1}{1+\bCore\tau}\times(1+\bCore\tau) \;=\; 1
+    \quad \text{for all }\bCore\text{ and }\tau.
+    \label{eq:martingale}
+\end{equation}
+If rescue probability were linear in the number of cells delivered, turnover
+would have no net effect on the core-delivery pathway. The rescue threshold
+$r^{*} = 10$ is a discrete, nonlinear criterion: $k$ cells arriving
+simultaneously are far more likely to cross it than $k$ single-cell arrivals
+separated in time. The martingale cancellation therefore does not hold at
+the level of rescue events, and an active core retains a residual advantage
+through bolus delivery that $\Lambda$ does not capture.
+
+\subsection{The dose-dependent transition: nursery vs.\ drift trap}
+\label{sec:transition}
+
+A direct consequence of the dormant-core limit
+(equation~\eqref{eq:dormant_limit}) reframes the entire dose-dependence.
+The passive buffer role of the core---extending the population's
+lifetime---provides \emph{no rescue advantage} over the well-mixed case:
+the longer Phase~1 duration exactly compensates for having fewer cells in
+the edge at any given time, leaving $\Lambda_{\text{edge}} = \Lambda_{\text{WM}}$
+regardless of dose. It follows that
+
+\begin{quote}
+\textit{The entire rescue advantage of the biofilm over the well-mixed
+case comes from core births.}
+\end{quote}
+
+Whether those births translate into rescue depends on $\alpha$.
+The result is a clean two-regime picture:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{lcc}
+\toprule
+ & Low selection ($\alpha \gg 1$) & High selection ($\alpha \ll 1$) \\
+\midrule
+Dormant core ($\bCore = 0$)
+    & $P_{\text{BF}} \approx P_{\text{WM}}$
+    & $P_{\text{BF}} \approx P_{\text{WM}}$ \\
+Active core ($\bCore > 0$)
+    & $P_{\text{BF}} \approx P_{\text{WM}}$
+    & $P_{\text{BF}} \gg P_{\text{WM}}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent At low selection the active core is no better than a dormant
+one: core mutations arise but are lost to drift before delivery
+($\langle P(\text{survive})\rangle \to 0$), and rescue probability
+collapses toward the well-mixed value. At high selection the active core
+is decisive: the boundary retreats fast enough that drift has little time
+to act, and the core functions as an efficient nursery. A dormant core,
+by contrast, contributes nothing to rescue at any dose. \emph{Note: this
+table captures drift effects on the core-delivery pathway only. A second
+suppression mechanism---WT resupply into the edge---is analyzed
+separately in Section~\ref{sec:resupply} and can drive
+$P_{\rm BF} < P_{\rm WM}$ at low selection even in the dormant-core
+case.}
+
+\paragraph{The irony.}
+The same antibiotic selection pressure that endangers the population is
+the mechanism that makes the core valuable. High $\sEdge$ simultaneously
+accelerates the collapse of the wild-type edge \emph{and} drives the
+boundary retreat that delivers core-born mutants before drift can
+eliminate them. The biofilm converts the killing force of the antibiotic
+into a delivery mechanism for resistance.
+
+\paragraph{The crossover.}
+The transition between regimes occurs at $\alpha = 1$:
+\begin{equation}
+    \sEdge^{*} = \frac{\bCore(\Nzero - l)}{l}.
+    \label{eq:crossover}
+\end{equation}
+For default parameters, $\sEdge^{*} = 0.2 \times 900 / 100 = 1.8$
+(\text{dose} $\approx 2.8$). The entire swept dose range
+$\sEdge \in [0.05,\, 2.0]$ therefore sits at or below the crossover,
+placing most simulated conditions in the drift-suppressed regime and
+making the upper end of the sweep the most mechanistically interesting
+region.
+
+\paragraph{Prediction for the $\bCore$ sensitivity sweep.}
+Since the biofilm rescue advantage depends on $\bCore$ only through
+core-delivery, and core-delivery is drift-suppressed at low selection,
+the rescue curves for different values of $\bCore$ should \emph{fan out}
+with increasing dose:
+\begin{itemize}
+    \item At low dose: all $\bCore$ values give
+        $P_{\text{rescue}} \approx P_{\text{WM}}$ --- curves collapse
+        onto the well-mixed baseline.
+    \item At high dose: $P_{\text{rescue}}$ increases strongly with
+        $\bCore$ --- curves diverge from one another and from the
+        well-mixed baseline.
+\end{itemize}
+The dose at which the curves begin to separate is set by
+equation~\eqref{eq:crossover}, which predicts a different separation
+point for each $\bCore$ value. This gives a concrete, parameter-free
+test of the mechanism against the simulation sweep.
+
+\subsection{WT resupply and suppression of edge-born mutants}
+\label{sec:resupply}
+
+The mechanisms analyzed so far---mutation supply and core-delivery
+drift---concern core-born lineages. The conveyor-belt dynamics impose a
+second, distinct suppression mechanism on mutations arising directly in
+the edge, acting through a \emph{wild-type resupply flux} from the core.
+
+\subsubsection*{The mechanism}
+
+During Phase~1 the edge compartment always contains exactly $l$ cells.
+Every edge death is immediately compensated by the outermost core cell
+moving into the edge. Because the core is wild-type dominated throughout
+Phase~1, each edge death injects a fresh WT cell into the edge. The
+total WT resupply rate is
+\begin{equation}
+    m_{\rm WT} \approx \dEdge \cdot l
+    \quad \text{(WT cells per unit time during Phase~1)}.
+    \label{eq:wt_resupply}
+\end{equation}
+
+In the well-mixed model there is no protected reservoir: dying WT cells
+are simply lost, and the WT pool shrinks monotonically. A resistant
+mutant in the WM population therefore faces progressively weaker
+competition as the WT decline. In the biofilm the WT pool in the edge
+is actively \emph{maintained} by resupply from the core throughout
+Phase~1.
+
+\subsubsection*{Effect on R establishment}
+
+Let $k$ denote the number of R cells in the edge (held at $l$ cells
+during Phase~1). The conveyor-belt mechanics---births push the innermost
+edge cell to the core, deaths draw the outermost core cell to the
+edge---yield effective transition rates for $k$:
+\begin{align}
+    \text{Rate}(k \to k+1) &= b_R\, k\, (l-k)/l,
+        \label{eq:up_rate} \\
+    \text{Rate}(k \to k-1) &= k\left[\bEdge\,(l-k)/l + d_R\right].
+        \label{eq:down_rate}
+\end{align}
+The downward rate contains two contributions: WT births that push R
+cells into the core (rate $\bEdge(l-k)k/l$), and R deaths replenished
+by WT arriving from the core (rate $d_R k$). Both effects are sustained
+at a constant level throughout Phase~1 because the WT pool in the edge
+is maintained by resupply. This reduces the effective establishment
+probability $p_{\rm est}^{\rm eff}$ below the value
+$1 - d_R/b_R = 0.4$ that applies in a declining WM population.
+
+An exact expression for $p_{\rm est}^{\rm eff}$ requires solving the
+first-passage problem for the Markov chain
+\eqref{eq:up_rate}--\eqref{eq:down_rate} with absorbing states $k=0$
+(extinction) and $k = r^* = 10$ (rescue), which does not simplify
+readily. The qualitative conclusion is that WT resupply suppresses
+edge-born R establishment, and this suppression is active for the full
+Phase~1 duration $T_1 = (\Nzero - l)/v$.
+
+\subsubsection*{Dose dependence}
+
+The suppression window has duration $T_1 = (\Nzero - l)/v$, where
+$v = \sEdge\,l$ is the boundary retreat velocity. At low selection
+($v$ small, $T_1$ large), each edge-born R lineage faces sustained WT
+dilution before the core is exhausted; suppression is strong. At high
+selection ($v$ large, $T_1$ small), Phase~2 dominates quickly and WT
+resupply has little time to act.
+
+Importantly, WT resupply occurs even when $\bCore = 0$ (dormant core),
+because core cells move to the edge upon edge deaths regardless of
+whether they divide. The dormant-core equality
+$\Lambda\big|_{\bCore=0} = \Lambda_{\rm WM}$ is a statement about
+\emph{mutation supply} only; WT resupply suppresses establishment
+probabilities through a channel not captured by $\Lambda$, and could
+cause $P_{\rm rescue}^{\rm BF} \leq P_{\rm WM}$ even in the dormant
+limit.
+
+\subsubsection*{Combined suppression prediction}
+
+Adding WT resupply to the drift-suppression picture gives a
+\emph{non-monotone} dose dependence for the biofilm rescue advantage:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{lcc}
+\toprule
+ & Low selection ($v$ small, $T_1$ large)
+ & High selection ($v$ large, $T_1$ small) \\
+\midrule
+Dormant core ($\bCore = 0$)
+    & $P_{\rm BF} \lesssim P_{\rm WM}$\;\;(WT resupply)
+    & $P_{\rm BF} \approx P_{\rm WM}$ \\
+Active core ($\bCore > 0$)
+    & $P_{\rm BF} < P_{\rm WM}$\;\;(drift $+$ resupply)
+    & $P_{\rm BF} \gg P_{\rm WM}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The crossover dose at which the biofilm transitions from
+suppression to enhancement is governed by the interplay of core drift
+(equation~\eqref{eq:crossover}) and WT resupply
+(equation~\eqref{eq:wt_resupply}). Whether this crossover is
+empirically detectable, and at what dose it occurs, is a question for
+the stochastic simulation.
+
+\subsection{What the analytical approximation captures}
+\label{sec:captures}
+
+Table~\ref{tab:scope} summarizes which effects are included in the
+approximation $P = 1 - e^{-\Lambda}$ and which are not.
+
+\begin{table}[h]
+\centering
+\caption{Scope of the analytical approximation $P_{\text{BF}} = 1 - e^{-\Lambda}$.}
+\label{tab:scope}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{6.2cm} c c}
+\toprule
+Effect & Direction & In $\Lambda$? \\
+\midrule
+Core births increase mutation supply           & $+$ & \checkmark \\
+Core lifetime extends edge mutation window     & $+$ & \checkmark \\
+Drift eliminates core lineages before delivery & $-$ & $\times$   \\
+Bolus delivery aids threshold crossing         & $+$ & $\times$   \\
+WT resupply suppresses edge-born establishment & $-$ & $\times$   \\
+Establishment probability of edge-born mutants & --- & $\times$   \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+$\Lambda$ counts every mutation event produced, treating each as equally
+capable of rescue. The true rescue probability is therefore bounded above:
+\begin{equation}
+    P(\text{rescue}) \;\leq\; 1 - e^{-\Lambda}.
+    \label{eq:upper_bound}
+\end{equation}
+The gap is set by establishment probabilities. For the \emph{edge-delivery}
+pathway, a single R cell born in the edge has establishment probability
+$1 - d_R/b_R = 1 - 0.6 = 0.4$ (exact result for a supercritical
+birth-death process \cite{athreya1972}), though this is attenuated by WT
+resupply throughout Phase~1 (Section~\ref{sec:resupply}). For the
+\emph{core-delivery} pathway, establishment is further attenuated by the
+drift-survival factor $\ln(1+\alpha)/\alpha$ and modified nonlinearly by
+bolus delivery. Both pathways are tracked explicitly in the stochastic
+simulation (Section~\ref{sec:sims}).
+
+% --------------------------------------------------------------------------
+\section{Simulation results}
+\label{sec:sims}
+% --------------------------------------------------------------------------
+
+\TODO{This section will present results from the OSG parameter sweep:
+main rescue-vs-dose curves for all three conditions (biofilm, chainWM,
+wellMixed), pathway breakdown (edge-origin vs core-delivery rescue), and
+sensitivity analyses over $\mu$ and $\bCore$.}
+
+\subsection{Rescue probability vs.\ dose}
+\label{sec:rescue_vs_dose}
+
+\TODO{Figure: $P(\text{rescue})$ vs.\ $s = \text{dose} - 1$ for the three
+conditions. Expected result: biofilm $>$ chainWM $\approx$ wellMixed at
+every dose, with largest gap at intermediate doses.}
+
+\subsection{Rescue pathway breakdown}
+\label{sec:pathways}
+
+\TODO{Figure: fraction of biofilm rescues attributed to edge-origin vs.\
+core-delivery. Expected result: core-delivery fraction rises with dose,
+consistent with the core becoming more important as edge mutations become
+less likely to survive.}
+
+\subsection{Sensitivity to core rate ($\bCore$)}
+\label{sec:core_sensitivity}
+
+\TODO{Figure: $P(\text{rescue})$ vs.\ dose for $\bCore / \bEdge \in
+\{0.05, 0.1, 0.2\}$. Equation~\eqref{eq:ratio} predicts the rescue advantage
+scales as $\bCore (\Nzero - l)^2 / (2 l \Nzero \bEdge)$, so slower core
+growth should reduce the advantage.}
+
+\subsection{Sensitivity to mutation rate ($\mu$)}
+\label{sec:mu_sensitivity}
+
+\TODO{Figure: $P(\text{rescue})$ vs.\ dose for $\mu \in \{10^{-6},
+10^{-5}, 10^{-4}, 10^{-3}\}$. In the rare-mutation regime
+($\Lambda \ll 1$), $P(\text{rescue}) \propto \mu$, so the curves
+should shift vertically but preserve their shape.}
+
+% --------------------------------------------------------------------------
+\section{Discussion}
+\label{sec:discussion}
+% --------------------------------------------------------------------------
+
+\TODO{Discuss the mechanism: the core acts as a long-lived nursery for
+mutations that can be delivered to the edge by conveyor-belt flow, and
+as a buffer that slows the overall population decline and keeps the
+total birth rate high. Compare to Fruet et al.\ 2025 and other
+biofilm-rescue literature.}
+
+% --------------------------------------------------------------------------
+\appendix
+\section{Derivation of the linear-decline approximation}
+\label{app:linear}
+% --------------------------------------------------------------------------
+
+Here we verify that the $\sCore = 0$ case yields exactly linear decline.
+With $\bCore = \dCore$, the core birth and death rates cancel and
+equation~\eqref{eq:dNdt_phase1} becomes:
+\begin{equation}
+    \frac{dN}{dt} = -\sEdge\, l = \text{const}, \quad N > l.
+\end{equation}
+Integrating from $t = 0$: $N(t) = \Nzero - \sEdge\, l\, t$.
+
+The total birth rate during Phase~1 is:
+\begin{align}
+    B(t) &= \bCore (N(t) - l) + \bEdge\, l \\
+         &= \bCore (\Nzero - l - \sEdge\, l\, t) + \bEdge\, l.
+\end{align}
+Integrating $\mu B(t)$ over $[0, T_1]$ with $T_1 = (\Nzero - l)/(\sEdge l)$:
+\begin{align}
+    \Lambda_1 &= \mu\int_0^{T_1} B(t)\, dt \\
+    &= \mu\left[\bCore\int_0^{T_1}(\Nzero - l - \sEdge\, l\, t)\, dt
+       + \bEdge\, l\, T_1\right] \\
+    &= \mu\left[\bCore \cdot \frac{(\Nzero - l)}{2}\cdot T_1
+       + \bEdge\, l\, T_1\right] \\
+    &= \mu\, T_1\left[\frac{\bCore(\Nzero - l)}{2} + \bEdge\, l\right].
+\end{align}
+Substituting $T_1$ and combining with $\Lambda_2 = \mu \bEdge l / \sEdge$
+recovers equation~\eqref{eq:Lambda_total}.
+
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+
+\end{document}
