@@ -37,16 +37,28 @@ a stochastic chain model}
 \maketitle
 
 \begin{abstract}
-Biofilms are spatially structured communities of bacteria in which cells near
-the surface are exposed to antibiotic while interior cells are shielded. We
-study how this structure affects the probability that a resistant mutant arises
-and rescues the population before it goes extinct under lethal antibiotic
-doses. We formulate a stochastic 1D ``chain model'' in which births and deaths
-drive a conveyor-belt flow of cells between a protected core and an exposed
-edge. We derive analytical approximations for the probability of mutant
-appearance as a function of the initial population size, edge width, and
-excess death rate, then validate and extend these results with stochastic
-simulations. \TODO{Fill in main quantitative results once sweeps are complete.}
+Biofilms expose only their outermost cells to antibiotic, shielding an interior
+core from direct killing. Whether this spatial structure aids evolutionary
+rescue depends on \emph{how} the core participates in population dynamics.
+We analyze a stochastic 1D chain model in which births and deaths drive a
+conveyor-belt exchange between a protected core and an antibiotic-exposed edge.
+A surprising dormant-core result emerges: if core cells neither grow nor die,
+the total mutation supply integrated over the population's decline equals that
+of an equivalent well-mixed population---passive protection alone confers no
+rescue advantage. The entire biofilm advantage originates from active core
+births. Core-born resistant mutants face a tension between two effects:
+mutation supply is enriched by the core's lower death rate, but any delivered
+mutant enters at the innermost edge position and is immediately at risk of
+displacement back into the core before it can expand. The net delivery rate
+saturates logarithmically with core size. A single dimensionless parameter,
+$\alpha = b_{\mathrm{core}}(N_0 - l)/(s_{\mathrm{edge}}\,l)$, governs which
+effect dominates: when $\alpha \ll 1$ (high dose relative to core output) the
+core acts as an efficient nursery; when $\alpha \gg 1$ (low dose) displacement
+suppresses delivery and the biofilm advantage collapses. Independently, edge
+deaths continuously replenish the edge with wild-type core cells, diluting
+edge-born resistant lineages during population decline. We validate the
+analytical predictions with stochastic simulations across a range of doses,
+edge widths, and mutation rates.
 \end{abstract}
 
 % --------------------------------------------------------------------------
@@ -79,6 +91,26 @@ We compare two scenarios:
 The comparison is made under identical total population sizes and mutation
 rates. Any difference in rescue probability is purely a consequence of spatial
 structure.
+
+The central result is counter-intuitive: a \emph{dormant} core---one with no
+cell division---provides no rescue advantage whatsoever. Shielding cells from
+killing is not sufficient; the core must actively produce births to matter.
+When it does, the advantage is real but bounded: core-born mutants must
+traverse the edge-to-core boundary in reverse, and the displacement risk at
+that boundary limits how much the core can contribute. These two effects---
+enriched mutation supply from the core, and displacement-driven suppression of
+delivery---compete in a way that depends on drug dose, making the biofilm's
+advantage strongest at intermediate to high doses and collapsing near the MIC.
+
+The remainder of this paper is organized as follows.
+Section~\ref{sec:model} defines the chain model precisely.
+Section~\ref{sec:analytics} derives the total mutation supply for biofilm and
+well-mixed populations and proves the dormant-core equivalence, then analyzes
+establishment probabilities for core- and edge-born mutants and characterizes
+the dependence on $\alpha$.
+Section~\ref{sec:sims} presents validation against stochastic simulations
+across doses, edge widths, and mutation rates.
+Section~\ref{sec:discussion} discusses implications and open questions.
 
 % --------------------------------------------------------------------------
 \section{Model}
@@ -330,8 +362,8 @@ mutation-supply advantage:
     \label{eq:ratio}
 \end{equation}
 This ratio is always $\geq 1$. For the default parameters ($\Nzero = 1000$,
-$l = 100$, $\bCore = \bEdge = 1$) it equals $1 + 4.05 = 5.05$: the biofilm
-expects five times as many mutations as the well-mixed control.
+$l = 100$, $\bCore = 0.2$, $\bEdge = 1$) it equals $1 + 0.81 = 1.81$: the biofilm
+expects roughly twice as many mutations as the well-mixed control.
 
 \paragraph{Dormant-core limit ($\bCore \to 0$).}
 Setting $\bCore = 0$ in equation~\eqref{eq:Lambda_total}:
