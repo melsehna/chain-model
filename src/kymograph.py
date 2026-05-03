@@ -19,8 +19,6 @@ def stepXY(xVals, tVals):
     for i in range(len(xVals) - 1):
         xs.extend([xVals[i], xVals[i]])
         ts.extend([tVals[i], tVals[i + 1]])
-    xs.append(xVals[i + 1])
-    ts.append(tVals[i + 1])
     xs.append(xVals[-1])
     ts.append(tVals[-1])
     return np.array(xs), np.array(ts)
@@ -43,7 +41,6 @@ def plotKymograph(result, params, title=None, ax=None, figsize=(10, 7)):
     times = np.array(result['trajectoryTimes'])
     boundaries = np.array(result['trajectoryBoundaries'])
     outer = np.array([len(s) for s in traj])
-    l = params['l']
     maxN = int(outer.max())
     nSnap = len(traj)
 

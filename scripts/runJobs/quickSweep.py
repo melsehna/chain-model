@@ -69,12 +69,12 @@ biofilmRescued = df[(df.condition == 'biofilm') & (df.rescued == 1)]
 pathway = (biofilmRescued.groupby('dose').rescueMode
            .value_counts(normalize=True)
            .unstack(fill_value=0).sort_index())
-if 'coreDelivery' in pathway.columns:
-    ax.plot(pathway.index, pathway['coreDelivery'], 'o-',
-            label='coreDelivery', color='C3')
-if 'edgeMutation' in pathway.columns:
-    ax.plot(pathway.index, pathway['edgeMutation'], 'o-',
-            label='edgeMutation', color='C4')
+if 'core' in pathway.columns:
+    ax.plot(pathway.index, pathway['core'], 'o-',
+            label='core delivery', color='C3')
+if 'edge' in pathway.columns:
+    ax.plot(pathway.index, pathway['edge'], 'o-',
+            label='edge mutation', color='C4')
 ax.set_xlabel('d_WtEdge')
 ax.set_ylabel('Fraction of biofilm rescues')
 ax.set_title('Pathway breakdown (biofilm)')

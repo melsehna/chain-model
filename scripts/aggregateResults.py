@@ -75,12 +75,12 @@ def plotMain(df, outPath):
     ax.grid(alpha=0.3)
 
     ax = axes[1]
-    if 'coreDelivery' in pathway.columns:
-        ax.plot(pathway.dose, pathway.coreDelivery, 'o-',
-                label='coreDelivery', color='C3')
-    if 'edgeMutation' in pathway.columns:
-        ax.plot(pathway.dose, pathway.edgeMutation, 'o-',
-                label='edgeMutation', color='C4')
+    if 'core' in pathway.columns:
+        ax.plot(pathway.dose, pathway.core, 'o-',
+                label='core delivery', color='C3')
+    if 'edge' in pathway.columns:
+        ax.plot(pathway.dose, pathway.edge, 'o-',
+                label='edge mutation', color='C4')
     ax.set_xlabel('d_WtEdge (dose)')
     ax.set_ylabel('Fraction of biofilm rescues')
     ax.set_title('Biofilm rescue pathway breakdown')

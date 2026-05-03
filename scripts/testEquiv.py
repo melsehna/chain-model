@@ -4,8 +4,8 @@ If the chain model's core never forms (because l is always larger than N),
 then it should behave identically to a well-mixed population with the same
 per-cell rates. This test verifies that numerically.
 '''
-import sys
-sys.path.insert(0, '/home/claude/sweep')
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src'))
 import numpy as np
 from chainModel import simulateChain
 from wellMixed import simulateWellMixed
@@ -36,7 +36,7 @@ def collectStats(simulator, params, nSeeds=200, maxTime=100.0):
     rescueTimes = []
     extinctionTimes = []
     finalNs = []
-    modes = {'edgeMutation': 0, 'coreDelivery': 0}
+    modes = {'core': 0, 'edge': 0}
     for seed in range(nSeeds):
         r = simulator(params, seed=seed, maxTime=maxTime, stopAtRescue=True)
         if r['rescued']:

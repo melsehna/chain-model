@@ -450,6 +450,7 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
         'finalCells': cells,
         'mutationEvents': mutationEvents,
         # Aggregate lineage statistics
+        'nLineagesAppeared': nLineagesAppearedCore + nLineagesAppearedEdge,
         'nLineagesAppearedCore': nLineagesAppearedCore,
         'nLineagesAppearedEdge': nLineagesAppearedEdge,
         'nLineagesExtinctCore': nLineagesExtinctCore,

@@ -97,12 +97,12 @@ def main():
             r = simulator(params, seed=seed, maxTime=args.maxTime,
                           stopAtRescue=True)
             if isChain:
-                nMutCore = r['nMutCore']
-                nMutEdge = r['nMutEdge']
+                nMutCore = r['nLineagesAppearedCore']
+                nMutEdge = r['nLineagesAppearedEdge']
                 bCoreRatioOut = args.bCoreRatio
             else:
                 nMutCore = 0
-                nMutEdge = r['nMut']
+                nMutEdge = r['nLineagesAppeared']
                 bCoreRatioOut = ''  # N/A for wellMixed
 
             writer.writerow([

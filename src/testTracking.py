@@ -11,9 +11,6 @@ Runs both models with small parameters and checks:
   - chainModel well-mixed limit (l >= nInit) gives reasonable rescue behavior
 '''
 
-import sys
-sys.path.insert(0, '/home/claude')
-
 import numpy as np
 from chainModel import simulateChain
 from wellMixed import simulateWellMixed
@@ -24,7 +21,7 @@ EXPECTED_CHAIN_KEYS = {
     'extinct', 'extinctionTime', 'extinctionGeneration',
     'terminationReason', 'finalN', 'finalTime', 'finalGenerations',
     'finalCells', 'mutationEvents',
-    'nLineagesAppearedCore', 'nLineagesAppearedEdge',
+    'nLineagesAppeared', 'nLineagesAppearedCore', 'nLineagesAppearedEdge',
     'nLineagesExtinctCore', 'nLineagesExtinctEdge',
     'nLineagesReachedEdge',
     'nLineagesPresentAtEnd', 'nLineagesPresentInCore', 'nLineagesPresentInEdge',
