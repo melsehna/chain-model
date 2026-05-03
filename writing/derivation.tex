@@ -120,14 +120,16 @@ Time is measured in edge generations ($\bEdge \equiv 1$). The default
 parameter values used in simulations are given in Table~\ref{tab:params}.
 
 \textbf{Birth mechanics.} When any cell in compartment $c$ gives birth, a
-daughter is inserted at a uniformly random position within $c$. Because the
-array shifts to accommodate the new cell, the boundary $b = \max(0, N-l)$
-increases by one: every birth in the edge pushes one edge cell into the core,
+daughter is inserted at one of the two positions immediately adjacent to the
+parent, chosen with equal probability. Because the array shifts to accommodate
+the new cell, the boundary $b = \max(0, N-l)$ increases by one: every birth
+in the edge pushes the innermost edge cell (at position $b$) into the core,
 and every birth in the core simply enlarges the core.
 
 \textbf{Death mechanics.} When any cell dies it is removed from the array.
-The boundary $b$ decreases by one: every death in the edge exposes one core
-cell to the edge, and every death in the core simply shrinks the core.
+The boundary $b$ decreases by one: every death in the edge draws the outermost
+core cell (at position $b-1$) into the edge, and every death in the core
+simply shrinks the core.
 
 \textbf{Conveyor-belt coupling.} The net effect is that cells flow inward
 during edge births and outward during edge deaths. A core-born resistant
@@ -537,11 +539,12 @@ The transition between regimes occurs at $\alpha = 1$:
     \label{eq:crossover}
 \end{equation}
 For default parameters, $\sEdge^{*} = 0.2 \times 900 / 100 = 1.8$
-(\text{dose} $\approx 2.8$). The entire swept dose range
-$\sEdge \in [0.05,\, 2.0]$ therefore sits at or below the crossover,
-placing most simulated conditions in the drift-suppressed regime and
-making the upper end of the sweep the most mechanistically interesting
-region.
+(dose $= 2.8$). The main sweep spans $\sEdge \in [0.05,\, 2.0]$, which
+straddles the crossover: the majority of simulated conditions fall in the
+efficient-nursery regime ($\sEdge < \sEdge^{*}$), while the upper portion
+of the sweep ($\sEdge \in [1.8,\, 2.0]$) probes the transition and the
+drift-dominated side. The region near and above $\sEdge^{*}$ is therefore
+the most mechanistically interesting part of the sweep.
 
 \paragraph{Prediction for the $\bCore$ sensitivity sweep.}
 Since the biofilm rescue advantage depends on $\bCore$ only through
@@ -609,11 +612,25 @@ is maintained by resupply. This reduces the effective establishment
 probability $p_{\rm est}^{\rm eff}$ below the value
 $1 - d_R/b_R = 0.4$ that applies in a declining WM population.
 
-An exact expression for $p_{\rm est}^{\rm eff}$ requires solving the
-first-passage problem for the Markov chain
-\eqref{eq:up_rate}--\eqref{eq:down_rate} with absorbing states $k=0$
-(extinction) and $k = r^* = 10$ (rescue), which does not simplify
-readily. The qualitative conclusion is that WT resupply suppresses
+The factors of $k/l$ and $(l-k)/l$ in
+\eqref{eq:up_rate}--\eqref{eq:down_rate} assume \emph{uniform mixing}
+within the edge: the cell at position $b$ (which births always push to
+the core) is treated as a uniform sample from the edge, so it is R with
+probability $k/l$. This approximation is most inaccurate for newly
+delivered core-born R cells. Because edge deaths draw the outermost core
+cell into position $b$ (the innermost edge slot), a freshly delivered R
+lineage occupies exactly the position that the next birth event will push
+back to the core. The initial displacement risk for a single delivered R
+cell is therefore much higher than $1/l$, meaning
+\eqref{eq:up_rate}--\eqref{eq:down_rate} underestimate establishment
+difficulty and the true $p_{\rm est}^{\rm eff}$ is lower than the
+first-passage solution to this chain would predict. The approximation
+improves as $k$ grows and R cells spread through the edge via
+replication.
+
+An exact expression for $p_{\rm est}^{\rm eff}$ would require solving the
+first-passage problem for the spatially explicit process, which does not
+simplify readily. The qualitative conclusion is that WT resupply suppresses
 edge-born R establishment, and this suppression is active for the full
 Phase~1 duration $T_1 = (\Nzero - l)/v$.
 
