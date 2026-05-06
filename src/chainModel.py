@@ -62,7 +62,7 @@ def pickPosition(cells, rng, start, end, targetIsWt, wtCount, rCount):
 
 def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
                   nMax=None, recordEvery=50, stopAtRescue=False,
-                  rThreshold=10, debug=False):
+                  rThreshold=10, kEst=3, debug=False):
     '''Run the spatial chain model.
 
     Parameters (dict):
@@ -97,6 +97,7 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
     dWtE  = float(params['dWtEdge'])
     bRE   = float(params['bREdge'])
     dRE   = float(params['dREdge'])
+    K     = float(params.get('K', nInit))  # Wilson carrying capacity for R births
 
     if nMax is None:
         nMax = 10 * nInit
@@ -118,6 +119,9 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
     rescueTime = None
     rescueGeneration = None
     rescueEdgeCounts = None  # populated at rescue-trigger moment; see below
+
+    wtExtinct = False
+    wtExtinctTime = None
 
     nextLineage = 2
     mutationEvents = []
@@ -148,13 +152,17 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
             'birthTime': atTime,
             'birthGeneration': atGeneration,
             'liveCount': 1,
+            'maxLiveCount': 1,
             'everReachedEdge': not bornInCore,  # edge-born starts in edge
             'deathTime': None,
             'deathGeneration': None,
         }
 
     def incLineage(lineageId):
-        lineages[lineageId]['liveCount'] += 1
+        info = lineages[lineageId]
+        info['liveCount'] += 1
+        if info['liveCount'] > info['maxLiveCount']:
+            info['maxLiveCount'] = info['liveCount']
 
     def decLineage(lineageId, atTime, atGeneration):
         info = lineages[lineageId]
@@ -211,11 +219,17 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
 
         b = max(0, N - l)
 
+        # Wilson density factor on R births only (WT births stay density-independent
+        # per Wilson 2017 / Uecker 2014 D=1 model). Applied to R in both compartments
+        # using the global (wt+r)/K so the equilibrium m_eq = K*(1 - dR/bR) is
+        # well-defined for the entire simulated population.
+        densityFactor = max(0.0, 1.0 - N / K)
+
         ratesList = (
             ('birthWtCore', bWtC * wtCore),
-            ('birthRCore',  bRC  * rCore),
+            ('birthRCore',  bRC  * rCore * densityFactor),
             ('birthWtEdge', bWtE * wtEdge),
-            ('birthREdge',  bRE  * rEdge),
+            ('birthREdge',  bRE  * rEdge * densityFactor),
             ('deathWtCore', dWtC * wtCore),
             ('deathRCore',  dRC  * rCore),
             ('deathWtEdge', dWtE * wtEdge),
@@ -305,6 +319,10 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
                 if isWt: wtEdge -= 1
                 else:    rEdge  -= 1
 
+            if isWt and (wtCore + wtEdge) == 0 and not wtExtinct:
+                wtExtinct = True
+                wtExtinctTime = time
+
             if deadGenotype >= 2:
                 decLineage(deadGenotype, time, generations)
 
@@ -374,6 +392,19 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
     nLineagesExtinctEdge = sum(
         1 for info in lineages.values()
         if info['birthRegion'] == 'edge' and info['liveCount'] == 0
+    )
+
+    # Established lineages: ever reached maxLiveCount >= kEst (passes the drift bottleneck).
+    nLineagesEstablished = sum(
+        1 for info in lineages.values() if info['maxLiveCount'] >= kEst
+    )
+    nLineagesEstablishedCore = sum(
+        1 for info in lineages.values()
+        if info['birthRegion'] == 'core' and info['maxLiveCount'] >= kEst
+    )
+    nLineagesEstablishedEdge = sum(
+        1 for info in lineages.values()
+        if info['birthRegion'] == 'edge' and info['maxLiveCount'] >= kEst
     )
 
     # Core-born lineages that ever reached the edge (either by core->edge boundary
@@ -456,6 +487,11 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
         'nLineagesExtinctCore': nLineagesExtinctCore,
         'nLineagesExtinctEdge': nLineagesExtinctEdge,
         'nLineagesReachedEdge': nLineagesReachedEdge,
+        'nLineagesEstablished': nLineagesEstablished,
+        'nLineagesEstablishedCore': nLineagesEstablishedCore,
+        'nLineagesEstablishedEdge': nLineagesEstablishedEdge,
+        'wtExtinct': wtExtinct,
+        'wtExtinctTime': wtExtinctTime,
         'nLineagesPresentAtEnd': nLineagesPresentAtEnd,
         'nLineagesPresentInCore': nLineagesPresentInCore,
         'nLineagesPresentInEdge': nLineagesPresentInEdge,

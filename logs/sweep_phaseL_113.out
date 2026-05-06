@@ -1,0 +1,12 @@
+=== Slurm sweep ===
+Sweep:        phaseL
+Seeds/point:  2500
+CPUs:         48
+Node:         phenotyper
+Submit dir:   /home/smellick/chain-model
+Job ID:       113
+Started:      Mon May  4 09:33:03 PM EDT 2026
+
+sweep=phaseL  seedsPerPoint=2500  nWorkers=48  nTasks=150,000
+doses (s_e): [0.005, 0.0086, 0.0149, 0.0256, 0.0442, 0.0762, 0.1313, 0.2264, 0.3903, 0.6729, 1.1601, 2.0]
+out=/home/smellick/chain-model/results/phaseL.csv

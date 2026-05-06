@@ -18,7 +18,7 @@ comparison and an internal consistency check:
 The two should give statistically equivalent results: the chain model with
 l ≥ N_init is mathematically equivalent to a well-mixed population. Running
 both catches implementation errors -- if they diverge at any dose, something
-is wrong. `testEquivalence.py` validates this at small scale (1000 paired seeds).
+is wrong. `testEquiv.py` validates this at small scale (1000 paired seeds).
 
 **`biofilm` vs `chainWM`/`wellMixed` is the scientific comparison.** Does the
 biofilm's spatial structure give it a rescue advantage? At what doses?
@@ -37,11 +37,17 @@ biofilm's spatial structure give it a rescue advantage? At what doses?
 | `sweepMain.sub`               | HTCondor submit for main sweep |
 | `sweepSensitivityCore.sub`    | Submit for core sensitivity |
 | `sweepSensitivityMu.sub`      | Submit for mu sensitivity |
-| `aggregate.py`       | Combines CSVs, produces summary figures |
+| `aggregateResults.py` | Combines CSVs, produces summary figures |
 | `quickSweep.py`      | Local 3-condition sanity check (~3 min) |
-| `testEquivalence.py` | Verifies chainWM agrees with wellMixed |
+| `testEquiv.py`       | Verifies chainWM agrees with wellMixed |
 
 ## Preliminary findings
+
+> **Stale (pre-2026-05-03):** the findings below predate the analytical
+> framework in `writing/writeup.tex` and `NEXT_STEPS.md`, which predicts
+> P_BF/P_WM ≈ 0.11 (biofilm rescues *less* than well-mixed). They are kept
+> here as a record of an earlier short run; the full sweep will resolve the
+> tension.
 
 Running `quickSweep.py` (3 conditions × 8 doses × 200 seeds, ~3 min) shows:
 
@@ -123,9 +129,9 @@ condor_submit sweepSensitivityMu.sub    # 540 jobs
 ### 5. Aggregate
 
 ```bash
-python aggregate.py --prefix main     --out main.png
-python aggregate.py --prefix sensCore --out sensCore.png
-python aggregate.py --prefix sensMu   --out sensMu.png
+python aggregateResults.py --prefix main     --out main.png
+python aggregateResults.py --prefix sensCore --out sensCore.png
+python aggregateResults.py --prefix sensMu   --out sensMu.png
 ```
 
 `main.png` has 3 panels: rescue vs dose for all 3 conditions, biofilm
@@ -148,5 +154,5 @@ python quickSweep.py
 
 Equivalence test (1000 paired seeds):
 ```bash
-python testEquivalence.py
+python testEquiv.py
 ```

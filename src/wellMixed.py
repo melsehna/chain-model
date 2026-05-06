@@ -47,7 +47,7 @@ def pickLineage(rLineages, rTotal, rng):
 
 def simulateWellMixed(params, seed=None, maxGenerations=200_000,
                       maxTime=np.inf, nMax=None, stopAtRescue=False,
-                      rThreshold=10):
+                      rThreshold=10, kEst=3):
     '''Run the well-mixed control.
 
     Parameters (dict):
@@ -57,8 +57,12 @@ def simulateWellMixed(params, seed=None, maxGenerations=200_000,
         dWtEdge    WT death rate (sweep variable)
         bREdge     R birth rate
         dREdge     R death rate
+        K          (optional) carrying capacity for the Wilson density factor
+                   on R births: birthR_rate = bR * r * max(0, 1 - (w+r)/K).
+                   WT births stay density-independent. Default: nInit.
 
     Rescue: r >= rThreshold (default 10).
+    Establishment: lineage's max live count >= kEst (default 3).
 
     Lineage tracking: every R lineage that ever appears is recorded in the
     internal `lineages` dict. Aggregate counts over this dict are returned.
@@ -71,6 +75,7 @@ def simulateWellMixed(params, seed=None, maxGenerations=200_000,
     dWt   = float(params['dWtEdge'])
     bR    = float(params['bREdge'])
     dR    = float(params['dREdge'])
+    K     = float(params.get('K', nInit))  # Wilson carrying capacity for R births
 
     if nMax is None:
         nMax = 10 * nInit
@@ -89,6 +94,9 @@ def simulateWellMixed(params, seed=None, maxGenerations=200_000,
     rescueTime = None
     rescueGeneration = None
     rescueRLineages = None  # snapshot of rLineages at rescue trigger
+
+    wtExtinct = False
+    wtExtinctTime = None
 
     nextLineage = 2
     mutationEvents = []
@@ -112,9 +120,12 @@ def simulateWellMixed(params, seed=None, maxGenerations=200_000,
             terminationReason = 'nMaxExceeded'
             break
 
+        # Wilson density factor on R births only (WT births stay density-independent
+        # per Wilson 2017 / Uecker 2014 D=1 model).
+        densityFactor = max(0.0, 1.0 - (wt + r) / K)
         ratesList = (
             ('birthWt', bWt * wt),
-            ('birthR',  bR  * r),
+            ('birthR',  bR  * r * densityFactor),
             ('deathWt', dWt * wt),
             ('deathR',  dR  * r),
         )
@@ -134,6 +145,7 @@ def simulateWellMixed(params, seed=None, maxGenerations=200_000,
                 r += 1
                 lineages[lin] = {
                     'liveCount': 1,
+                    'maxLiveCount': 1,
                     'birthTime': time,
                     'birthGeneration': generations,
                     'deathTime': None,
@@ -152,11 +164,17 @@ def simulateWellMixed(params, seed=None, maxGenerations=200_000,
             lin = pickLineage(rLineages, r, rng)
             rLineages[lin] += 1
             r += 1
-            lineages[lin]['liveCount'] += 1
+            info = lineages[lin]
+            info['liveCount'] += 1
+            if info['liveCount'] > info['maxLiveCount']:
+                info['maxLiveCount'] = info['liveCount']
             N += 1
         elif event == 'deathWt':
             wt -= 1
             N -= 1
+            if wt == 0 and not wtExtinct:
+                wtExtinct = True
+                wtExtinctTime = time
         elif event == 'deathR':
             lin = pickLineage(rLineages, r, rng)
             rLineages[lin] -= 1
@@ -188,6 +206,9 @@ def simulateWellMixed(params, seed=None, maxGenerations=200_000,
     nLineagesAppeared = len(lineages)
     nLineagesExtinct = sum(1 for info in lineages.values() if info['liveCount'] == 0)
     nLineagesPresentAtEnd = sum(1 for info in lineages.values() if info['liveCount'] > 0)
+    nLineagesEstablished = sum(
+        1 for info in lineages.values() if info['maxLiveCount'] >= kEst
+    )
 
     # ----- Rescue-specific stats -----
     # Uses the snapshot taken at rescue trigger, for the same reason as chainModel.
@@ -226,6 +247,9 @@ def simulateWellMixed(params, seed=None, maxGenerations=200_000,
         'nLineagesAppeared': nLineagesAppeared,
         'nLineagesExtinct': nLineagesExtinct,
         'nLineagesPresentAtEnd': nLineagesPresentAtEnd,
+        'nLineagesEstablished': nLineagesEstablished,
+        'wtExtinct': wtExtinct,
+        'wtExtinctTime': wtExtinctTime,
         'rAtEnd': r,
         'nLineagesAtRescue': nLineagesAtRescue,
         'rescueRLineages': rescueRLineages,

@@ -3,6 +3,7 @@
 Verifies the sweep pipeline and checks chainWM/wellMixed agreement before
 committing to OSG. Takes ~6 min on a workstation.
 '''
+import sys
 import time
 import subprocess
 import numpy as np
@@ -25,7 +26,7 @@ t0 = time.perf_counter()
 for cond in conditions:
     for dose in doses:
         subprocess.run([
-            'python', 'runBatch.py',
+            sys.executable, 'runBatch.py',
             '--condition', cond, '--dose', str(dose),
             '--seedStart', '0', '--seedCount', str(seedsPerPoint),
             '--mu', str(mu), '--bCoreRatio', '0.2',

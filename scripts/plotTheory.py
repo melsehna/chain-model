@@ -22,6 +22,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
+if not hasattr(np, 'trapezoid'):
+    np.trapezoid = np.trapz  # numpy < 2.0 compatibility
+
 # ── Default simulation parameters ──────────────────────────────────────────
 N0      = 1000
 L       = 100

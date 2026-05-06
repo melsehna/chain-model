@@ -247,6 +247,23 @@ likely to rescue the population. The next two sections quantify the two
 additional hurdles---delivery and establishment---that make the true rescue
 probability far lower.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.78\linewidth]{panels/sim_rescue_curves.png}
+\caption{\emph{Simulation companion to Figure~\ref{fig:lambda}.}
+$P(\text{rescue})$ vs.\ dose for all three conditions, 5000 seeds per point.
+Dotted lines are the analytical upper bounds $1 - e^{-\Lambda}$
+(Equations~\ref{eq:lambda_wm}, \ref{eq:lambda_bf}); dashed lines are the
+suppression-corrected full approximation derived in
+Section~\ref{sec:total}. The well-mixed sim (green) tracks the WM full
+approximation closely; biofilm sim (blue) sits visibly \emph{above} it at
+every dose, by a factor $\sim$1.5--2$\times$. Both observations are
+incompatible with the analytical prediction $P_{\text{BF}}/P_{\text{WM}}
+\approx 0.11$, motivating the more careful analysis that follows and the
+caveat in Section~\ref{sec:caveats}.}
+\label{fig:sim_lambda}
+\end{figure}
+
 
 \subsection{Core delivery: the race between drift and boundary retreat}
 \label{sec:delivery}
@@ -329,6 +346,20 @@ that kills the population also drives the fast boundary retreat that makes
 the core useful. High selection is simultaneously the threat and the
 delivery mechanism.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.68\linewidth]{panels/sim_pathway.png}
+\caption{\emph{Simulation companion to Figure~\ref{fig:delivery}.}
+Fraction of biofilm rescues attributable to each compartment of origin
+(\texttt{rescueMode} = compartment of the dominant lineage at the rescue
+threshold). Edge mutation dominates at low dose ($\sim$80\% at $d_e = 1.05$),
+declining as dose increases; core delivery climbs from $\sim$20\% to
+$\sim$40\% by dose~1.5 and plateaus. The qualitative trend matches the
+analytical prediction that core delivery becomes more efficient as
+$\alpha = b_c(N_0 - l)/(s_e l)$ falls below~1 (i.e.\ at high dose).}
+\label{fig:sim_pathway}
+\end{figure}
+
 
 \subsection{Establishment: WT resupply keeps the edge hostile}
 \label{sec:establishment}
@@ -410,6 +441,24 @@ cells may cluster near the outer surface where displacement by WT is least
 likely. The true suppression is probably weaker, but by how much requires
 simulation to determine.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.78\linewidth]{panels/sim_sensCore.png}
+\caption{\emph{Simulation companion to Figure~\ref{fig:pest}.}
+Biofilm rescue probability vs.\ dose for three values of $b_c \in
+\{0.05, 0.1, 0.2\}$ (5000 seeds per point), with the analytical
+suppression-corrected curves overlaid (dashed). The simulated curves track
+the well-mixed reference (black dotted) closely and lie far above the
+analytical biofilm prediction. Varying $b_c$ shifts the simulated curves
+only mildly---inconsistent with the dose-independent 83-fold suppression
+that the uniform-mixing chain in
+Equations~\eqref{eq:up}--\eqref{eq:down} predicts. The most natural
+explanation is that $p_{\text{est}}^{\text{BF}}$ is much larger in the
+simulation than the analytical 0.0048, because R cells cluster near the
+outer surface and avoid most WT-resupply displacements.}
+\label{fig:sim_sensCore}
+\end{figure}
+
 
 \subsection{Putting it together: establishment suppression dominates}
 \label{sec:total}
@@ -464,11 +513,34 @@ The core-delivery term adds a small dose-dependent contribution at high dose
 (faster boundary retreat delivers larger boluses) but is insufficient to
 push the ratio above 1 within our swept range.
 
-The core conclusion: the $1.81\times$ mutation-supply advantage from
-Section~\ref{sec:lambda} is overwhelmed by the $83\times$ establishment
-suppression. The upper-bound curves in Figure~\ref{fig:lambda} are
-systematically misleading---extra mutations that cannot establish do not
-contribute to rescue.
+The core conclusion of the analytics: the $1.81\times$ mutation-supply
+advantage from Section~\ref{sec:lambda} is overwhelmed by the $83\times$
+establishment suppression. The upper-bound curves in Figure~\ref{fig:lambda}
+are systematically misleading---extra mutations that cannot establish do
+not contribute to rescue.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.68\linewidth]{panels/sim_ratio.png}
+\caption{\emph{Simulation companion to Figure~\ref{fig:pratio}.}
+Simulated $P_{\text{BF}}/P_{\text{WM}}$ vs.\ dose, 5000 seeds per point.
+The analytical full-approximation curve (dashed) sits at $\approx 0.11$
+across all doses; the simulated ratio sits at $\approx 1.5$--$2$ for
+every dose in the swept range. The simulation does not falsify the
+\emph{shape} of the analytical prediction (both curves are roughly flat
+in dose) but it does falsify its \emph{magnitude} by an order of
+magnitude. The most likely culprit is the uniform-mixing assumption in
+the establishment chain (Section~\ref{sec:caveats}, first bullet).}
+\label{fig:sim_ratio}
+\end{figure}
+
+The simulation result is qualitatively the opposite of the analytical
+prediction at this level: the biofilm rescues $\approx 1.5$--$2\times$
+\emph{more} often than the well-mixed control, not $\sim 9\times$ less.
+The dose-independence of the ratio is preserved, but the absolute
+suppression that the establishment chain predicts is not realized in
+practice. This forces a careful look at where the analytics break down
+(Section~\ref{sec:caveats}).
 
 \subsection{Testable predictions}
 \label{sec:predictions}
@@ -504,6 +576,33 @@ clustering is strong enough to overcome the 83-fold analytical suppression
 and put $P_{\text{BF}} > P_{\text{WM}}$---is the central empirical question
 the simulation is designed to answer.
 
+\paragraph{Empirical answer (5000 seeds per point).}
+Prediction~1 \emph{fails} in the direction the lower-bound caveat
+anticipated: the simulated biofilm rescues $\approx 1.5$--$2\times$
+more often than the well-mixed control across the entire swept dose
+range (Figure~\ref{fig:sim_ratio}). Prediction~2 (dose-independent
+ratio) holds: the simulated ratio is roughly flat at $\sim 1.7$ rather
+than at the predicted $\sim 0.11$. Prediction~3 (rescue curves fan out
+in $b_c$ at high dose) does not appear in the data we collected
+(Figure~\ref{fig:sim_sensCore}); the three $b_c$ values give nearly
+overlapping curves, which is consistent with establishment dominating
+over delivery throughout the regime sampled. Prediction~5 ($P \propto
+\mu$ vertical shift) is examined in Figure~\ref{fig:sim_sensMu} and
+holds approximately for biofilm and well-mixed alike.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{panels/sim_sensMu.png}
+\caption{\emph{Mutation-rate sensitivity.} \emph{Left:} biofilm (solid)
+and well-mixed (dashed) rescue curves at $\mu \in \{10^{-6}, 10^{-5},
+10^{-4}, 10^{-3}\}$, 5000 seeds per point. The curves shift roughly
+log-vertically with $\mu$, consistent with prediction~5. \emph{Right:}
+the ratio $P_{\text{BF}}/P_{\text{WM}}$ stays in the $\sim 1$--$3$ band
+across all four mutation rates and all doses, with no qualitative
+crossover into the suppressed regime.}
+\label{fig:sim_sensMu}
+\end{figure}
+
 \subsection{What the approximation misses}
 \label{sec:caveats}
 
@@ -513,6 +612,12 @@ the simulation is designed to answer.
     simulation, births occur adjacent to the parent, producing spatial
     clustering near the outer surface where displacement risk is lowest.
     This approximation is expected to overestimate the 83-fold suppression.
+    The simulation results in
+    Figures~\ref{fig:sim_lambda},~\ref{fig:sim_sensCore}, and~\ref{fig:sim_ratio}
+    show that this expectation holds with substantial force: the simulated
+    suppression is not just weaker but flips sign relative to the analytical
+    prediction. Pinning down the actual $p_{\text{est}}^{\text{BF}}$ in the
+    spatially structured edge is the most important open theoretical task.
 
     \item \textbf{Independent lineages.} Two R lineages can compete if both
     are in the edge simultaneously. At $\mu = 10^{-4}$ and $N_0 = 1000$,
