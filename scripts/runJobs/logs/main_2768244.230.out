@@ -1,0 +1,5 @@
+Running condition=chainWM dose=1.1 seedStart=1000 seedCount=200 l=default
+Python: /usr/bin/python3
+Python 3.9.25
+numpy 1.23.5
+Done: main_chainWM_dose1.1_s1000.csv has 201 lines

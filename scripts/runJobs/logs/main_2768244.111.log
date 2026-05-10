@@ -1,0 +1,83 @@
+000 (2768244.111.000) 2026-05-10 11:42:21 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768244.111.000) 2026-05-10 11:43:34 Started transferring input files
+	Transferring to host: <10.3.129.202:45465?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector6#473382%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector2#465969&PrivNet=mem2&addrs=10.3.129.202-45465&alias=mem2&noUDP>
+...
+040 (2768244.111.000) 2026-05-10 11:43:34 Finished transferring input files
+...
+021 (2768244.111.000) 2026-05-10 11:43:35 Message from starter on slot1_7@glidein_30100_597693540@mem2:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768244.111.000) 2026-05-10 11:43:35 Job executing on host: <10.3.129.202:32819?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector10#460252%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector2#453882&PrivNet=mem2&addrs=10.3.129.202-32819&alias=mem2&noUDP>
+	SlotName: slot1_7@mem2
+	CondorScratchDir = "/wsu/tmp/glide_o0p7rT/execute/dir_28393"
+	Cpus = 1
+	Disk = 205824
+	GLIDEIN_ResourceName = "WSU-GRID-CE1"
+	GPUs = 0
+	Memory = 512
+...
+021 (2768244.111.000) 2026-05-10 11:43:35 Error from starter on slot1_7@glidein_30100_597693540@mem2:
+	Singularity test failed:FATAL:   container creation failed: failed to resolve session directory /wsu/tmp/glide_o0p7rT/main/condor/usr/x86_64/var/lib/apptainer/mnt/session: lstat /wsu/tmp/glide_o0p7rT/main/condor/usr/x86_64/var: no such file or directory
+...
+004 (2768244.111.000) 2026-05-10 11:43:35 Job was evicted. Code 1007 Subcode 0
+	(0) CPU times
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	38939  -  Run Bytes Received By Job
+	Reason: Error from slot1_7@glidein_30100_597693540@mem2: Singularity test failed:FATAL:   container creation failed: failed to resolve session directory /wsu/tmp/glide_o0p7rT/main/condor/usr/x86_64/var/lib/apptainer/mnt/session: lstat /wsu/tmp/glide_o0p7rT/main/condor/usr/x86_64/var: no such file or directory
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :                 1         1 
+	   Disk (KB)            :       40   204800    205824 
+	   GPUs                 :                           0 
+	   Memory (MB)          :               512       512 
+	   TimeSlotBusy (s)     :        2                    
+...
+040 (2768244.111.000) 2026-05-10 11:43:52 Started transferring input files
+	Transferring to host: <192.168.247.1:32903?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector7#472908%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector7#465298&PrivNet=mendel-c0001.mendel.sdmz.amnh.org&addrs=192.168.247.1-32903+[fde1-53ba-e9a0-de11-6e2b-59ff-fead-d84b]-32903&alias=mendel-c0001.mendel.sdmz.amnh.org&noUDP>
+...
+040 (2768244.111.000) 2026-05-10 11:43:52 Finished transferring input files
+...
+021 (2768244.111.000) 2026-05-10 11:43:53 Message from starter on slot1_7@glidein_2367628_268421712@mendel-c0001.mendel.sdmz.amnh.org:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768244.111.000) 2026-05-10 11:43:53 Job executing on host: <192.168.247.1:45225?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector8#470431%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector8#462671&PrivNet=mendel-c0001.mendel.sdmz.amnh.org&addrs=192.168.247.1-45225+[fde1-53ba-e9a0-de11-6e2b-59ff-fead-d84b]-45225&alias=mendel-c0001.mendel.sdmz.amnh.org&noUDP>
+	SlotName: slot1_7@glidein_2367628_268421712@mendel-c0001.mendel.sdmz.amnh.org
+	CondorScratchDir = "/scratch_space/glide_uecFYs/execute/dir_2626524/scratch"
+	Cpus = 1
+	Disk = 204800
+	GLIDEIN_ResourceName = "AMNH-Mendel-CE1"
+	GPUs = 0
+	Memory = 512
+...
+006 (2768244.111.000) 2026-05-10 11:44:02 Image size of job updated: 2577608
+	64  -  MemoryUsage of job (MB)
+	64684  -  ResidentSetSize of job (KB)
+...
+006 (2768244.111.000) 2026-05-10 11:44:05 Image size of job updated: 2577608
+	66  -  MemoryUsage of job (MB)
+	66616  -  ResidentSetSize of job (KB)
+...
+040 (2768244.111.000) 2026-05-10 11:44:06 Started transferring output files
+...
+040 (2768244.111.000) 2026-05-10 11:44:06 Finished transferring output files
+...
+005 (2768244.111.000) 2026-05-10 11:44:06 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:11, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:11, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	22179  -  Run Bytes Sent By Job
+	38939  -  Run Bytes Received By Job
+	22179  -  Total Bytes Sent By Job
+	77878  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :      220   204800    204800 
+	   GPUs                 :                           0 
+	   Memory (MB)          :       66      512       512 
+	   TimeExecute (s)      :       12                    
+	   TimeSlotBusy (s)     :       15                    
+...

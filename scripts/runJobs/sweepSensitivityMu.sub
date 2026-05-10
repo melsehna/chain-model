@@ -1,27 +1,36 @@
-# HTCondor submit file for mutation rate sensitivity
+# HTCondor submit file for mutation rate sensitivity sweep
 #
-# Runs both l=100 (biofilm) and l=2000 (well-mixed) across multiple mu values.
+# 3 conditions x 3 mu values x 8 doses x 25 batches of 200 = 1800 jobs, 5000 seeds per point.
+# Generate sensitivityMuJobs.txt first:  python genMuSensitivityJobs.py
+# Then submit:                           condor_submit sweepSensitivityMu.sub
 
-universe = vanilla
+universe   = vanilla
 executable = runBatch.sh
 
-request_cpus = 1
+request_cpus   = 1
 request_memory = 512MB
-request_disk = 200MB
+request_disk   = 200MB
 
-+JobDurationCategory = "Medium"
-+ProjectName = "PLACEHOLDER_PROJECT"
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage       = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
 
-should_transfer_files = YES
+should_transfer_files   = YES
 when_to_transfer_output = ON_EXIT
-transfer_input_files = chainModel.py, runBatch.py
+transfer_input_files = ../../src/chainModel.py, ../../src/wellMixed.py, runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
 
 output = logs/sensMu_$(Cluster).$(Process).out
 error  = logs/sensMu_$(Cluster).$(Process).err
 log    = logs/sensMu_$(Cluster).$(Process).log
 
-arguments = $(lVal) $(dose) $(seedStart) 200 $(mu) 0.2 sensMu_l$(lVal)_dose$(dose)_mu$(mu)_s$(seedStart).csv
-transfer_output_files = sensMu_l$(lVal)_dose$(dose)_mu$(mu)_s$(seedStart).csv
-transfer_output_remaps = "sensMu_l$(lVal)_dose$(dose)_mu$(mu)_s$(seedStart).csv = results/sensMu_l$(lVal)_dose$(dose)_mu$(mu)_s$(seedStart).csv"
+arguments              = $(condition) $(dose) $(seedStart) 200 $(mu) 0.2 sensMu_$(condition)_dose$(dose)_mu$(mu)_s$(seedStart).csv
+transfer_output_files  = sensMu_$(condition)_dose$(dose)_mu$(mu)_s$(seedStart).csv
+transfer_output_remaps = "sensMu_$(condition)_dose$(dose)_mu$(mu)_s$(seedStart).csv = results/sensMu_$(condition)_dose$(dose)_mu$(mu)_s$(seedStart).csv"
 
-queue lVal, dose, seedStart, mu from sensitivityMuJobs.txt
+queue condition, dose, seedStart, mu from sensitivityMuJobs.txt

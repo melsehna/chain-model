@@ -1,0 +1,79 @@
+000 (2768244.520.000) 2026-05-10 11:42:21 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768244.520.000) 2026-05-10 11:44:54 Started transferring input files
+	Transferring to host: <10.3.129.207:34051?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector1#473664%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector5#466869&PrivNet=mem7&addrs=10.3.129.207-34051&alias=mem7&noUDP>
+...
+040 (2768244.520.000) 2026-05-10 11:44:54 Finished transferring input files
+...
+021 (2768244.520.000) 2026-05-10 11:44:56 Message from starter on slot1_4@glidein_18537_82147655@mem7:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768244.520.000) 2026-05-10 11:44:56 Job executing on host: <10.3.129.207:42521?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector9#449179%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector3#441869&PrivNet=mem7&addrs=10.3.129.207-42521&alias=mem7&noUDP>
+	SlotName: slot1_4@mem7
+	CondorScratchDir = "/wsu/tmp/glide_MX5lsd/execute/dir_26816"
+	Cpus = 1
+	Disk = 205824
+	GLIDEIN_ResourceName = "WSU-GRID-CE1"
+	GPUs = 0
+	Memory = 512
+...
+021 (2768244.520.000) 2026-05-10 11:44:56 Error from starter on slot1_4@glidein_18537_82147655@mem7:
+	Singularity test failed:FATAL:   container creation failed: failed to resolve session directory /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var/lib/apptainer/mnt/session: lstat /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var: no such file or directory
+...
+004 (2768244.520.000) 2026-05-10 11:44:56 Job was evicted. Code 1007 Subcode 0
+	(0) CPU times
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	38939  -  Run Bytes Received By Job
+	Reason: Error from slot1_4@glidein_18537_82147655@mem7: Singularity test failed:FATAL:   container creation failed: failed to resolve session directory /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var/lib/apptainer/mnt/session: lstat /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var: no such file or directory
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :                 1         1 
+	   Disk (KB)            :       40   204800    205824 
+	   GPUs                 :                           0 
+	   Memory (MB)          :               512       512 
+	   TimeSlotBusy (s)     :        4                    
+...
+040 (2768244.520.000) 2026-05-10 11:44:59 Started transferring input files
+	Transferring to host: <10.244.182.211:34093?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector5#464559%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector5#457417&PrivNet=SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk&addrs=10.244.182.211-34093+[fdf0-17b3-c3ec-1f79-10-0-2-2dd6]-34093&alias=SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk&noUDP&sock=slot1_3977_e7fb_150>
+...
+040 (2768244.520.000) 2026-05-10 11:44:59 Finished transferring input files
+...
+021 (2768244.520.000) 2026-05-10 11:45:00 Message from starter on slot1@SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768244.520.000) 2026-05-10 11:45:00 Job executing on host: <10.244.182.211:34093?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector5#464559%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector5#457417&PrivNet=SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk&addrs=10.244.182.211-34093+[fdf0-17b3-c3ec-1f79-10-0-2-2dd6]-34093&alias=SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk&noUDP&sock=startd_3972_0a43>
+	SlotName: slot1@SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk
+	CondorScratchDir = "/pilot/osgvo-pilot-yuPz1P/execute/dir_169419"
+	Cpus = 1
+	Disk = 8000000
+	GLIDEIN_ResourceName = "SDSC-PRP-OSPool-Provisioner"
+	GPUs = 0
+	Memory = 4096
+...
+006 (2768244.520.000) 2026-05-10 11:45:01 Image size of job updated: 2
+	5  -  MemoryUsage of job (MB)
+	4924  -  ResidentSetSize of job (KB)
+...
+040 (2768244.520.000) 2026-05-10 11:45:01 Started transferring output files
+...
+040 (2768244.520.000) 2026-05-10 11:45:01 Finished transferring output files
+...
+005 (2768244.520.000) 2026-05-10 11:45:02 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	17760  -  Run Bytes Sent By Job
+	38939  -  Run Bytes Received By Job
+	17760  -  Total Bytes Sent By Job
+	77878  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :      130   204800   8000000 
+	   GPUs                 :                           0 
+	   Memory (MB)          :        5      512      4096 
+	   TimeExecute (s)      :        1                    
+	   TimeSlotBusy (s)     :        3                    
+...

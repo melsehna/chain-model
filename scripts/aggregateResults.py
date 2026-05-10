@@ -129,6 +129,23 @@ def plotSensCore(df, outPath):
     print(f'Saved {outPath}')
 
 
+def plotSensL(df, outPath):
+    summary = summarize(df, ['l', 'dose'])
+    fig, ax = plt.subplots(figsize=(8, 5))
+    for lVal in sorted(df.l.unique()):
+        s = summary[summary.l == lVal].sort_values('dose')
+        ax.errorbar(s.dose, s.pRescue, yerr=s.pRescueSE,
+                    marker='o', label=f'l = {int(lVal)}', capsize=3)
+    ax.set_xlabel('d_WtEdge')
+    ax.set_ylabel('P(rescue)')
+    ax.set_title('Biofilm rescue vs edge width l\n(narrative.tex Sec 8: crossover depends on l)')
+    ax.legend()
+    ax.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(outPath, dpi=120, bbox_inches='tight')
+    print(f'Saved {outPath}')
+
+
 def plotSensMu(df, outPath):
     summary = summarize(df, ['condition', 'dose', 'mu'])
     mus = sorted(df.mu.unique())
@@ -158,7 +175,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--resultsDir', default='results')
     p.add_argument('--prefix', required=True,
-                   choices=['main', 'sensCore', 'sensMu'])
+                   choices=['main', 'sensCore', 'sensMu', 'sensL'])
     p.add_argument('--out', required=True)
     args = p.parse_args()
 
@@ -172,6 +189,8 @@ def main():
         plotSensCore(df, args.out)
     elif args.prefix == 'sensMu':
         plotSensMu(df, args.out)
+    elif args.prefix == 'sensL':
+        plotSensL(df, args.out)
 
 
 if __name__ == '__main__':

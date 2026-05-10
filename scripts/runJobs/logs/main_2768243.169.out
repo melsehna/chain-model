@@ -1,0 +1,4 @@
+Running condition=biofilm dose=2.3 seedStart=3800 seedCount=200 l=default
+Python: /usr/bin/python3
+Python 3.9.25
+Done: main_biofilm_dose2.3_s3800.csv has 201 lines

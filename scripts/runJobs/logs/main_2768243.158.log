@@ -1,0 +1,45 @@
+000 (2768243.158.000) 2026-05-10 11:36:17 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768243.158.000) 2026-05-10 11:37:38 Started transferring input files
+	Transferring to host: <10.0.2.104:44157?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector3#472197%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector9#465538&PrivNet=nvbaisec4.ib&addrs=10.0.2.104-44157&alias=nvbaisec4.ib&noUDP>
+...
+040 (2768243.158.000) 2026-05-10 11:37:39 Finished transferring input files
+...
+021 (2768243.158.000) 2026-05-10 11:37:42 Message from starter on slot1_21@glidein_2736562_184950000@nvbaisec4.ib:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using default Singularity image /scratch/osg01/glide_qFxuQG/images/htc__rocky__9.sif
+...
+001 (2768243.158.000) 2026-05-10 11:37:42 Job executing on host: <10.0.2.104:39555?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector9#468666%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector1#462345&PrivNet=nvbaisec4.ib&addrs=10.0.2.104-39555&alias=nvbaisec4.ib&noUDP>
+	SlotName: slot1_21@glidein_2736562_184950000@nvbaisec4.ib
+	CondorScratchDir = "/scratch/osg01/glide_qFxuQG/execute/dir_2895776/scratch"
+	Cpus = 1
+	Disk = 204800
+	GLIDEIN_ResourceName = "UNR-CC-CE1"
+	GPUs = 0
+	Memory = 512
+...
+006 (2768243.158.000) 2026-05-10 11:37:51 Image size of job updated: 3985296
+	93  -  MemoryUsage of job (MB)
+	95016  -  ResidentSetSize of job (KB)
+...
+040 (2768243.158.000) 2026-05-10 11:37:52 Started transferring output files
+...
+040 (2768243.158.000) 2026-05-10 11:37:52 Finished transferring output files
+...
+005 (2768243.158.000) 2026-05-10 11:37:53 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:03, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:03, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	21969  -  Run Bytes Sent By Job
+	21930277  -  Run Bytes Received By Job
+	21969  -  Total Bytes Sent By Job
+	21930277  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :    97379   204800    204800 
+	   GPUs                 :                           0 
+	   Memory (MB)          :       93      512       512 
+	   TimeExecute (s)      :        9                    
+	   TimeSlotBusy (s)     :       15                    
+...

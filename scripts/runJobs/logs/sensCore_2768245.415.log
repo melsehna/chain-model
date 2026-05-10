@@ -1,0 +1,57 @@
+000 (2768245.415.000) 2026-05-10 11:46:28 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768245.415.000) 2026-05-10 11:49:05 Started transferring input files
+	Transferring to host: <10.3.129.207:37115?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector7#473126%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector1#466373&PrivNet=mem7&addrs=10.3.129.207-37115&alias=mem7&noUDP>
+...
+040 (2768245.415.000) 2026-05-10 11:49:06 Finished transferring input files
+...
+021 (2768245.415.000) 2026-05-10 11:49:07 Message from starter on slot1_4@glidein_18537_82147655@mem7:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768245.415.000) 2026-05-10 11:49:07 Job executing on host: <10.3.129.207:42521?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector9#449179%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector3#441869&PrivNet=mem7&addrs=10.3.129.207-42521&alias=mem7&noUDP>
+	SlotName: slot1_4@mem7
+	CondorScratchDir = "/wsu/tmp/glide_MX5lsd/execute/dir_3299"
+	Cpus = 1
+	Disk = 205824
+	GLIDEIN_ResourceName = "WSU-GRID-CE1"
+	GPUs = 0
+	Memory = 512
+...
+021 (2768245.415.000) 2026-05-10 11:49:07 Error from starter on slot1_4@glidein_18537_82147655@mem7:
+	Singularity test failed:FATAL:   container creation failed: failed to resolve session directory /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var/lib/apptainer/mnt/session: lstat /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var: no such file or directory
+...
+004 (2768245.415.000) 2026-05-10 11:49:07 Job was evicted. Code 1007 Subcode 0
+	(0) CPU times
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	38939  -  Run Bytes Received By Job
+	Reason: Error from slot1_4@glidein_18537_82147655@mem7: Singularity test failed:FATAL:   container creation failed: failed to resolve session directory /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var/lib/apptainer/mnt/session: lstat /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var: no such file or directory
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :                 1         1 
+	   Disk (KB)            :       40   204800    205824 
+	   GPUs                 :                           0 
+	   Memory (MB)          :               512       512 
+	   TimeSlotBusy (s)     :        2                    
+...
+040 (2768245.415.000) 2026-05-10 11:49:19 Started transferring input files
+	Transferring to host: <10.5.206.211:45295?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector7#473144%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector1#466391&PrivNet=CRUSH-OSG-C7-10-5-206-211&addrs=10.5.206.211-45295&alias=CRUSH-OSG-C7-10-5-206-211&noUDP>
+...
+040 (2768245.415.000) 2026-05-10 11:49:19 Finished transferring input files
+...
+021 (2768245.415.000) 2026-05-10 11:49:19 Message from starter on slot1_3@glidein_89151_439650644@CRUSH-OSG-C7-10-5-206-211:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768245.415.000) 2026-05-10 11:49:19 Job executing on host: <10.5.206.211:41583?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector9#401399%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector3#394849&PrivNet=CRUSH-OSG-C7-10-5-206-211&addrs=10.5.206.211-41583&alias=CRUSH-OSG-C7-10-5-206-211&noUDP>
+	SlotName: slot1_3@CRUSH-OSG-C7-10-5-206-211
+	CondorScratchDir = "/var/lib/condor/execute/dir_89149/glide_qSRXTk/execute/dir_84383"
+	Cpus = 1
+	Disk = 205824
+	GLIDEIN_ResourceName = "SU-ITS-CE2"
+	GPUs = 0
+	Memory = 512
+...
+006 (2768245.415.000) 2026-05-10 11:49:29 Image size of job updated: 929176
+	55  -  MemoryUsage of job (MB)
+	55344  -  ResidentSetSize of job (KB)
+...

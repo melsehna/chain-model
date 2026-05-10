@@ -1,0 +1,49 @@
+000 (2768245.317.000) 2026-05-10 11:46:28 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768245.317.000) 2026-05-10 11:48:30 Started transferring input files
+	Transferring to host: <172.16.1.16:42385?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector9#472584%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector5#466991&PrivNet=chpc-compute016.cm.cluster&addrs=172.16.1.16-42385&alias=chpc-compute016.cm.cluster&noUDP>
+...
+040 (2768245.317.000) 2026-05-10 11:48:30 Finished transferring input files
+...
+021 (2768245.317.000) 2026-05-10 11:48:36 Message from starter on slot1_6@glidein_965746_83686618@chpc-compute016.cm.cluster:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768245.317.000) 2026-05-10 11:48:37 Job executing on host: <172.16.1.16:41187?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector6#430821%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector6#424615&PrivNet=chpc-compute016.cm.cluster&addrs=172.16.1.16-41187&alias=chpc-compute016.cm.cluster&noUDP>
+	SlotName: slot1_6@glidein_965746_83686618@chpc-compute016.cm.cluster
+	CondorScratchDir = "/tmp/glide_F5lkQS/execute/dir_2620439/scratch"
+	Cpus = 1
+	Disk = 204800
+	GLIDEIN_ResourceName = "Alabama-CHPC-CE1"
+	GPUs = 0
+	Memory = 512
+...
+006 (2768245.317.000) 2026-05-10 11:48:45 Image size of job updated: 3705304
+	87  -  MemoryUsage of job (MB)
+	88292  -  ResidentSetSize of job (KB)
+...
+006 (2768245.317.000) 2026-05-10 11:48:59 Image size of job updated: 3705568
+	87  -  MemoryUsage of job (MB)
+	88820  -  ResidentSetSize of job (KB)
+...
+040 (2768245.317.000) 2026-05-10 11:49:00 Started transferring output files
+...
+040 (2768245.317.000) 2026-05-10 11:49:00 Finished transferring output files
+...
+005 (2768245.317.000) 2026-05-10 11:49:00 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:19, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:19, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	21834  -  Run Bytes Sent By Job
+	38939  -  Run Bytes Received By Job
+	21834  -  Total Bytes Sent By Job
+	38939  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :      220   204800    204800 
+	   GPUs                 :                           0 
+	   Memory (MB)          :       87      512       512 
+	   TimeExecute (s)      :       23                    
+	   TimeSlotBusy (s)     :       31                    
+...

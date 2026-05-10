@@ -1,0 +1,42 @@
+000 (2768245.581.000) 2026-05-10 11:46:28 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768245.581.000) 2026-05-10 11:49:43 Started transferring input files
+	Transferring to host: <10.1.11.228:37691?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector3#472720%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector3#465050&PrivNet=nal-004-docker&addrs=10.1.11.228-37691&alias=nal-004-docker&noUDP>
+...
+040 (2768245.581.000) 2026-05-10 11:49:43 Finished transferring input files
+...
+021 (2768245.581.000) 2026-05-10 11:49:43 Message from starter on slot1@glidein_3824_467418693@nal-004-docker:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768245.581.000) 2026-05-10 11:49:43 Job executing on host: <10.1.11.228:45619?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector8#473871%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector8#466248&PrivNet=nal-004-docker&addrs=10.1.11.228-45619&alias=nal-004-docker&noUDP>
+	SlotName: slot1@glidein_3824_467418693@nal-004-docker
+	CondorScratchDir = "/tmp/osg01/glide_XOxKDW/execute/dir_780763/scratch"
+	Cpus = 1
+	Disk = 250257772
+	GLIDEIN_ResourceName = "MSU-DataMachine-CE1"
+	GPUs = 0
+	Memory = 2048
+...
+006 (2768245.581.000) 2026-05-10 11:49:52 Image size of job updated: 2
+	3  -  MemoryUsage of job (MB)
+	2904  -  ResidentSetSize of job (KB)
+...
+006 (2768245.581.000) 2026-05-10 11:50:04 Image size of job updated: 2058164
+	65  -  MemoryUsage of job (MB)
+	66060  -  ResidentSetSize of job (KB)
+...
+004 (2768245.581.000) 2026-05-10 11:50:06 Job was evicted. Code 1013 Subcode 0
+	(0) CPU times
+		Usr 0 00:00:17, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	38939  -  Run Bytes Received By Job
+	Reason: Startd was shutdown
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :      193   204800 250257772 
+	   GPUs                 :                           0 
+	   Memory (MB)          :       65      512      2048 
+	   TimeExecute (s)      :       21                    
+	   TimeSlotBusy (s)     :       22                    
+...

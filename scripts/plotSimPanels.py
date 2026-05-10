@@ -283,6 +283,212 @@ def panel_agreement(df, outPath):
     print(f'  wrote {outPath}')
 
 
+def panel_mutation_supply(df, outPath):
+    '''narrative.tex Sec 4: biofilm should have ~1.8x more mutations than WM
+    (active core adds extra births). Plots mean total mutations per run.'''
+    df = df.copy()
+    df['nMutTotal'] = df['nMutCore'].fillna(0) + df['nMutEdge'].fillna(0)
+    g = (df.groupby(['condition', 'dose'])
+           .agg(meanMut=('nMutTotal', 'mean'),
+                seMut=('nMutTotal', lambda x: x.std() / np.sqrt(len(x))))
+           .reset_index())
+    fig, ax = plt.subplots(figsize=(7, 5))
+    for cond in ['biofilm', 'chainWM', 'wellMixed']:
+        s = g[g.condition == cond].sort_values('dose')
+        if len(s) == 0:
+            continue
+        ax.errorbar(s.dose, s.meanMut, yerr=s.seMut,
+                    marker='o', ms=4, lw=1.2, capsize=2,
+                    color=CONDITION_COLORS[cond], label=cond)
+    ax.set_xlabel(r'dose $(d_e)$')
+    ax.set_ylabel(r'$\langle$ R lineages produced per run $\rangle$')
+    ax.set_title('Mutation supply vs dose (narrative Sec 4)\n'
+                 'BF should exceed WM at active core (default $b_c=0.2$)')
+    ax.legend()
+    ax.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(outPath, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f'  wrote {outPath}')
+
+
+def panel_estab_phase(df, outPath):
+    '''narrative.tex Sec 5: BF Phase-1-born edge mutations face WT resupply
+    suppression; BF Phase-2-born edge mutations should establish at near-WM
+    rate (no resupply). The BF P1 vs BF P2 vs WM comparison is the central
+    test of the analytical framework.'''
+    rows = []
+    for (cond, dose), sub in df.groupby(['condition', 'dose']):
+        if cond == 'biofilm':
+            for phase, mutCol, estCol in [('P1', 'nMutEdgePhase1', 'nEstEdgePhase1'),
+                                           ('P2', 'nMutEdgePhase2', 'nEstEdgePhase2')]:
+                nMut = sub[mutCol].sum()
+                nEst = sub[estCol].sum()
+                if nMut > 0:
+                    p = nEst / nMut
+                    se = np.sqrt(p * (1 - p) / nMut)
+                    rows.append({'group': f'BF {phase}', 'dose': dose,
+                                 'p': p, 'se': se, 'n': nMut})
+        elif cond == 'wellMixed':
+            nMut = sub['nMutEdge'].sum()
+            nEst = sub['nEstablishedEdge'].sum()
+            if nMut > 0:
+                p = nEst / nMut
+                se = np.sqrt(p * (1 - p) / nMut)
+                rows.append({'group': 'WM', 'dose': dose,
+                             'p': p, 'se': se, 'n': nMut})
+    g = pd.DataFrame(rows)
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    styles = {'BF P1': ('C0', 'o', '-'),
+              'BF P2': ('C0', 's', '--'),
+              'WM':    ('C2', '^', '-')}
+    for grp in ['BF P1', 'BF P2', 'WM']:
+        sub = g[g.group == grp].sort_values('dose')
+        if len(sub) == 0:
+            continue
+        col, mk, ls = styles[grp]
+        ax.errorbar(sub.dose, sub.p, yerr=sub.se,
+                    marker=mk, ms=5, lw=1.4, ls=ls, capsize=2,
+                    color=col, label=grp)
+    ax.set_xlabel(r'dose $(d_e)$')
+    ax.set_ylabel('Establishment fraction (lineages reaching $k_{est}$)')
+    ax.set_title('Establishment by phase (narrative Sec 5)\n'
+                 'BF P1 << BF P2 ~ WM is the WT-resupply suppression signal')
+    ax.set_yscale('log')
+    ax.legend()
+    ax.grid(alpha=0.3, which='both')
+    plt.tight_layout()
+    plt.savefig(outPath, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f'  wrote {outPath}')
+
+
+def panel_delivery(df, outPath):
+    '''narrative.tex Sec 6: drift kills core mutations at low dose; delivery
+    fraction (nDelivered / nMutCore) rises with dose for the biofilm.'''
+    bf = df[df.condition == 'biofilm']
+    rows = []
+    for dose, sub in bf.groupby('dose'):
+        nMut = sub['nMutCore'].sum()
+        nDel = sub['nDelivered'].sum()
+        if nMut > 0:
+            p = nDel / nMut
+            se = np.sqrt(p * (1 - p) / nMut)
+            rows.append({'dose': dose, 'p': p, 'se': se, 'n': nMut})
+    g = pd.DataFrame(rows).sort_values('dose')
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.errorbar(g.dose, g.p, yerr=g.se,
+                marker='o', ms=5, lw=1.4, capsize=2,
+                color='C3', label='BF: core lineages reaching edge')
+    ax.set_xlabel(r'dose $(d_e)$')
+    ax.set_ylabel('Delivery fraction (nDelivered / nMutCore)')
+    ax.set_title('Core-to-edge delivery efficiency vs dose (narrative Sec 6)\n'
+                 'Drift suppression at low dose; efficient at high dose')
+    ax.set_ylim(0, 1)
+    ax.legend()
+    ax.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(outPath, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f'  wrote {outPath}')
+
+
+def panel_bolus(df, outPath):
+    '''narrative.tex Sec 8: a core lineage that survives drift grows in the
+    core before delivery, arriving as a bolus. meanDeliverySizeCore should
+    rise with dose (signature of bolus advantage).'''
+    bf = df[(df.condition == 'biofilm') & df['meanDeliverySizeCore'].notna()]
+    g = (bf.groupby('dose')
+           .agg(meanBolus=('meanDeliverySizeCore', 'mean'),
+                seBolus=('meanDeliverySizeCore', lambda x: x.std() / np.sqrt(len(x))),
+                n=('meanDeliverySizeCore', 'count'))
+           .reset_index())
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.errorbar(g.dose, g.meanBolus, yerr=g.seBolus,
+                marker='o', ms=5, lw=1.4, capsize=2,
+                color='C5', label='mean delivery size (core-born)')
+    ax.axhline(1.0, color='gray', ls=':', lw=1, label='single-cell delivery (no bolus)')
+    ax.set_xlabel(r'dose $(d_e)$')
+    ax.set_ylabel(r'$\langle$ lineage size at first edge entry $\rangle$')
+    ax.set_title('Bolus size of core-delivered lineages vs dose (narrative Sec 8)\n'
+                 'Rising values are the bolus-advantage signature')
+    ax.legend()
+    ax.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(outPath, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f'  wrote {outPath}')
+
+
+def panel_rescue_time(df, outPath):
+    '''narrative.tex "What we don't know": time-to-rescue as alternative
+    signal. BF should be slower at low dose (edge establishment suppressed)
+    and possibly faster at high dose (bolus delivery).'''
+    rescued = df[df.rescued == 1].copy()
+    rescued['rescueTime'] = pd.to_numeric(rescued['rescueTime'], errors='coerce')
+    g = (rescued.dropna(subset=['rescueTime'])
+                .groupby(['condition', 'dose'])
+                .agg(median=('rescueTime', 'median'),
+                     q25=('rescueTime', lambda x: x.quantile(0.25)),
+                     q75=('rescueTime', lambda x: x.quantile(0.75)),
+                     n=('rescueTime', 'count'))
+                .reset_index())
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    for cond in ['biofilm', 'chainWM', 'wellMixed']:
+        sub = g[g.condition == cond].sort_values('dose')
+        if len(sub) == 0:
+            continue
+        yerr = np.array([sub['median'] - sub['q25'], sub['q75'] - sub['median']])
+        ax.errorbar(sub.dose, sub['median'], yerr=yerr,
+                    marker='o', ms=4, lw=1.2, capsize=2,
+                    color=CONDITION_COLORS[cond], label=f'{cond} (median, IQR)')
+    ax.set_xlabel(r'dose $(d_e)$')
+    ax.set_ylabel('Time to rescue (rescued runs only)')
+    ax.set_yscale('log')
+    ax.set_title('Time to rescue vs dose (narrative "What we don\'t know")\n'
+                 'BF slower at low dose, comparable/faster at high dose')
+    ax.legend()
+    ax.grid(alpha=0.3, which='both')
+    plt.tight_layout()
+    plt.savefig(outPath, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f'  wrote {outPath}')
+
+
+def panel_sensL(df, outPath):
+    '''narrative.tex Sec 8: crossover dose depends on edge width l.'''
+    s = (df.groupby(['l', 'dose'])
+           .agg(n=('seed', 'count'), nRescued=('rescued', 'sum'))
+           .reset_index())
+    s['p'] = s.nRescued / s.n
+    s['se'] = np.sqrt(s.p * (1 - s.p) / s.n)
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    cmap = plt.get_cmap('viridis')
+    lVals = sorted(df.l.unique())
+    for i, lVal in enumerate(lVals):
+        sub = s[s.l == lVal].sort_values('dose')
+        col = cmap(i / max(1, len(lVals) - 1))
+        ax.errorbar(sub.dose, sub.p, yerr=sub.se,
+                    marker='o', ms=4, lw=1.2, capsize=2,
+                    color=col, label=f'l = {int(lVal)}')
+    ax.set_xlabel(r'dose $(d_e)$')
+    ax.set_ylabel(r'$P(\mathrm{rescue})$')
+    ax.set_yscale('log')
+    ax.set_title('Edge-width sensitivity (narrative Sec 8)\n'
+                 r'Crossover dose should shift with $l$')
+    ax.legend(fontsize=8)
+    ax.grid(alpha=0.3, which='both')
+    plt.tight_layout()
+    plt.savefig(outPath, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f'  wrote {outPath}')
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--resultsDir', default=os.path.join(REPO_ROOT, 'results'))
@@ -291,23 +497,40 @@ def main():
 
     os.makedirs(args.outDir, exist_ok=True)
 
-    print('Loading main.csv...')
-    main_df = pd.read_csv(os.path.join(args.resultsDir, 'main.csv'),
-                          low_memory=False)
-    panel_rescue_curves(main_df, os.path.join(args.outDir, 'sim_rescue_curves.png'))
-    panel_pathway(main_df, os.path.join(args.outDir, 'sim_pathway.png'))
-    panel_ratio(main_df, os.path.join(args.outDir, 'sim_ratio.png'))
-    panel_agreement(main_df, os.path.join(args.outDir, 'sim_agreement.png'))
+    mainPath = os.path.join(args.resultsDir, 'main.csv')
+    if os.path.exists(mainPath):
+        print('Loading main.csv...')
+        main_df = pd.read_csv(mainPath, low_memory=False)
+        panel_rescue_curves(main_df, os.path.join(args.outDir, 'sim_rescue_curves.png'))
+        panel_pathway(main_df, os.path.join(args.outDir, 'sim_pathway.png'))
+        panel_ratio(main_df, os.path.join(args.outDir, 'sim_ratio.png'))
+        panel_agreement(main_df, os.path.join(args.outDir, 'sim_agreement.png'))
+        panel_mutation_supply(main_df, os.path.join(args.outDir, 'sim_mutation_supply.png'))
+        panel_delivery(main_df, os.path.join(args.outDir, 'sim_delivery.png'))
+        panel_bolus(main_df, os.path.join(args.outDir, 'sim_bolus.png'))
+        panel_rescue_time(main_df, os.path.join(args.outDir, 'sim_rescue_time.png'))
+        if 'nMutEdgePhase1' in main_df.columns:
+            panel_estab_phase(main_df, os.path.join(args.outDir, 'sim_estab_phase.png'))
+        else:
+            print('  (skipping sim_estab_phase: phase columns not in CSV; rerun sweep)')
 
-    print('Loading sensCore.csv...')
-    sc_df = pd.read_csv(os.path.join(args.resultsDir, 'sensCore.csv'),
-                        low_memory=False)
-    panel_sensCore(sc_df, os.path.join(args.outDir, 'sim_sensCore.png'))
+    scPath = os.path.join(args.resultsDir, 'sensCore.csv')
+    if os.path.exists(scPath):
+        print('Loading sensCore.csv...')
+        sc_df = pd.read_csv(scPath, low_memory=False)
+        panel_sensCore(sc_df, os.path.join(args.outDir, 'sim_sensCore.png'))
 
-    print('Loading sensMu.csv...')
-    sm_df = pd.read_csv(os.path.join(args.resultsDir, 'sensMu.csv'),
-                        low_memory=False)
-    panel_sensMu(sm_df, os.path.join(args.outDir, 'sim_sensMu.png'))
+    smPath = os.path.join(args.resultsDir, 'sensMu.csv')
+    if os.path.exists(smPath):
+        print('Loading sensMu.csv...')
+        sm_df = pd.read_csv(smPath, low_memory=False)
+        panel_sensMu(sm_df, os.path.join(args.outDir, 'sim_sensMu.png'))
+
+    slPath = os.path.join(args.resultsDir, 'sensL.csv')
+    if os.path.exists(slPath):
+        print('Loading sensL.csv...')
+        sl_df = pd.read_csv(slPath, low_memory=False)
+        panel_sensL(sl_df, os.path.join(args.outDir, 'sim_sensL.png'))
 
 
 if __name__ == '__main__':

@@ -1,29 +1,40 @@
-# HTCondor submit file for core dormancy sensitivity
+# HTCondor submit file for core dormancy sensitivity sweep
 #
-# Runs chain model with l=100 (biofilm) across multiple bCoreRatio values.
-# The well-mixed comparison reuses main sweep's l=2000 data.
+# 8 doses x 6 bCoreRatio values x 25 batches of 200 = 1200 jobs, 5000 seeds per point.
+# bCore=0.0 is the dormant-core baseline (narrative.tex Sec 7); higher
+# values test active-core effects (narrative.tex Sec 8).
+# The well-mixed comparison reuses main-sweep data (default bCoreRatio=0.2).
+# Generate sensitivityCoreJobs.txt first:  python genCoreSensitivityJobs.py
+# Then submit:                              condor_submit sweepSensitivityCore.sub
 
-universe = vanilla
+universe   = vanilla
 executable = runBatch.sh
 
-request_cpus = 1
+request_cpus   = 1
 request_memory = 512MB
-request_disk = 200MB
+request_disk   = 200MB
 
-+JobDurationCategory = "Medium"
-+ProjectName = "PLACEHOLDER_PROJECT"
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage       = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
 
-should_transfer_files = YES
+should_transfer_files   = YES
 when_to_transfer_output = ON_EXIT
-transfer_input_files = chainModel.py, runBatch.py
+transfer_input_files = ../../src/chainModel.py, ../../src/wellMixed.py, runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
 
 output = logs/sensCore_$(Cluster).$(Process).out
 error  = logs/sensCore_$(Cluster).$(Process).err
 log    = logs/sensCore_$(Cluster).$(Process).log
 
-# Fixed l=100 (biofilm); vary bCoreRatio
-arguments = 100 $(dose) $(seedStart) 200 1e-4 $(bCore) sensCore_dose$(dose)_bCore$(bCore)_s$(seedStart).csv
-transfer_output_files = sensCore_dose$(dose)_bCore$(bCore)_s$(seedStart).csv
+# Fixed condition=biofilm, mu=1e-4; vary bCoreRatio across doses
+arguments              = biofilm $(dose) $(seedStart) 200 1e-4 $(bCore) sensCore_dose$(dose)_bCore$(bCore)_s$(seedStart).csv
+transfer_output_files  = sensCore_dose$(dose)_bCore$(bCore)_s$(seedStart).csv
 transfer_output_remaps = "sensCore_dose$(dose)_bCore$(bCore)_s$(seedStart).csv = results/sensCore_dose$(dose)_bCore$(bCore)_s$(seedStart).csv"
 
 queue dose, seedStart, bCore from sensitivityCoreJobs.txt

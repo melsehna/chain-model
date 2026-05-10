@@ -1,0 +1,41 @@
+# HTCondor submit file for edge-width (l) sensitivity sweep
+#
+# Tests narrative.tex Sec 8 claim that crossover dose depends on l.
+# 8 doses x 5 l values x 25 batches of 200 = 1000 jobs, 5000 seeds per point.
+# Biofilm condition only; the well-mixed reference reuses main-sweep data.
+# Worst-case observed runtime: ~4 min per batch (l=25, dose=1.05).
+# Generate sensitivityLJobs.txt first:  python genLSensitivityJobs.py
+# Then submit:                          condor_submit sweepSensitivityL.sub
+
+universe   = vanilla
+executable = runBatch.sh
+
+request_cpus   = 1
+request_memory = 512MB
+request_disk   = 200MB
+
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage       = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
+
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../../src/chainModel.py, ../../src/wellMixed.py, runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+output = logs/sensL_$(Cluster).$(Process).out
+error  = logs/sensL_$(Cluster).$(Process).err
+log    = logs/sensL_$(Cluster).$(Process).log
+
+# Fixed condition=biofilm, bCoreRatio=0.2, mu=1e-4; vary l across doses.
+# 8th positional arg is forwarded to runBatch.sh as the --l override.
+arguments              = biofilm $(dose) $(seedStart) 200 1e-4 0.2 sensL_dose$(dose)_l$(lVal)_s$(seedStart).csv $(lVal)
+transfer_output_files  = sensL_dose$(dose)_l$(lVal)_s$(seedStart).csv
+transfer_output_remaps = "sensL_dose$(dose)_l$(lVal)_s$(seedStart).csv = results/sensL_dose$(dose)_l$(lVal)_s$(seedStart).csv"
+
+queue dose, seedStart, lVal from sensitivityLJobs.txt

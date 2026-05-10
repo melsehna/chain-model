@@ -1,0 +1,19 @@
+000 (2768245.859.000) 2026-05-10 11:46:28 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768245.859.000) 2026-05-10 11:50:13 Started transferring input files
+	Transferring to host: <10.136.81.244:46753?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector4#473470%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector4#464917&PrivNet=comp-cc-0474&addrs=10.136.81.244-46753&alias=comp-cc-0474&noUDP>
+...
+040 (2768245.859.000) 2026-05-10 11:50:13 Finished transferring input files
+...
+021 (2768245.859.000) 2026-05-10 11:50:13 Message from starter on slot1_3@glidein_3945363_375739776@comp-cc-0474:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768245.859.000) 2026-05-10 11:50:13 Job executing on host: <10.136.81.244:36147?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector4#446534%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector2#439319&PrivNet=comp-cc-0474&addrs=10.136.81.244-36147&alias=comp-cc-0474&noUDP>
+	SlotName: slot1_3@glidein_3945363_375739776@comp-cc-0474
+	CondorScratchDir = "/localscratch/condor/execute/dir_3945347/scratch/glide_J1Ib0h/execute/dir_2956185/scratch"
+	Cpus = 1
+	Disk = 204800
+	GLIDEIN_ResourceName = "PSU-LIGO"
+	GPUs = 0
+	Memory = 512
+...

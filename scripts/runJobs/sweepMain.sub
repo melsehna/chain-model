@@ -1,36 +1,42 @@
 # HTCondor submit file for main parameter sweep
 #
-# Sweeps d_WtEdge across super-MIC range for two values of l:
-#   l=100  -> biofilm (core present)
-#   l=2000 -> well-mixed (core never forms; l >= nInit)
+# 3 conditions x 8 doses x 25 batches of 200 = 600 jobs, 5000 seeds per point.
+# Generate sweepMainJobs.txt first:  python genSweepMainJobs.py
+# Then submit:                        condor_submit sweepMain.sub
 #
-# Both use the same chainModel.py, so the comparison is exact.
-#
-# Usage:
-#   python genSweepMainJobs.py
-#   condor_submit sweepMain.sub
+# Worst-case observed runtime: ~1.5 min per batch (biofilm dose=1.05).
+# OSPool accepts only "Medium" (<= 10 hr) or "Long" (10-20 hr) categories.
 
-universe = vanilla
+universe   = vanilla
 executable = runBatch.sh
 
-request_cpus = 1
+request_cpus   = 1
 request_memory = 512MB
-request_disk = 200MB
+request_disk   = 200MB
 
-+JobDurationCategory = "Medium"
-+ProjectName = "PLACEHOLDER_PROJECT"
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage       = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
 
-should_transfer_files = YES
+should_transfer_files   = YES
 when_to_transfer_output = ON_EXIT
-transfer_input_files = chainModel.py, runBatch.py
+transfer_input_files = ../../src/chainModel.py, ../../src/wellMixed.py, runBatch.py
+
+# Auto-retry on preemption / transient failures (common on OSPool).
+# Failed exits go on hold, get released up to max_retries times.
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
 
 output = logs/main_$(Cluster).$(Process).out
 error  = logs/main_$(Cluster).$(Process).err
 log    = logs/main_$(Cluster).$(Process).log
 
-# Arguments: l dose seedStart seedCount mu bCoreRatio outFile
-arguments = $(lVal) $(dose) $(seedStart) 200 1e-4 0.2 main_l$(lVal)_dose$(dose)_s$(seedStart).csv
-transfer_output_files = main_l$(lVal)_dose$(dose)_s$(seedStart).csv
-transfer_output_remaps = "main_l$(lVal)_dose$(dose)_s$(seedStart).csv = results/main_l$(lVal)_dose$(dose)_s$(seedStart).csv"
+# Arguments: condition dose seedStart seedCount mu bCoreRatio outFile
+arguments              = $(condition) $(dose) $(seedStart) 200 1e-4 0.2 main_$(condition)_dose$(dose)_s$(seedStart).csv
+transfer_output_files  = main_$(condition)_dose$(dose)_s$(seedStart).csv
+transfer_output_remaps = "main_$(condition)_dose$(dose)_s$(seedStart).csv = results/main_$(condition)_dose$(dose)_s$(seedStart).csv"
 
-queue lVal, dose, seedStart from sweepMainJobs.txt
+queue condition, dose, seedStart from sweepMainJobs.txt

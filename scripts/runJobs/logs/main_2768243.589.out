@@ -1,0 +1,4 @@
+Running condition=wellMixed dose=2.8 seedStart=2800 seedCount=200 l=default
+Python: /usr/bin/python3
+Python 3.9.25
+Done: main_wellMixed_dose2.8_s2800.csv has 201 lines

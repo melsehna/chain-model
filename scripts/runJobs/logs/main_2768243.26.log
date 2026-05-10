@@ -1,0 +1,49 @@
+000 (2768243.026.000) 2026-05-10 11:36:17 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768243.026.000) 2026-05-10 11:37:39 Started transferring input files
+	Transferring to host: <10.18.2.32:39311?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector5#473848%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector9#465547&PrivNet=node032.localdomain&addrs=10.18.2.32-39311&alias=node032.localdomain&noUDP>
+...
+040 (2768243.026.000) 2026-05-10 11:37:40 Finished transferring input files
+...
+021 (2768243.026.000) 2026-05-10 11:37:40 Message from starter on slot1@glidein_605571_523882609@node032.localdomain:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using default Singularity image /local/scratch/glide_H0tZ2j/images/htc__rocky__9.sif
+...
+001 (2768243.026.000) 2026-05-10 11:37:40 Job executing on host: <10.18.2.32:34771?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector4#472452%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector4#463901&PrivNet=node032.localdomain&addrs=10.18.2.32-34771&alias=node032.localdomain&noUDP>
+	SlotName: slot1@glidein_605571_523882609@node032.localdomain
+	CondorScratchDir = "/local/scratch/glide_H0tZ2j/execute/dir_763635/scratch"
+	Cpus = 1
+	Disk = 2068219
+	GLIDEIN_ResourceName = "TCNJ-ELSA-CE2"
+	GPUs = 0
+	Memory = 2500
+...
+006 (2768243.026.000) 2026-05-10 11:37:49 Image size of job updated: 2
+	6  -  MemoryUsage of job (MB)
+	5128  -  ResidentSetSize of job (KB)
+...
+006 (2768243.026.000) 2026-05-10 11:38:41 Image size of job updated: 3856252
+	105  -  MemoryUsage of job (MB)
+	107348  -  ResidentSetSize of job (KB)
+...
+040 (2768243.026.000) 2026-05-10 11:38:42 Started transferring output files
+...
+040 (2768243.026.000) 2026-05-10 11:38:42 Finished transferring output files
+...
+005 (2768243.026.000) 2026-05-10 11:38:42 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:56, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:56, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	21612  -  Run Bytes Sent By Job
+	21930277  -  Run Bytes Received By Job
+	21612  -  Total Bytes Sent By Job
+	21930277  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :     0.99        1         1 
+	   Disk (KB)            : 97370      204800   2068219 
+	   GPUs                 :                           0 
+	   Memory (MB)          :   105         512      2500 
+	   TimeExecute (s)      :    61                       
+	   TimeSlotBusy (s)     :    63                       
+...

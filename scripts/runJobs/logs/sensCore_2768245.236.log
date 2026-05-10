@@ -1,0 +1,83 @@
+000 (2768245.236.000) 2026-05-10 11:46:28 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768245.236.000) 2026-05-10 11:48:23 Started transferring input files
+	Transferring to host: <10.3.129.207:33203?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector8#474068%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector4#464825&PrivNet=mem7&addrs=10.3.129.207-33203&alias=mem7&noUDP>
+...
+040 (2768245.236.000) 2026-05-10 11:48:23 Finished transferring input files
+...
+021 (2768245.236.000) 2026-05-10 11:48:24 Message from starter on slot1_4@glidein_18537_82147655@mem7:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768245.236.000) 2026-05-10 11:48:24 Job executing on host: <10.3.129.207:42521?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector9#449179%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector3#441869&PrivNet=mem7&addrs=10.3.129.207-42521&alias=mem7&noUDP>
+	SlotName: slot1_4@mem7
+	CondorScratchDir = "/wsu/tmp/glide_MX5lsd/execute/dir_39977"
+	Cpus = 1
+	Disk = 205824
+	GLIDEIN_ResourceName = "WSU-GRID-CE1"
+	GPUs = 0
+	Memory = 512
+...
+021 (2768245.236.000) 2026-05-10 11:48:24 Error from starter on slot1_4@glidein_18537_82147655@mem7:
+	Singularity test failed:FATAL:   container creation failed: failed to resolve session directory /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var/lib/apptainer/mnt/session: lstat /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var: no such file or directory
+...
+004 (2768245.236.000) 2026-05-10 11:48:26 Job was evicted. Code 1007 Subcode 0
+	(0) CPU times
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	38939  -  Run Bytes Received By Job
+	Reason: Error from slot1_4@glidein_18537_82147655@mem7: Singularity test failed:FATAL:   container creation failed: failed to resolve session directory /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var/lib/apptainer/mnt/session: lstat /wsu/tmp/glide_MX5lsd/main/condor/usr/x86_64/var: no such file or directory
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :                 1         1 
+	   Disk (KB)            :       40   204800    205824 
+	   GPUs                 :                           0 
+	   Memory (MB)          :               512       512 
+	   TimeSlotBusy (s)     :        2                    
+...
+040 (2768245.236.000) 2026-05-10 11:48:32 Started transferring input files
+	Transferring to host: <192.168.247.13:40683?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector2#473443%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector10#465908&PrivNet=mendel-c0013.mendel.sdmz.amnh.org&addrs=192.168.247.13-40683+[fde1-53ba-e9a0-de11-6e2b-59ff-feb0-49c6]-40683&alias=mendel-c0013.mendel.sdmz.amnh.org&noUDP>
+...
+040 (2768245.236.000) 2026-05-10 11:48:32 Finished transferring input files
+...
+021 (2768245.236.000) 2026-05-10 11:48:33 Message from starter on slot1_5@glidein_2679388_253651515@mendel-c0013.mendel.sdmz.amnh.org:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768245.236.000) 2026-05-10 11:48:33 Job executing on host: <192.168.247.13:44805?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector4#472389%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector8#465452&PrivNet=mendel-c0013.mendel.sdmz.amnh.org&addrs=192.168.247.13-44805+[fde1-53ba-e9a0-de11-6e2b-59ff-feb0-49c6]-44805&alias=mendel-c0013.mendel.sdmz.amnh.org&noUDP>
+	SlotName: slot1_5@glidein_2679388_253651515@mendel-c0013.mendel.sdmz.amnh.org
+	CondorScratchDir = "/scratch_space/glide_SBMmID/execute/dir_2853022/scratch"
+	Cpus = 1
+	Disk = 204800
+	GLIDEIN_ResourceName = "AMNH-Mendel-CE1"
+	GPUs = 0
+	Memory = 512
+...
+006 (2768245.236.000) 2026-05-10 11:48:41 Image size of job updated: 2588052
+	77  -  MemoryUsage of job (MB)
+	78716  -  ResidentSetSize of job (KB)
+...
+006 (2768245.236.000) 2026-05-10 11:49:29 Image size of job updated: 2589496
+	79  -  MemoryUsage of job (MB)
+	80608  -  ResidentSetSize of job (KB)
+...
+040 (2768245.236.000) 2026-05-10 11:49:29 Started transferring output files
+...
+040 (2768245.236.000) 2026-05-10 11:49:29 Finished transferring output files
+...
+005 (2768245.236.000) 2026-05-10 11:49:29 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:51, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:51, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	21773  -  Run Bytes Sent By Job
+	38939  -  Run Bytes Received By Job
+	21773  -  Total Bytes Sent By Job
+	77878  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :      219   204800    204800 
+	   GPUs                 :                           0 
+	   Memory (MB)          :       79      512       512 
+	   TimeExecute (s)      :       56                    
+	   TimeSlotBusy (s)     :       58                    
+...

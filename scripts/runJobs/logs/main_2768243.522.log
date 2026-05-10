@@ -1,0 +1,53 @@
+000 (2768243.522.000) 2026-05-10 11:36:18 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768243.522.000) 2026-05-10 11:37:50 Started transferring input files
+	Transferring to host: <172.18.89.38:46639?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector8#473657%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector8#466021&PrivNet=a284.anvil.rcac.purdue.edu&addrs=172.18.89.38-46639&alias=a284.anvil.rcac.purdue.edu&noUDP>
+...
+040 (2768243.522.000) 2026-05-10 11:37:50 Finished transferring input files
+...
+021 (2768243.522.000) 2026-05-10 11:37:50 Message from starter on slot1_8@glidein_1956298_451968055@a284.anvil.rcac.purdue.edu:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using default Singularity image /tmp/glide_1SpnYg/images/htc__rocky__8.sif
+...
+001 (2768243.522.000) 2026-05-10 11:37:50 Job executing on host: <172.18.89.38:33385?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector2#351654%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector6#345150&PrivNet=a284.anvil.rcac.purdue.edu&addrs=172.18.89.38-33385&alias=a284.anvil.rcac.purdue.edu&noUDP>
+	SlotName: slot1_8@glidein_1956298_451968055@a284.anvil.rcac.purdue.edu
+	CondorScratchDir = "/tmp/glide_1SpnYg/execute/dir_1790173/scratch"
+	Cpus = 1
+	Disk = 204800
+	GLIDEIN_ResourceName = "Purdue-Anvil-CE1"
+	GPUs = 0
+	Memory = 512
+...
+006 (2768243.522.000) 2026-05-10 11:37:51 Image size of job updated: 2334212
+	39  -  MemoryUsage of job (MB)
+	39724  -  ResidentSetSize of job (KB)
+...
+040 (2768243.522.000) 2026-05-10 11:37:52 Started transferring output files
+...
+040 (2768243.522.000) 2026-05-10 11:37:52 Finished transferring output files
+...
+021 (2768243.522.000) 2026-05-10 11:37:52 Error from starter on slot1_8@glidein_1956298_451968055@a284.anvil.rcac.purdue.edu:
+	STARTER at 172.18.89.38 failed to send file(s) to <128.105.69.40:9618>: |Error: 1 total failures: first failure: reading from file /tmp/glide_1SpnYg/execute/dir_1790173/scratch/main_wellMixed_dose1.6_s4400.csv: (errno 2) No such file or directory; SHADOW failed to receive file(s) from <128.211.155.48:60294>
+	Code 13 Subcode 2
+...
+004 (2768243.522.000) 2026-05-10 11:37:52 Job was evicted. Code 12 Subcode 2
+	(0) CPU times
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	21930277  -  Run Bytes Received By Job
+	Reason: Transfer output files failure at the execution point while sending files to access point ap41. Details: 1 total failures: first failure: reading from file /tmp/glide_1SpnYg/execute/dir_1790173/scratch/main_wellMixed_dose1.6_s4400.csv: (errno 2) No such file or directory
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :    97393   204800    204800 
+	   GPUs                 :                           0 
+	   Memory (MB)          :       39      512       512 
+	   TimeExecute (s)      :        2                    
+	   TimeSlotBusy (s)     :        3                    
+...
+012 (2768243.522.000) 2026-05-10 11:37:52 Job was held.
+	Transfer output files failure at the execution point while sending files to access point ap41. Details: 1 total failures: first failure: reading from file /tmp/glide_1SpnYg/execute/dir_1790173/scratch/main_wellMixed_dose1.6_s4400.csv: (errno 2) No such file or directory
+	Code 12 Subcode 2
+...
+009 (2768243.522.000) 2026-05-10 11:39:22 Job was aborted.
+	via condor_rm (by user smellick)
+...

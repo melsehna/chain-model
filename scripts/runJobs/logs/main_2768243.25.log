@@ -1,0 +1,53 @@
+000 (2768243.025.000) 2026-05-10 11:36:17 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768243.025.000) 2026-05-10 11:37:30 Started transferring input files
+	Transferring to host: <128.105.76.44:44359?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector3#472188%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector7#465033&PrivNet=oconnor2007.chtc.wisc.edu&addrs=128.105.76.44-44359+[2607-f388-2200-100-3680-dff-fef7-17f0]-44359&alias=oconnor2007.chtc.wisc.edu&noUDP>
+...
+040 (2768243.025.000) 2026-05-10 11:37:31 Finished transferring input files
+...
+021 (2768243.025.000) 2026-05-10 11:37:32 Message from starter on slot1@glidein_494279_404927424@oconnor2007.chtc.wisc.edu:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using default Singularity image /var/lib/condor/execute/slot1/dir_494260/scratch/glide_OZzqUB/images/htc__rocky__8.sif
+...
+001 (2768243.025.000) 2026-05-10 11:37:32 Job executing on host: <128.105.76.44:43957?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector3#471917%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector7#464739&PrivNet=oconnor2007.chtc.wisc.edu&addrs=128.105.76.44-43957+[2607-f388-2200-100-3680-dff-fef7-17f0]-43957&alias=oconnor2007.chtc.wisc.edu&noUDP>
+	SlotName: slot1@glidein_494279_404927424@oconnor2007.chtc.wisc.edu
+	CondorScratchDir = "/var/lib/condor/execute/slot1/dir_494260/scratch/glide_OZzqUB/execute/dir_530779/scratch"
+	Cpus = 1
+	Disk = 210080
+	GLIDEIN_ResourceName = "CHTC"
+	GPUs = 0
+	Memory = 2500
+...
+006 (2768243.025.000) 2026-05-10 11:37:34 Image size of job updated: 2
+	6  -  MemoryUsage of job (MB)
+	5716  -  ResidentSetSize of job (KB)
+...
+040 (2768243.025.000) 2026-05-10 11:37:34 Started transferring output files
+...
+040 (2768243.025.000) 2026-05-10 11:37:35 Finished transferring output files
+...
+021 (2768243.025.000) 2026-05-10 11:37:35 Error from starter on slot1@glidein_494279_404927424@oconnor2007.chtc.wisc.edu:
+	STARTER at 128.105.76.44 failed to send file(s) to <128.105.69.40:9618>: |Error: 1 total failures: first failure: reading from file /var/lib/condor/execute/slot1/dir_494260/scratch/glide_OZzqUB/execute/dir_530779/scratch/main_biofilm_dose1.1_s0.csv: (errno 2) No such file or directory; SHADOW failed to receive file(s) from <128.105.76.44:42413>
+	Code 13 Subcode 2
+...
+004 (2768243.025.000) 2026-05-10 11:37:35 Job was evicted. Code 12 Subcode 2
+	(0) CPU times
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	21930277  -  Run Bytes Received By Job
+	Reason: Transfer output files failure at the execution point while sending files to access point ap41. Details: 1 total failures: first failure: reading from file /var/lib/condor/execute/slot1/dir_494260/scratch/glide_OZzqUB/execute/dir_530779/scratch/main_biofilm_dose1.1_s0.csv: (errno 2) No such file or directory
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :    97393   204800    210080 
+	   GPUs                 :                           0 
+	   Memory (MB)          :        6      512      2500 
+	   TimeExecute (s)      :        2                    
+	   TimeSlotBusy (s)     :        5                    
+...
+012 (2768243.025.000) 2026-05-10 11:37:35 Job was held.
+	Transfer output files failure at the execution point while sending files to access point ap41. Details: 1 total failures: first failure: reading from file /var/lib/condor/execute/slot1/dir_494260/scratch/glide_OZzqUB/execute/dir_530779/scratch/main_biofilm_dose1.1_s0.csv: (errno 2) No such file or directory
+	Code 12 Subcode 2
+...
+009 (2768243.025.000) 2026-05-10 11:39:22 Job was aborted.
+	via condor_rm (by user smellick)
+...

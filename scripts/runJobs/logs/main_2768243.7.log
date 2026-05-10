@@ -1,0 +1,44 @@
+000 (2768243.007.000) 2026-05-10 11:36:18 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768243.007.000) 2026-05-10 11:37:43 Started transferring input files
+	Transferring to host: <10.5.205.77:34096?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector10#472175%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector6#466814&PrivNet=CRUSH-OSG-C7-10-5-205-77&addrs=10.5.205.77-34096&alias=CRUSH-OSG-C7-10-5-205-77&noUDP>
+...
+040 (2768243.007.000) 2026-05-10 11:37:45 Finished transferring input files
+...
+021 (2768243.007.000) 2026-05-10 11:37:46 Message from starter on slot1_11@glidein_110516_254642200@CRUSH-OSG-C7-10-5-205-77:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using default Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768243.007.000) 2026-05-10 11:37:47 Job executing on host: <10.5.205.77:44466?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector5#411048%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector7#401945&PrivNet=CRUSH-OSG-C7-10-5-205-77&addrs=10.5.205.77-44466&alias=CRUSH-OSG-C7-10-5-205-77&noUDP>
+	SlotName: slot1_11@CRUSH-OSG-C7-10-5-205-77
+	CondorScratchDir = "/var/lib/condor/execute/dir_110514/glide_mod4mY/execute/dir_44730"
+	Cpus = 1
+	Disk = 205824
+	GLIDEIN_ResourceName = "SU-ITS-CE3"
+	GPUs = 0
+	Memory = 512
+...
+006 (2768243.007.000) 2026-05-10 11:37:56 Image size of job updated: 48228
+	3  -  MemoryUsage of job (MB)
+	2780  -  ResidentSetSize of job (KB)
+...
+006 (2768243.007.000) 2026-05-10 11:39:22 Image size of job updated: 740104
+	68  -  MemoryUsage of job (MB)
+	69160  -  ResidentSetSize of job (KB)
+...
+004 (2768243.007.000) 2026-05-10 11:39:22 Job was evicted.
+	(0) CPU times
+		Usr 0 00:01:30, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	21930277  -  Run Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :                 1         1 
+	   Disk (KB)            :    97347   204800    205824 
+	   GPUs                 :                           0 
+	   Memory (MB)          :       68      512       512 
+	   TimeExecute (s)      :       96                    
+	   TimeSlotBusy (s)     :      105                    
+...
+009 (2768243.007.000) 2026-05-10 11:39:22 Job was aborted.
+	via condor_rm (by user smellick)
+...

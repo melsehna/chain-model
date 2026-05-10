@@ -1,0 +1,45 @@
+000 (2768244.396.000) 2026-05-10 11:42:21 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768244.396.000) 2026-05-10 11:44:42 Started transferring input files
+	Transferring to host: <10.244.182.211:34093?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector5#464559%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector5#457417&PrivNet=SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk&addrs=10.244.182.211-34093+[fdf0-17b3-c3ec-1f79-10-0-2-2dd6]-34093&alias=SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk&noUDP&sock=slot1_3977_e7fb_148>
+...
+040 (2768244.396.000) 2026-05-10 11:44:42 Finished transferring input files
+...
+021 (2768244.396.000) 2026-05-10 11:44:42 Message from starter on slot1@SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768244.396.000) 2026-05-10 11:44:42 Job executing on host: <10.244.182.211:34093?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector5#464559%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector5#457417&PrivNet=SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk&addrs=10.244.182.211-34093+[fdf0-17b3-c3ec-1f79-10-0-2-2dd6]-34093&alias=SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk&noUDP&sock=startd_3972_0a43>
+	SlotName: slot1@SDSC-PRP-OSPool-Provisioner.osg-direct-69faf5b1-00391d-cxkbk
+	CondorScratchDir = "/pilot/osgvo-pilot-yuPz1P/execute/dir_168338"
+	Cpus = 1
+	Disk = 8000000
+	GLIDEIN_ResourceName = "SDSC-PRP-OSPool-Provisioner"
+	GPUs = 0
+	Memory = 4096
+...
+006 (2768244.396.000) 2026-05-10 11:44:44 Image size of job updated: 2
+	5  -  MemoryUsage of job (MB)
+	4920  -  ResidentSetSize of job (KB)
+...
+040 (2768244.396.000) 2026-05-10 11:44:45 Started transferring output files
+...
+040 (2768244.396.000) 2026-05-10 11:44:45 Finished transferring output files
+...
+005 (2768244.396.000) 2026-05-10 11:44:45 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	19364  -  Run Bytes Sent By Job
+	38939  -  Run Bytes Received By Job
+	19364  -  Total Bytes Sent By Job
+	38939  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :      131   204800   8000000 
+	   GPUs                 :                           0 
+	   Memory (MB)          :        5      512      4096 
+	   TimeExecute (s)      :        2                    
+	   TimeSlotBusy (s)     :        4                    
+...

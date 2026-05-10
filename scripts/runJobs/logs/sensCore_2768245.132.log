@@ -1,0 +1,23 @@
+000 (2768245.132.000) 2026-05-10 11:46:28 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768245.132.000) 2026-05-10 11:47:07 Started transferring input files
+	Transferring to host: <128.105.69.227:43309?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector6#473539%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector10#465852&PrivNet=e2610.chtc.wisc.edu&addrs=128.105.69.227-43309+[2607-f388-2200-100-eaeb-d3ff-fe40-155c]-43309&alias=e2610.chtc.wisc.edu&noUDP>
+...
+040 (2768245.132.000) 2026-05-10 11:47:07 Finished transferring input files
+...
+021 (2768245.132.000) 2026-05-10 11:47:13 Message from starter on slot1_6@glidein_4082738_471565799@e2610.chtc.wisc.edu:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using Singularity image /cvmfs/singularity.opensciencegrid.org/htc/rocky:9
+...
+001 (2768245.132.000) 2026-05-10 11:47:13 Job executing on host: <128.105.69.227:37881?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector8#465997%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector10#457753&PrivNet=e2610.chtc.wisc.edu&addrs=128.105.69.227-37881+[2607-f388-2200-100-eaeb-d3ff-fe40-155c]-37881&alias=e2610.chtc.wisc.edu&noUDP>
+	SlotName: slot1_6@glidein_4082738_471565799@e2610.chtc.wisc.edu
+	CondorScratchDir = "/var/lib/condor/execute/slot1/dir_4082557/scratch/glide_eiZdpe/execute/dir_817318/scratch"
+	Cpus = 1
+	Disk = 204800
+	GLIDEIN_ResourceName = "CHTC"
+	GPUs = 0
+	Memory = 512
+...
+006 (2768245.132.000) 2026-05-10 11:47:22 Image size of job updated: 3710328
+	44  -  MemoryUsage of job (MB)
+	45056  -  ResidentSetSize of job (KB)
+...

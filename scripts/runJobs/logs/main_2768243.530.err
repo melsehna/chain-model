@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "runBatch.py", line 25, in <module>
+    from chainModel import simulateChain
+  File "/var/lib/condor/execute/dir_34827/glide_Agi3AR/execute/dir_7615/chainModel.py", line 20, in <module>
+    import numpy as np
+  File "/var/lib/condor/execute/dir_34827/glide_Agi3AR/execute/dir_7615/numpy_deps/numpy/__init__.py", line 114, in <module>
+    from numpy.__config__ import show as show_config
+  File "/var/lib/condor/execute/dir_34827/glide_Agi3AR/execute/dir_7615/numpy_deps/numpy/__config__.py", line 4, in <module>
+    from numpy._core._multiarray_umath import (
+  File "/var/lib/condor/execute/dir_34827/glide_Agi3AR/execute/dir_7615/numpy_deps/numpy/_core/__init__.py", line 23, in <module>
+    from . import multiarray
+  File "/var/lib/condor/execute/dir_34827/glide_Agi3AR/execute/dir_7615/numpy_deps/numpy/_core/multiarray.py", line 1141
+    def putmask(a, /, mask, values):
+                   ^
+SyntaxError: invalid syntax

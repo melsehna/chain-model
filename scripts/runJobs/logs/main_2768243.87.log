@@ -1,0 +1,53 @@
+000 (2768243.087.000) 2026-05-10 11:36:18 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768243.087.000) 2026-05-10 11:37:39 Started transferring input files
+	Transferring to host: <172.18.1.105:41061?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector2#473005%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector10#465465&PrivNet=gpu112.cm.cluster&addrs=172.18.1.105-41061&alias=gpu112.cm.cluster&noUDP>
+...
+040 (2768243.087.000) 2026-05-10 11:37:40 Finished transferring input files
+...
+021 (2768243.087.000) 2026-05-10 11:37:41 Message from starter on slot1_4@glidein_34774_511543971@gpu112.cm.cluster:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Singularity is not supported - continuing job without a container
+...
+001 (2768243.087.000) 2026-05-10 11:37:41 Job executing on host: <172.18.1.105:38007?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector2#460128%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector6#454014&PrivNet=gpu112.cm.cluster&addrs=172.18.1.105-38007&alias=gpu112.cm.cluster&noUDP>
+	SlotName: slot1_4@gpu112.cm.cluster
+	CondorScratchDir = "/local/osg01/glide_6R7LuD/execute/dir_22766"
+	Cpus = 1
+	Disk = 205824
+	GLIDEIN_ResourceName = "Boise-State-Borah-CE1"
+	GPUs = 0
+	Memory = 512
+...
+006 (2768243.087.000) 2026-05-10 11:37:41 Image size of job updated: 2
+	4  -  MemoryUsage of job (MB)
+	3164  -  ResidentSetSize of job (KB)
+...
+040 (2768243.087.000) 2026-05-10 11:37:42 Started transferring output files
+...
+040 (2768243.087.000) 2026-05-10 11:37:42 Finished transferring output files
+...
+021 (2768243.087.000) 2026-05-10 11:37:42 Error from starter on slot1_4@glidein_34774_511543971@gpu112.cm.cluster:
+	STARTER at 172.18.1.105 failed to send file(s) to <128.105.69.40:9618>: |Error: reading from file /local/osg01/glide_6R7LuD/execute/dir_22766/main_biofilm_dose1.4_s2400.csv: (errno 2) No such file or directory; SHADOW failed to receive file(s) from <132.178.207.41:21250>
+	Code 13 Subcode 2
+...
+004 (2768243.087.000) 2026-05-10 11:37:42 Job was evicted. Code 12 Subcode 2
+	(0) CPU times
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	21930277  -  Run Bytes Received By Job
+	Reason: Transfer output files failure at execution point slot1_4@glidein_34774_511543971@gpu112.cm.cluster while sending files to access point ap41. Details: reading from file /local/osg01/glide_6R7LuD/execute/dir_22766/main_biofilm_dose1.4_s2400.csv: (errno 2) No such file or directory
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :                 1         1 
+	   Disk (KB)            :    97231   204800    205824 
+	   GPUs                 :                           0 
+	   Memory (MB)          :        4      512       512 
+	   TimeExecute (s)      :        0                    
+	   TimeSlotBusy (s)     :        5                    
+...
+012 (2768243.087.000) 2026-05-10 11:37:42 Job was held.
+	Transfer output files failure at execution point slot1_4@glidein_34774_511543971@gpu112.cm.cluster while sending files to access point ap41. Details: reading from file /local/osg01/glide_6R7LuD/execute/dir_22766/main_biofilm_dose1.4_s2400.csv: (errno 2) No such file or directory
+	Code 12 Subcode 2
+...
+009 (2768243.087.000) 2026-05-10 11:39:22 Job was aborted.
+	via condor_rm (by user smellick)
+...

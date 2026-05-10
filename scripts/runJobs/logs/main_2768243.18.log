@@ -1,0 +1,45 @@
+000 (2768243.018.000) 2026-05-10 11:36:17 Job submitted from host: <128.105.69.40:9618?addrs=128.105.69.40-9618+[2607-f388-2200-100-5200-e6ff-fe61-930c]-9618&alias=ap41.uw.osg-htc.org&noUDP&sock=schedd_8323_76d5>
+...
+040 (2768243.018.000) 2026-05-10 11:37:38 Started transferring input files
+	Transferring to host: <10.1.11.224:36487?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector4#472940%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector8#465987&PrivNet=acm-048-docker&addrs=10.1.11.224-36487&alias=acm-048-docker&noUDP>
+...
+040 (2768243.018.000) 2026-05-10 11:37:38 Finished transferring input files
+...
+021 (2768243.018.000) 2026-05-10 11:37:38 Message from starter on slot1@glidein_664423_491894705@acm-048-docker:
+	PREPARE_JOB (prepare-hook) succeeded (reported status 000): Using default Singularity image /tmp/osg01/glide_QP7wQs/images/htc__rocky__9.sif
+...
+001 (2768243.018.000) 2026-05-10 11:37:38 Job executing on host: <10.1.11.224:35511?CCBID=128.105.82.148:9618%3faddrs%3d128.105.82.148-9618+[2607-f388-2200-85-296f-402f-6ac5-aa64]-9618%26alias%3dospool-ccb.osg.chtc.io%26noUDP%26sock%3dcollector8#465537%2067.58.49.91:9618%3faddrs%3d67.58.49.91-9618+[fdf0-17b3-c3ec-1f79-10-0-1-f922]-9618%26alias%3dccb-2.ospool.osg-htc.org%26noUDP%26sock%3dcollector10#457276&PrivNet=acm-048-docker&addrs=10.1.11.224-35511&alias=acm-048-docker&noUDP>
+	SlotName: slot1@glidein_664423_491894705@acm-048-docker
+	CondorScratchDir = "/tmp/osg01/glide_QP7wQs/execute/dir_505566/scratch"
+	Cpus = 1
+	Disk = 264771157
+	GLIDEIN_ResourceName = "MSU-DataMachine-CE1"
+	GPUs = 0
+	Memory = 2048
+...
+006 (2768243.018.000) 2026-05-10 11:37:48 Image size of job updated: 2
+	3  -  MemoryUsage of job (MB)
+	2912  -  ResidentSetSize of job (KB)
+...
+006 (2768243.018.000) 2026-05-10 11:39:23 Image size of job updated: 2285580
+	99  -  MemoryUsage of job (MB)
+	100508  -  ResidentSetSize of job (KB)
+...
+004 (2768243.018.000) 2026-05-10 11:39:23 Job was evicted. Code 1009 Subcode 0
+	(0) CPU times
+		Usr 0 00:01:42, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	21930277  -  Run Bytes Received By Job
+	Reason: Claim deactivated
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :        0        1         1 
+	   Disk (KB)            :    97359   204800 264771157 
+	   GPUs                 :                           0 
+	   Memory (MB)          :       99      512      2048 
+	   TimeExecute (s)      :      105                    
+	   TimeSlotBusy (s)     :      106                    
+...
+009 (2768243.018.000) 2026-05-10 11:39:23 Job was aborted.
+	via condor_rm (by user smellick)
+...
