@@ -45,7 +45,7 @@ def pickLineage(rLineages, rTotal, rng):
     return lastLin
 
 
-def simulateWellMixed(params, seed=None, maxGenerations=200_000,
+def simulateWellMixed(params, seed=None, maxGenerations=np.inf,
                       maxTime=np.inf, nMax=None, stopAtRescue=False,
                       rThreshold=10, kEst=3):
     '''Run the well-mixed control.

@@ -60,7 +60,7 @@ def pickPosition(cells, rng, start, end, targetIsWt, wtCount, rCount):
     raise RuntimeError('pickPosition: count mismatch')
 
 
-def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
+def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
                   nMax=None, recordEvery=50, stopAtRescue=False,
                   rThreshold=10, kEst=3, debug=False):
     '''Run the spatial chain model.
@@ -75,8 +75,10 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
         bREdge, dREdge       R birth/death rates in edge
         bRCore, dRCore       R rates in core (default = WT core rates; neutral)
 
-    Rescue: rEdge >= rThreshold (default 10). Stops on: rescue (if stopAtRescue),
-    extinction (N=0), maxGenerations, maxTime, or N > nMax.
+    Rescue: rEdge >= rThreshold (default 10). Defaults stop only on rescue
+    (if stopAtRescue) or extinction (N=0); maxGenerations and maxTime default
+    to np.inf since the model is guaranteed to terminate naturally. nMax
+    (default 10*nInit) remains a bug-detector for runaway-N situations.
 
     If debug is True, compartment counts are checked against the cells array
     after every event.
@@ -114,6 +116,11 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
     time = 0.0
     generations = 0
     recordCounter = 0
+
+    # Phase 1 = N > l (core present, buffered decline). Phase 2 = N <= l (core
+    # exhausted, exponential collapse). phase1EndTime = first time N drops to l.
+    # Initialized to 0 if the run is "always Phase 2" (l >= nInit, e.g. chainWM).
+    phase1EndTime = 0.0 if nInit <= l else None
 
     rescued = False
     rescueTime = None
@@ -154,6 +161,7 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
             'liveCount': 1,
             'maxLiveCount': 1,
             'everReachedEdge': not bornInCore,  # edge-born starts in edge
+            'deliverySize': 1 if not bornInCore else None,  # set on first edge entry for core-born
             'deathTime': None,
             'deathGeneration': None,
         }
@@ -280,7 +288,10 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
                 else:                     rEdge += 1
                 # Daughter was placed in edge -- if it's R, it has now "reached edge"
                 if daughterGenotype >= 2:
-                    lineages[daughterGenotype]['everReachedEdge'] = True
+                    info = lineages[daughterGenotype]
+                    if not info['everReachedEdge']:
+                        info['deliverySize'] = info['liveCount']
+                    info['everReachedEdge'] = True
 
             if newB > b and p > b:
                 # The insert at p > b did not displace cells[b], which now sits
@@ -336,10 +347,16 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
                     rCore -= 1
                     rEdge += 1
                     # btDeath (an R lineage) has now reached the edge
-                    lineages[btDeath]['everReachedEdge'] = True
+                    info = lineages[btDeath]
+                    if not info['everReachedEdge']:
+                        info['deliverySize'] = info['liveCount']
+                    info['everReachedEdge'] = True
 
         if debug:
             checkInvariants(f'after {event}')
+
+        if phase1EndTime is None and N <= l:
+            phase1EndTime = time
 
         if (not rescued) and rEdge >= rThreshold:
             rescued = True
@@ -407,12 +424,49 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
         if info['birthRegion'] == 'edge' and info['maxLiveCount'] >= kEst
     )
 
+    # Phase 1 vs Phase 2 stratification of edge-born lineages. A Phase 1 birth
+    # faces WT resupply suppression (analytical claim of ~83x establishment
+    # reduction); a Phase 2 birth does not, so its establishment fraction
+    # should approach the well-mixed value. If phase1EndTime is None, the run
+    # rescued or extincted before Phase 2 ever started, so all edge births are
+    # Phase 1.
+    def _isPhase1(info):
+        return phase1EndTime is None or info['birthTime'] < phase1EndTime
+
+    nLineagesAppearedEdgePhase1 = sum(
+        1 for info in lineages.values()
+        if info['birthRegion'] == 'edge' and _isPhase1(info)
+    )
+    nLineagesAppearedEdgePhase2 = sum(
+        1 for info in lineages.values()
+        if info['birthRegion'] == 'edge' and not _isPhase1(info)
+    )
+    nLineagesEstablishedEdgePhase1 = sum(
+        1 for info in lineages.values()
+        if info['birthRegion'] == 'edge' and _isPhase1(info)
+        and info['maxLiveCount'] >= kEst
+    )
+    nLineagesEstablishedEdgePhase2 = sum(
+        1 for info in lineages.values()
+        if info['birthRegion'] == 'edge' and not _isPhase1(info)
+        and info['maxLiveCount'] >= kEst
+    )
+
     # Core-born lineages that ever reached the edge (either by core->edge boundary
     # flow, or by edge birth after arrival -- either way, everReachedEdge is set).
     nLineagesReachedEdge = sum(
         1 for info in lineages.values()
         if info['birthRegion'] == 'core' and info['everReachedEdge']
     )
+
+    # Mean lineage size at first edge entry for delivered core-born lineages.
+    # deliverySize records total liveCount at the moment everReachedEdge first
+    # became True. Larger values indicate multi-cell bolus arrivals.
+    _delivered = [
+        info['deliverySize'] for info in lineages.values()
+        if info['birthRegion'] == 'core' and info['everReachedEdge']
+    ]
+    meanDeliverySizeCore = sum(_delivered) / len(_delivered) if _delivered else None
 
     # State at termination. Scan cells once to get per-lineage compartment counts.
     bFinal = max(0, N - l)
@@ -487,9 +541,15 @@ def simulateChain(params, seed=None, maxGenerations=200_000, maxTime=np.inf,
         'nLineagesExtinctCore': nLineagesExtinctCore,
         'nLineagesExtinctEdge': nLineagesExtinctEdge,
         'nLineagesReachedEdge': nLineagesReachedEdge,
+        'meanDeliverySizeCore': meanDeliverySizeCore,
         'nLineagesEstablished': nLineagesEstablished,
         'nLineagesEstablishedCore': nLineagesEstablishedCore,
         'nLineagesEstablishedEdge': nLineagesEstablishedEdge,
+        'phase1EndTime': phase1EndTime,
+        'nLineagesAppearedEdgePhase1': nLineagesAppearedEdgePhase1,
+        'nLineagesAppearedEdgePhase2': nLineagesAppearedEdgePhase2,
+        'nLineagesEstablishedEdgePhase1': nLineagesEstablishedEdgePhase1,
+        'nLineagesEstablishedEdgePhase2': nLineagesEstablishedEdgePhase2,
         'wtExtinct': wtExtinct,
         'wtExtinctTime': wtExtinctTime,
         'nLineagesPresentAtEnd': nLineagesPresentAtEnd,
