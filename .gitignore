@@ -4,3 +4,7 @@ results/
 data/
 figures/
 *.csv
+*.log
+*.err
+*.out
+scripts/runJobs/logs/
