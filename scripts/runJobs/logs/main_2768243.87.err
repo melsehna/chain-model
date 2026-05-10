@@ -1,2 +1,0 @@
-which: no python3 in (/local/osg01/glide_6R7LuD/.gwms.d/bin::/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/cm/shared/apps/slurm/current/sbin:/cm/shared/apps/slurm/current/bin:/cm/local/apps/gcc/9.2.0/bin:/cm/local/apps/environment-modules/4.4.0//bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/dell/srvadmin/sbin:/sbin:/usr/sbin:/cm/local/apps/environment-modules/4.4.0/bin:/opt/dell/srvadmin/sbin:/bsuhome/osg01/.local/bin:/bsuhome/osg01/bin)
-/local/osg01/glide_6R7LuD/execute/dir_22766/runBatch.sh: line 25: python3: command not found

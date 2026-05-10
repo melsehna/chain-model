@@ -1,5 +1,0 @@
-Running condition=biofilm dose=1.1 seedStart=400 seedCount=200 l=default
-Python: /usr/bin/python3
-Python 3.9.25
-numpy 1.23.5
-Done: sensCore_dose1.1_bCore0.0_s400.csv has 201 lines
