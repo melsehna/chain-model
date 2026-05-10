@@ -1,0 +1,291 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\geometry{margin=1.2in}
+
+\hypersetup{colorlinks=true, linkcolor=blue!60!black}
+
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+\title{Spatial rescue in a biofilm:\\a first-principles narrative}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent This document explains the model, its mechanisms, and the central
+question from first principles, without reference to simulation results or
+formal derivations. It is meant to build intuition before reading
+\texttt{derivation.tex} or \texttt{writeup.tex}.
+
+% ---------------------------------------------------------------------------
+\section{The biological question}
+% ---------------------------------------------------------------------------
+
+Bacteria in a biofilm are physically shielded from antibiotic. Drug diffuses
+in from the outside, so only the outermost layer of cells is exposed to
+lethal concentrations. Cells buried deeper are protected. Does that
+protection actually help the population survive?
+
+We study this through \emph{evolutionary rescue}: a declining population
+avoids extinction because a resistant mutant arises and takes over before
+the population collapses. The question is whether the biofilm's spatial
+structure---a protected interior feeding into an antibiotic-exposed
+surface---makes rescue more or less likely than in a well-mixed population
+of the same size.
+
+% ---------------------------------------------------------------------------
+\section{The model}
+% ---------------------------------------------------------------------------
+
+The biofilm is a line of cells. The outermost $l$ cells are the
+\textbf{edge}: exposed to antibiotic, dying faster than they reproduce. The
+rest is the \textbf{core}: shielded, with births and deaths roughly balanced
+(neutral).
+
+The core and edge are not isolated. Every edge death draws the innermost
+core cell outward into the edge; every edge birth pushes the innermost edge
+cell inward into the core. This \textbf{conveyor belt} means the two
+compartments exchange cells continuously, driven by births and deaths at the
+boundary. Cells do not stay put.
+
+Wild-type (WT) cells are killed by antibiotic in the edge. Resistant (R)
+cells survive and grow there. Resistance arises by mutation at a fixed
+probability per birth event. We compare this biofilm to a well-mixed
+population of the same initial size, using only edge rates (every cell is
+exposed), as the baseline.
+
+% ---------------------------------------------------------------------------
+\section{Two regimes of population decline}
+% ---------------------------------------------------------------------------
+
+Once antibiotic treatment starts, the edge is net-dying. The conveyor belt
+means the core shrinks as it feeds replacement cells into the edge. This
+produces two qualitatively different periods.
+
+\textbf{The buffered decline} (while the core persists): Every edge death
+is compensated by a core cell entering the edge, so the edge stays at
+exactly $l$ cells. The total population falls, but linearly and
+slowly---only the $l$ edge cells drive the net decline. The rate of decline
+is proportional to dose times $l$. This period ends when the last core cell
+is consumed.
+
+\textbf{The final collapse} (after the core is exhausted): No buffer
+remains. The whole remaining population is in the edge and falls
+exponentially, exactly as a well-mixed population would. The biofilm has
+lost its special structure.
+
+How long the buffered decline lasts depends on dose: at low dose, the edge
+declines slowly, so the core is consumed slowly and the buffered period is
+long. At high dose, the core is consumed quickly.
+
+% ---------------------------------------------------------------------------
+\section{Naive intuition: the biofilm should win}
+% ---------------------------------------------------------------------------
+
+The buffered decline extends the population's lifetime. If the core is
+metabolically active---cells are dividing and dying there---it also
+contributes extra births. Extra births mean extra chances for resistance
+to arise. The biofilm appears to have all the advantages: more time, more
+mutations, a protected reservoir.
+
+This intuition is wrong, or at least incomplete. The same spatial structure
+that creates the buffer also creates two suppression mechanisms that can
+hurt rescue.
+
+% ---------------------------------------------------------------------------
+\section{Suppression mechanism 1: WT resupply}
+% ---------------------------------------------------------------------------
+
+During the buffered decline, every WT death in the edge immediately draws in
+a fresh WT cell from the core. As long as the core is WT-dominated (which it
+is throughout most of the buffered decline), the WT count in the edge is
+actively \emph{maintained} at $l$ cells. The antibiotic is killing WT at the
+edge, but the core is instantly replacing every one.
+
+A lone R mutant that arises in the edge cannot capitalize on this. In a
+well-mixed population, WT cells that die are gone---the competitive
+landscape for R improves as the population shrinks. In the biofilm, dying
+WT cells are replaced from the core. The competitive pressure on R never
+weakens. A lone R cell's birth rate equals WT's but its deaths immediately
+inject a fresh WT competitor; the effective net rate for R in the edge is
+negative during the buffered decline.
+
+Two properties of this mechanism shape everything that follows.
+
+\textbf{It is dose-independent.} The WT resupply rate scales with dose, but
+so does the WT death rate that drives it---these cancel. The suppression of
+R establishment is the same regardless of how hard the antibiotic is
+working.
+
+\textbf{It operates even with a dormant core.} Core cells slide into the
+edge mechanically when edge cells die, regardless of whether the core cells
+themselves divide. WT resupply is driven by edge deaths, not core births.
+
+% ---------------------------------------------------------------------------
+\section{Suppression mechanism 2: drift kills core mutations before delivery}
+% ---------------------------------------------------------------------------
+
+A resistant mutant born in the core is in a neutral environment---no
+antibiotic there, no growth advantage. The lineage drifts stochastically
+while waiting for the retreating boundary to expose it to the edge, where
+it would have an advantage.
+
+At \textbf{low dose}, the boundary retreats slowly. A mutation born deep in
+the core waits a long time. Neutral drift has many opportunities to
+eliminate the lineage before the boundary ever reaches it. At \textbf{high
+dose}, the boundary retreats fast and sweeps up lineages before drift can
+act. Core delivery is efficient at high dose and nearly useless at low dose.
+
+This mechanism \textbf{requires an active core} ($b_c > 0$). A dormant core
+produces no mutations; there is nothing to be lost to drift.
+
+% ---------------------------------------------------------------------------
+\section{The dormant core: a clean baseline}
+% ---------------------------------------------------------------------------
+
+Before combining the two mechanisms, it is worth working through the dormant
+core case ($b_c = 0$) because it gives the clearest prediction.
+
+With a dormant core, there are no core mutations. Rescue must come entirely
+from the edge. Now consider how many edge birth events the biofilm edge
+produces over its entire lifetime, compared to the well-mixed population.
+
+During the buffered decline the edge is held at exactly $l$ cells,
+generating births at rate $b_e \cdot l$ continuously. The buffered decline
+lasts until the core is consumed---a duration proportional to $(N_0 -
+l)/(s_e \cdot l)$. Multiplying: the edge produces $(N_0 - l)/s_e$ birth
+events during the buffered decline. After the core is exhausted, the final
+collapse contributes another $l/s_e$ edge birth events. Total:
+$(N_0 - l + l)/s_e = N_0/s_e$.
+
+The well-mixed population, declining exponentially from $N_0$, produces
+$N_0/s_e$ total birth events.
+
+\textbf{They are equal.} The biofilm's longer lifetime exactly compensates
+for having only $l$ cells in the edge at any one time. A dormant core adds
+no mutation supply.
+
+But the edge mutations in the biofilm are not equal in quality to the
+well-mixed mutations. Every edge mutation during the buffered decline faces
+WT resupply---establishment is suppressed. The well-mixed mutations face
+no such suppression. Therefore:
+
+\begin{quote}
+\textit{A dormant-core biofilm has the same total mutation supply as a
+well-mixed population of the same size, but worse establishment probability
+for every mutation. It rescues strictly less often, at every dose, by a
+dose-independent factor.}
+\end{quote}
+
+There is no crossover for a dormant core. It is uniformly worse.
+
+% ---------------------------------------------------------------------------
+\section{The active core: a crossover with dose}
+% ---------------------------------------------------------------------------
+
+With a metabolically active core ($b_c > 0$), the picture is more complex,
+and a dose-dependent crossover emerges.
+
+\subsection*{At low dose}
+
+Core delivery is drift-suppressed---most core-born lineages die out before
+the slow-moving boundary reaches them. As dose approaches zero, core
+delivery approaches zero entirely. The active-core biofilm behaves
+essentially like the dormant-core biofilm at low dose: rescue comes from
+edge mutations, which face the same WT resupply suppression as before.
+
+Edge mutations in the biofilm are competing against the entire well-mixed
+population. The biofilm's edge ($l$ cells) generates the same total births
+as the whole well-mixed population ($N_0$ cells), but establishment is
+suppressed throughout the buffered decline. Well-mixed wins.
+
+\textbf{At low dose, the biofilm with an active core still rescues less
+often than well-mixed.} The core is not yet helping---it is contributing
+neither mutations (drift kills them) nor any structural advantage. The
+conveyor belt is acting purely as a WT resupply machine.
+
+\subsection*{At high dose}
+
+Core delivery becomes efficient. The fast-retreating boundary sweeps up
+core-born lineages before drift eliminates them. Moreover, a lineage that
+survives long enough in the core before delivery has had time to grow: it
+arrives at the edge not as a single cell but as a \emph{bolus} of several
+cells. A multi-cell bolus has disproportionately better establishment
+prospects than the same number of independent single-cell arrivals, because
+the rescue threshold is a discrete nonlinear criterion. This bolus advantage
+is not available to the well-mixed population.
+
+At high dose, the buffered decline is also shorter, so WT resupply suppresses
+edge mutations for less time before the core is exhausted.
+
+\textbf{At high dose, the biofilm with an active core rescues more often
+than well-mixed.} The core delivery pathway is now genuinely contributing,
+and the bolus advantage compounds it.
+
+\subsection*{The crossover}
+
+A crossover exists between low and high dose---the biofilm transitions from
+rescuing less often than well-mixed to more often. The crossover is driven
+by whether core delivery is efficient enough to compensate for the
+establishment suppression. It requires an active core; a dormant core has
+no crossover.
+
+The location of the crossover depends on:
+\begin{itemize}
+    \item \textbf{Core turnover rate $b_c$}: faster turnover generates more
+    core mutations but also means faster neutral drift, so the two partially
+    cancel. More turnover shifts the crossover to lower dose.
+    \item \textbf{Edge width $l$} and \textbf{core size $N_0 - l$}: a larger
+    core relative to the edge means more potential core delivery, but also a
+    longer buffered decline during which WT resupply suppresses edge
+    mutations. The balance determines the crossover dose.
+    \item \textbf{The establishment suppression}: how much WT resupply
+    actually suppresses each edge mutation's probability of establishing.
+    This depends on $l$, $b_R$, $b_e$, and $d_R$, and is not yet fully
+    characterized.
+\end{itemize}
+
+\subsection*{The irony}
+
+The same antibiotic pressure that kills the population is the mechanism
+that makes the core useful. High dose drives fast boundary retreat, which
+is what delivers core-born mutants efficiently and what limits the duration
+of WT resupply suppression. A strong antibiotic simultaneously threatens
+the population and activates the biofilm's one genuine advantage.
+
+% ---------------------------------------------------------------------------
+\section{What we do not yet know}
+% ---------------------------------------------------------------------------
+
+The narrative above gives the qualitative picture from first principles, but
+several things remain to be worked out before we can predict the crossover
+dose or compare quantitatively to data.
+
+\textbf{The actual establishment suppression.} The WT resupply mechanism
+suppresses R establishment during the buffered decline. How severe this
+suppression is depends on the spatial arrangement of R cells in the edge.
+If R cells born in the edge cluster near the outer surface---which is
+plausible since births occur adjacent to the parent---they may be less
+vulnerable to WT-resupply displacement than a uniform-mixing model would
+predict. The true suppression could be substantially weaker than the
+worst-case analytical estimate.
+
+\textbf{The crossover dose.} Combining the establishment suppression with
+the core delivery efficiency, the crossover dose can in principle be
+calculated. Whether it falls within a biologically relevant range, and how
+it shifts with $b_c$, $l$, and other parameters, needs to be worked out.
+
+\textbf{Whether the crossover is observable.} At doses where rescue
+probability is nearly one for both biofilm and well-mixed, the probability
+metric becomes uninformative. The crossover in rescue probability may be
+easier to detect through time-to-rescue: even when both populations
+rescue with certainty, the biofilm may take longer at low dose (edge
+establishment suppressed) and shorter at high dose (bolus delivery).
+
+\end{document}
