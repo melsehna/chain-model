@@ -98,7 +98,7 @@ compartment and its genotype.
     rate. A fully dormant interior corresponds to $\bCore = 0$.
 \end{itemize}
 
-\subsection{The 'conveyor belt' mechanism'}
+\subsection{Two phases of decline}
 The core and edge are mechanically coupled by a simple bookkeeping
 rule: as long as the core still has cells in it, the edge always
 contains exactly $l$ cells. Whenever an edge cell divides, the
@@ -109,14 +109,13 @@ This rule produces two regimes of decline.
 \begin{enumerate}
     \item \textbf{Buffered decline} (phase of simulation where core is still present). When there there still cells left in the core (ie., $n(t) > l$), each death in the edge is immediately replaced by a cell drawn from the core, so the edge stays at $l$ cells. Only the $l$ edge cells
     contribute to net loss, and the total population falls linearly.
-    \item \textbf{Final collapse} (phase of simulation where core is gone). When the core is exhausted (ie., $N(t) \leq l$), the edge is the entire remaining population. There is no reservoir left to draw on, and the remaining cells decay
-    exponentially, just as a well-mixed population would.
+    \item \textbf{Final collapse} (phase of simulation where core is gone). When the core is exhausted (ie., $N(t) \leq l$), the edge is the entire remaining population. There is no reservoir from the core left to draw on, and the remaining cells decay exponentially, just as a well-mixed population would.
 \end{enumerate}
 The buffered decline lasts a long time at low dose, when slow edge
 turnover gradually drains the core. It is brief at high dose, when
 fast edge turnover quickly burns through the core.
 
-\paragraph{Mutations and rescue.}
+\subsection{Mutations and rescue.}
 Each birth event has a small probability $\mu$ of producing a
 resistant daughter instead of a wild-type one. Mutations can arise
 in either compartment. Because the core's birth rate is lower than
@@ -125,17 +124,16 @@ than edge cells do. A run counts as rescued once at least
 $r_{\text{thr}} = 10$ resistant cells are present in the edge at
 the same time, a count large enough to virtually guarantee takeover.
 
-\paragraph{The reference: a well-mixed population.}
+\subsection{The reference: a well-mixed population (Wilson et al. 2017).}
 To say whether the biofilm helps or hurts, we compare against a
-well-mixed population of the same initial size $\Nzero$. The
-well-mixed population uses only the edge rates: every cell is
-drug-exposed, with no shielded interior. This is the standard
-setting for evolutionary rescue.
+well-mixed population of the same initial size $\Nzero$, using Benjamin Wilson's evolutionary rescue framework (Wilson et al. 2017), excluding the soft sweep detection that was specific to Wilson's model. The
+well-mixed population is the one-compartment analog of the chain model, and uses only the edge rates: every cell is drug-exposed, with no shielded interior. This is the standard setting for evolutionary rescue.
 
-% ---------------------------------------------------------------------------
+
+
 \section{Parameters and simulation conditions}
 \label{sec:params}
-% ---------------------------------------------------------------------------
+
 
 Time is measured in edge generations ($\bEdge = 1$). We use a Gillespie
 stochastic simulation, with one event sampled at a time according to
@@ -160,22 +158,20 @@ $r_{\text{thr}}$ & $10$          & Resistant edge cells required to declare resc
 \bottomrule
 \end{tabular}
 \caption{Default model parameters. The two swept variables are dose
-($\dEdge$) and core activity ($\bCore$).}
+($\dEdge$), core activity ($\bCore$), and edge length ($l$).}
 \end{table}
 
 We sweep dose over $\dEdge \in \{1.05,\,1.1,\,1.2,\,1.4,\,1.6,\,1.9,\,
-2.3,\,2.8\}$ and core activity over
-$\bCore \in \{0,\,0.05,\,0.1,\,0.2,\,0.4,\,0.8\}$, with $5{,}000$
-independent runs at every parameter combination. The well-mixed
+2.3,\,2.8\}$, core activity over $\bCore \in \{0,\,0.05,\,0.1,\,0.2,\,0.4,\,0.8\}$, and edge length $l \in \{0, 25, 50, 100, 200, 400\}$ with $5{,}000$ independent runs at every parameter combination. The well-mixed
 reference is run at the same set of doses, also $5{,}000$ replicates per
-dose. Every run terminates naturally on either rescue
-($r_{\text{edge}} \geq r_{\text{thr}}$) or extinction ($N = 0$); no
+dose. Every run terminates naturally on either rescue ($r_{\text{edge}} \geq r_{\text{thr}}$) or extinction ($N = 0$); no
 artificial time or generation cap is applied.
 
-% ---------------------------------------------------------------------------
+
+
 \section{The double-edged sword}
 \label{sec:doubleedge}
-% ---------------------------------------------------------------------------
+
 
 To see whether the biofilm helps or hurts, we pick two doses at opposite
 ends of the swept range---a low dose just above the minimum inhibitory
@@ -230,10 +226,11 @@ lose at low dose, regardless of how active the core is? And what does
 an active core contribute at high dose that it does not contribute at
 low dose? The rest of the writeup works through these mechanisms.
 
-% ---------------------------------------------------------------------------
+
+
 \section{Rescue probability across dose}
 \label{sec:dosecurves}
-% ---------------------------------------------------------------------------
+
 
 The bar plot in Figure~\ref{fig:doubleedge} sampled two specific
 doses at opposite ends of the swept range. To see whether the flip
