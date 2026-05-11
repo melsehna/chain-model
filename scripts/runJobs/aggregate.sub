@@ -1,0 +1,46 @@
+# HTCondor submit file for sweep aggregation + plotting.
+#
+# Single job that concatenates per-prefix CSVs, generates per-prefix summary
+# figures, and emits all narrative-section panels.
+# The rescue-model-v1.sif image (numpy + pandas + matplotlib) is staged in
+# the user's OSDF origin so workers can pull it efficiently.
+#
+# Submit:  condor_submit aggregate.sub
+
+universe   = vanilla
+executable = aggregate.sh
+
+request_cpus   = 1
+request_memory = 4GB
+request_disk   = 4GB
+
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage        = "osdf:///ospool/ap41/data/smellick/rescue-model-v1.sif"
+
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+
+# Inputs: the packaged sweep results + the analysis scripts. SIF is pulled via OSDF.
+# /tmp paths for big inputs avoid bloating the submit dir; smaller scripts live in repo.
+transfer_input_files = /tmp/sweepResults.tar.gz, \
+                       aggregate.sh, \
+                       ../aggregateResults.py, \
+                       ../plotSimPanels.py, \
+                       ../plotTheory.py
+
+# Output: a single tarball with combined CSVs and all PNGs.
+# Lands in the submit dir with its original name (no remap needed).
+transfer_output_files = aggregateOutputs.tar.gz
+
+max_retries = 2
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Aggregate failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+output = logs/aggregate_$(Cluster).$(Process).out
+error  = logs/aggregate_$(Cluster).$(Process).err
+log    = logs/aggregate_$(Cluster).$(Process).log
+
+queue 1

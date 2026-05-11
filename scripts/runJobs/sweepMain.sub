@@ -11,7 +11,7 @@ universe   = vanilla
 executable = runBatch.sh
 
 request_cpus   = 1
-request_memory = 512MB
+request_memory = 1024MB
 request_disk   = 200MB
 
 requirements             = (Arch == "X86_64")
