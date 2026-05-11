@@ -7,13 +7,15 @@
 # Sweep outputs / job artifacts
 results/
 data/
-figures/
 logs/
 scripts/runJobs/logs/
 *.csv
 *.log
 *.err
 *.out
+
+# Figures: track current writeup figures; ignore archived ones.
+figures/legacy/
 
 # Generated job lists (output of scripts/runJobs/gen*Jobs.py)
 sensitivity*Jobs.txt
