@@ -85,8 +85,8 @@ def panel_rescue_curves(df, outPath):
 
     for cond in ['biofilm', 'chainWM', 'wellMixed']:
         sub = s[s.condition == cond].sort_values('dose')
-        ax.errorbar(sub.dose, sub.p, yerr=sub.se,
-                    marker='o', ms=4, lw=1.2, capsize=2,
+        ax.plot(sub.dose, sub.p,
+                    marker='o', ms=4, lw=1.2,
                     color=CONDITION_COLORS[cond], label=f'{cond} (sim)')
 
     ax.set_xlabel(r'dose $(d_e)$')
@@ -115,13 +115,11 @@ def panel_pathway(df, outPath):
     if 'edge' in pw.columns:
         edge = pw['edge'].reindex(nTotal.index).fillna(0)
         se = np.sqrt(edge * (1 - edge) / nTotal.values)
-        ax.errorbar(pw.index, edge, yerr=se, marker='o', ms=4, lw=1.2,
-                    capsize=2, color='C4', label='edge mutation')
+        ax.plot(pw.index, edge, marker='o', ms=4, lw=1.2, color='C4', label='edge mutation')
     if 'core' in pw.columns:
         core = pw['core'].reindex(nTotal.index).fillna(0)
         se = np.sqrt(core * (1 - core) / nTotal.values)
-        ax.errorbar(pw.index, core, yerr=se, marker='o', ms=4, lw=1.2,
-                    capsize=2, color='C3', label='core delivery')
+        ax.plot(pw.index, core, marker='o', ms=4, lw=1.2, color='C3', label='core delivery')
 
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel('Fraction of biofilm rescues')
@@ -145,8 +143,8 @@ def panel_sensCore(df, outPath):
     for bc in sorted(s.bCoreRatio.unique()):
         col = BC_COLORS.get(bc, 'k')
         sub = s[s.bCoreRatio == bc].sort_values('dose')
-        ax.errorbar(sub.dose, sub.p, yerr=sub.se,
-                    marker='o', ms=4, lw=1.2, capsize=2,
+        ax.plot(sub.dose, sub.p,
+                    marker='o', ms=4, lw=1.2,
                     color=col, label=fr'BF sim, $b_c={bc}$')
         theo = np.array([P_rescue_bf_approx(s_, bc) for s_ in sGrid])
         ax.plot(doseGrid, theo, ls='--', lw=1.2, color=col, alpha=0.8,
@@ -191,8 +189,8 @@ def panel_ratio(df, outPath):
     log_se = np.sqrt((m.se_bf / m.p_bf) ** 2 + (m.se_wm / m.p_wm) ** 2)
     lo = ratio * np.exp(-log_se)
     hi = ratio * np.exp(+log_se)
-    ax.errorbar(m.dose, ratio, yerr=[ratio - lo, hi - ratio],
-                marker='o', ms=5, capsize=3, ls='',
+    ax.plot(m.dose, ratio,
+                marker='o', ms=5, ls='',
                 color='C5', label='simulation')
     ax.axhline(1.0, color='gray', ls=':', lw=1.0)
     ax.set_xlabel(r'dose $(d_e)$')
@@ -216,10 +214,8 @@ def panel_sensMu(df, outPath):
         col = MU_COLORS.get(mu, 'k')
         bf = s[(s.condition == 'biofilm') & (s.mu == mu)].sort_values('dose')
         wm = s[(s.condition == 'wellMixed') & (s.mu == mu)].sort_values('dose')
-        ax.errorbar(bf.dose, bf.p, yerr=bf.se, marker='o', ms=3, lw=1,
-                    capsize=2, color=col, label=fr'BF $\mu={mu:g}$')
-        ax.errorbar(wm.dose, wm.p, yerr=wm.se, marker='s', ms=3, lw=1, ls='--',
-                    capsize=2, color=col, alpha=0.7,
+        ax.plot(bf.dose, bf.p, marker='o', ms=3, lw=1, color=col, label=fr'BF $\mu={mu:g}$')
+        ax.plot(wm.dose, wm.p, marker='s', ms=3, lw=1, ls='--', color=col, alpha=0.7,
                     label=fr'WM $\mu={mu:g}$')
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel(r'$P(\mathrm{rescue})$')
@@ -242,8 +238,8 @@ def panel_sensMu(df, outPath):
         log_se = np.sqrt((m.se_bf / m.p_bf) ** 2 + (m.se_wm / m.p_wm) ** 2)
         lo = ratio * np.exp(-log_se)
         hi = ratio * np.exp(+log_se)
-        ax.errorbar(m.dose, ratio, yerr=[ratio - lo, hi - ratio],
-                    marker='o', ms=4, capsize=2, lw=1.2,
+        ax.plot(m.dose, ratio,
+                    marker='o', ms=4, lw=1.2,
                     color=col, label=fr'$\mu={mu:g}$')
     ax.axhline(1.0, color='gray', ls=':', lw=1)
     ax.set_xlabel(r'dose $(d_e)$')
@@ -269,7 +265,7 @@ def panel_agreement(df, outPath):
     m['diffSE'] = np.sqrt(m.se_cwm ** 2 + m.se_wm ** 2)
 
     fig, ax = plt.subplots(figsize=(7, 5))
-    ax.errorbar(m.dose, m['diff'], yerr=m.diffSE, marker='o', capsize=3,
+    ax.plot(m.dose, m['diff'], marker='o',
                 color='black')
     ax.axhline(0, color='red', ls='--', alpha=0.5)
     ax.set_xlabel(r'dose $(d_e)$')
@@ -297,8 +293,8 @@ def panel_mutation_supply(df, outPath):
         s = g[g.condition == cond].sort_values('dose')
         if len(s) == 0:
             continue
-        ax.errorbar(s.dose, s.meanMut, yerr=s.seMut,
-                    marker='o', ms=4, lw=1.2, capsize=2,
+        ax.plot(s.dose, s.meanMut,
+                    marker='o', ms=4, lw=1.2,
                     color=CONDITION_COLORS[cond], label=cond)
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel(r'$\langle$ R lineages produced per run $\rangle$')
@@ -348,8 +344,8 @@ def panel_estab_phase(df, outPath):
         if len(sub) == 0:
             continue
         col, mk, ls = styles[grp]
-        ax.errorbar(sub.dose, sub.p, yerr=sub.se,
-                    marker=mk, ms=5, lw=1.4, ls=ls, capsize=2,
+        ax.plot(sub.dose, sub.p,
+                    marker=mk, ms=5, lw=1.4, ls=ls,
                     color=col, label=grp)
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel('Establishment fraction (lineages reaching $k_{est}$)')
@@ -379,8 +375,8 @@ def panel_delivery(df, outPath):
     g = pd.DataFrame(rows).sort_values('dose')
 
     fig, ax = plt.subplots(figsize=(7, 5))
-    ax.errorbar(g.dose, g.p, yerr=g.se,
-                marker='o', ms=5, lw=1.4, capsize=2,
+    ax.plot(g.dose, g.p,
+                marker='o', ms=5, lw=1.4,
                 color='C3', label='BF: core lineages reaching edge')
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel('Delivery fraction (nDelivered / nMutCore)')
@@ -407,8 +403,8 @@ def panel_bolus(df, outPath):
            .reset_index())
 
     fig, ax = plt.subplots(figsize=(7, 5))
-    ax.errorbar(g.dose, g.meanBolus, yerr=g.seBolus,
-                marker='o', ms=5, lw=1.4, capsize=2,
+    ax.plot(g.dose, g.meanBolus,
+                marker='o', ms=5, lw=1.4,
                 color='C5', label='mean delivery size (core-born)')
     ax.axhline(1.0, color='gray', ls=':', lw=1, label='single-cell delivery (no bolus)')
     ax.set_xlabel(r'dose $(d_e)$')
@@ -442,10 +438,9 @@ def panel_rescue_time(df, outPath):
         sub = g[g.condition == cond].sort_values('dose')
         if len(sub) == 0:
             continue
-        yerr = np.array([sub['median'] - sub['q25'], sub['q75'] - sub['median']])
-        ax.errorbar(sub.dose, sub['median'], yerr=yerr,
-                    marker='o', ms=4, lw=1.2, capsize=2,
-                    color=CONDITION_COLORS[cond], label=f'{cond} (median, IQR)')
+        ax.plot(sub.dose, sub['median'],
+                    marker='o', ms=4, lw=1.2,
+                    color=CONDITION_COLORS[cond], label=f'{cond} (median)')
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel('Time to rescue (rescued runs only)')
     ax.set_yscale('log')
@@ -453,6 +448,165 @@ def panel_rescue_time(df, outPath):
                  'BF slower at low dose, comparable/faster at high dose')
     ax.legend()
     ax.grid(alpha=0.3, which='both')
+    plt.tight_layout()
+    plt.savefig(outPath, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f'  wrote {outPath}')
+
+
+def _aggRescue(df, groupKeys):
+    if not groupKeys:
+        n = len(df)
+        nR = int(df['rescued'].sum())
+        p = nR / n if n else float('nan')
+        return pd.DataFrame([{'n': n, 'nRescued': nR, 'p': p}])
+    g = df.groupby(groupKeys).agg(n=('seed', 'count'),
+                                   nRescued=('rescued', 'sum')).reset_index()
+    g['p'] = g.nRescued / g.n
+    return g
+
+
+def _aggEstab(df, groupKeys):
+    '''Aggregate establishment fraction: total edge lineages reaching k_est
+    divided by total edge mutations, across all runs in the group.'''
+    if not groupKeys:
+        nEst = int(df['nEstablishedEdge'].sum())
+        nMut = int(df['nMutEdge'].sum())
+        p = nEst / nMut if nMut else float('nan')
+        return pd.DataFrame([{'nEst': nEst, 'nMut': nMut, 'p': p}])
+    g = df.groupby(groupKeys).agg(nEst=('nEstablishedEdge', 'sum'),
+                                   nMut=('nMutEdge', 'sum')).reset_index()
+    g['p'] = np.where(g.nMut > 0, g.nEst / g.nMut.replace(0, np.nan), np.nan)
+    return g
+
+
+def panel_double_edge_rescue(main_df, sensCore_df, outPath):
+    '''Biofilm as a double-edged sword (P(rescue)).
+
+    Compares BF at multiple b_c values against the WM reference vs dose.
+    The dormant core (b_c=0) is uniformly worse than WM at every dose (no
+    crossover). An active core (b_c>0) crosses above WM at some dose; the
+    crossover shifts earlier with higher b_c.
+    '''
+    bf = _aggRescue(sensCore_df, ['dose', 'bCoreRatio'])
+    wm = _aggRescue(main_df[main_df.condition == 'wellMixed'], ['dose']).sort_values('dose')
+
+    fig, ax = plt.subplots(figsize=(8, 5.5))
+    bcVals = sorted(bf.bCoreRatio.unique())
+    cmap = plt.get_cmap('viridis')
+    for i, bc in enumerate(bcVals):
+        sub = bf[bf.bCoreRatio == bc].sort_values('dose')
+        col = cmap(i / max(1, len(bcVals) - 1))
+        ax.plot(sub.dose, sub.p,
+                    marker='o', ms=4, lw=1.2,
+                    color=col, label=fr'BF, $b_c={bc}$')
+
+    ax.plot(wm.dose, wm.p,
+                marker='s', ms=6, lw=2.5,
+                color='red', label='wellMixed (reference)', zorder=5)
+
+    ax.set_xlabel(r'dose $(d_e)$')
+    ax.set_ylabel(r'$P(\mathrm{rescue})$')
+    ax.set_yscale('log')
+    ax.set_title('Biofilm as a double-edged sword: P(rescue) crossover\n'
+                 r'Dormant ($b_c=0$) BF is uniformly worse; active BF crosses above WM with dose')
+    ax.legend(fontsize=8, ncol=2)
+    ax.grid(alpha=0.3, which='both')
+    plt.tight_layout()
+    plt.savefig(outPath, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f'  wrote {outPath}')
+
+
+def panel_double_edge_est(main_df, sensCore_df, outPath):
+    '''Same double-edged sword view, on per-mutation establishment.
+
+    P(establishment | edge mutation) = (edge lineages reaching k_est) /
+    (edge lineages appearing). Decouples mutation supply from the
+    selection-dependent establishment bottleneck.
+    '''
+    bf = _aggEstab(sensCore_df, ['dose', 'bCoreRatio'])
+    wm = _aggEstab(main_df[main_df.condition == 'wellMixed'], ['dose']).sort_values('dose')
+
+    fig, ax = plt.subplots(figsize=(8, 5.5))
+    bcVals = sorted(bf.bCoreRatio.unique())
+    cmap = plt.get_cmap('viridis')
+    for i, bc in enumerate(bcVals):
+        sub = bf[bf.bCoreRatio == bc].sort_values('dose')
+        col = cmap(i / max(1, len(bcVals) - 1))
+        ax.plot(sub.dose, sub.p,
+                    marker='o', ms=4, lw=1.2,
+                    color=col, label=fr'BF, $b_c={bc}$')
+
+    ax.plot(wm.dose, wm.p,
+                marker='s', ms=6, lw=2.5,
+                color='red', label='wellMixed (reference)', zorder=5)
+
+    ax.set_xlabel(r'dose $(d_e)$')
+    ax.set_ylabel(r'$P(\mathrm{establishment} \mid \mathrm{edge\ mutation})$')
+    ax.set_yscale('log')
+    ax.set_title('Per-mutation establishment: BF vs WM across dose and $b_c$\n'
+                 'WT resupply in Phase 1 keeps BF below WM at low dose; gap closes at high dose')
+    ax.legend(fontsize=8, ncol=2)
+    ax.grid(alpha=0.3, which='both')
+    plt.tight_layout()
+    plt.savefig(outPath, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f'  wrote {outPath}')
+
+
+def panel_double_edge_bars(main_df, sensCore_df, outPath,
+                           lowDose=1.05, highDose=2.8,
+                           dormantBc=0.0, activeBc=0.8):
+    '''Crisp 2x2 bar summary of the double-edged sword.
+
+    Rows: P(rescue) and P(establishment | edge mutation).
+    Cols: 4 corner cells: (low dose, dormant), (low dose, active),
+           (high dose, dormant), (high dose, active).
+    Each cell shows BF vs WM bars side by side.
+    '''
+    cells = [
+        (lowDose,  dormantBc, f'low dose ({lowDose})\ndormant core ($b_c={dormantBc}$)'),
+        (lowDose,  activeBc,  f'low dose ({lowDose})\nactive core ($b_c={activeBc}$)'),
+        (highDose, dormantBc, f'high dose ({highDose})\ndormant core ($b_c={dormantBc}$)'),
+        (highDose, activeBc,  f'high dose ({highDose})\nactive core ($b_c={activeBc}$)'),
+    ]
+
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+    width = 0.35
+    xs = np.arange(len(cells))
+    labels = [c[2] for c in cells]
+
+    for ax, metric, fn, ylabel, title in [
+        (axes[0], 'rescue', _aggRescue, r'$P(\mathrm{rescue})$',
+         'P(rescue) at four extremes'),
+        (axes[1], 'estab',  _aggEstab,  r'$P(\mathrm{est} \mid \mathrm{edge\ mut})$',
+         'P(establishment) at four extremes'),
+    ]:
+        bf_p, wm_p = [], []
+        for dose, bc, _ in cells:
+            bf_sub = sensCore_df[(sensCore_df.dose == dose) &
+                                 (sensCore_df.bCoreRatio == bc)]
+            wm_sub = main_df[(main_df.condition == 'wellMixed') &
+                             (main_df.dose == dose)]
+            bf_g = fn(bf_sub, []).iloc[0]
+            wm_g = fn(wm_sub, []).iloc[0]
+            bf_p.append(bf_g['p'])
+            wm_p.append(wm_g['p'])
+        ax.bar(xs - width/2, bf_p, width,
+               color=CONDITION_COLORS['biofilm'], label='biofilm')
+        ax.bar(xs + width/2, wm_p, width,
+               color=CONDITION_COLORS['wellMixed'], label='wellMixed')
+        ax.set_xticks(xs)
+        ax.set_xticklabels(labels, fontsize=8.5)
+        ax.set_ylabel(ylabel)
+        ax.set_yscale('log')
+        ax.set_title(title)
+        ax.legend()
+        ax.grid(alpha=0.3, which='both', axis='y')
+
+    fig.suptitle('Biofilm as a double-edged sword: low dose / high dose, dormant / active core',
+                 fontsize=11, y=1.02)
     plt.tight_layout()
     plt.savefig(outPath, dpi=150, bbox_inches='tight')
     plt.close()
@@ -473,8 +627,8 @@ def panel_sensL(df, outPath):
     for i, lVal in enumerate(lVals):
         sub = s[s.l == lVal].sort_values('dose')
         col = cmap(i / max(1, len(lVals) - 1))
-        ax.errorbar(sub.dose, sub.p, yerr=sub.se,
-                    marker='o', ms=4, lw=1.2, capsize=2,
+        ax.plot(sub.dose, sub.p,
+                    marker='o', ms=4, lw=1.2,
                     color=col, label=f'l = {int(lVal)}')
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel(r'$P(\mathrm{rescue})$')
@@ -519,6 +673,14 @@ def main():
         print('Loading sensCore.csv...')
         sc_df = pd.read_csv(scPath, low_memory=False)
         panel_sensCore(sc_df, os.path.join(args.outDir, 'sim_sensCore.png'))
+        # Double-edged-sword panels combine wellMixed (main) and BF-vs-bcore (sensCore).
+        if os.path.exists(mainPath):
+            panel_double_edge_rescue(main_df, sc_df,
+                os.path.join(args.outDir, 'sim_double_edge_rescue.png'))
+            panel_double_edge_est(main_df, sc_df,
+                os.path.join(args.outDir, 'sim_double_edge_est.png'))
+            panel_double_edge_bars(main_df, sc_df,
+                os.path.join(args.outDir, 'sim_double_edge_bars.png'))
 
     smPath = os.path.join(args.resultsDir, 'sensMu.csv')
     if os.path.exists(smPath):
