@@ -65,8 +65,8 @@ def plotMain(df, outPath):
         s = summary[summary.condition == cond].sort_values('dose')
         if len(s) == 0:
             continue
-        ax.errorbar(s.dose, s.pRescue, yerr=s.pRescueSE,
-                    marker='o', label=cond, capsize=3,
+        ax.plot(s.dose, s.pRescue,
+                    marker='o', label=cond,
                     color=CONDITION_COLORS[cond])
     ax.set_xlabel('d_WtEdge (dose)')
     ax.set_ylabel('P(rescue)')
@@ -99,8 +99,8 @@ def plotMain(df, outPath):
         merged['diff'] = merged.pRescue_chainWM - merged.pRescue_wellMixed
         merged['diffSE'] = np.sqrt(merged.pRescueSE_chainWM**2
                                     + merged.pRescueSE_wellMixed**2)
-        ax.errorbar(merged.dose, merged['diff'], yerr=merged.diffSE,
-                    marker='o', capsize=3, color='black')
+        ax.plot(merged.dose, merged['diff'],
+                    marker='o', color='black')
         ax.axhline(0, color='red', ls='--', alpha=0.5)
         ax.set_xlabel('d_WtEdge (dose)')
         ax.set_ylabel('P(rescue)_chainWM - P(rescue)_wellMixed')
@@ -117,8 +117,8 @@ def plotSensCore(df, outPath):
     fig, ax = plt.subplots(figsize=(8, 5))
     for bCore in sorted(df.bCoreRatio.unique()):
         s = summary[summary.bCoreRatio == bCore].sort_values('dose')
-        ax.errorbar(s.dose, s.pRescue, yerr=s.pRescueSE,
-                    marker='o', label=f'bCore/bEdge = {bCore}', capsize=3)
+        ax.plot(s.dose, s.pRescue,
+                    marker='o', label=f'bCore/bEdge = {bCore}')
     ax.set_xlabel('d_WtEdge')
     ax.set_ylabel('P(rescue)')
     ax.set_title('Biofilm rescue vs core dormancy')
@@ -134,8 +134,8 @@ def plotSensL(df, outPath):
     fig, ax = plt.subplots(figsize=(8, 5))
     for lVal in sorted(df.l.unique()):
         s = summary[summary.l == lVal].sort_values('dose')
-        ax.errorbar(s.dose, s.pRescue, yerr=s.pRescueSE,
-                    marker='o', label=f'l = {int(lVal)}', capsize=3)
+        ax.plot(s.dose, s.pRescue,
+                    marker='o', label=f'l = {int(lVal)}')
     ax.set_xlabel('d_WtEdge')
     ax.set_ylabel('P(rescue)')
     ax.set_title('Biofilm rescue vs edge width l\n(narrative.tex Sec 8: crossover depends on l)')
@@ -158,8 +158,8 @@ def plotSensMu(df, outPath):
             s = sub[sub.condition == cond].sort_values('dose')
             if len(s) == 0:
                 continue
-            ax.errorbar(s.dose, s.pRescue, yerr=s.pRescueSE,
-                        marker='o', label=cond, capsize=3,
+            ax.plot(s.dose, s.pRescue,
+                        marker='o', label=cond,
                         color=CONDITION_COLORS[cond])
         ax.set_xlabel('d_WtEdge')
         ax.set_title(f'mu = {mu}')
