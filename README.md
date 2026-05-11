@@ -18,7 +18,7 @@ loses uniformly at every dose.
 | `scripts/`       | Plotting and analysis scripts for the writeup figures (`plot*.py`, `aggregateResults.py`) |
 | `scripts/runJobs/` | HTCondor / OSG sweep submission (`gen*Jobs.py`, `*.sub`, `runBatch.{py,sh}`) |
 | `figures/`       | Aggregated sweep CSVs (`main.csv`, `sensL.csv`, `sensCore.csv`, `sensMu.csv`) and rendered `panels/` |
-| `writing/`       | LaTeX writeups: `writeup_v2.tex` (main, current), `narrative.tex` (informal), `derivation.tex` (math) |
+| `writing/`       | LaTeX writeups: `writeup_v2.tex` (main, current), `narrative.tex` (informal)|
 
 ## Where to start
 
