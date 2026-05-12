@@ -1,11 +1,11 @@
 # chain-model
 
-Stochastic simulation study of **evolutionary rescue in biofilms under
-antibiotic treatment**. A 1D chain model with a drug-exposed edge and a
+Stochastic simulation study of evolutionary rescue in biofilms under
+antibiotic treatment. A 1D chain model with a drug-exposed edge and a
 shielded core is compared against a well-mixed population of the same
 initial size, across a range of doses and core-activity levels.
 
-The central finding: the biofilm is a **double-edged sword**. With an
+The central finding: the biofilm is a ***double-edged sword***. With an
 active interior, it rescues less often than the well-mixed reference
 at low dose and more often at high dose; with a dormant interior, it
 loses uniformly at every dose.
