@@ -28,11 +28,11 @@ def params(dWtEdge, mu, dREdge=0.3):
     }
 
 
-# 1. Pre-treatment: drug off (dE = bE). Steady state.
+# 1. Pre-treatment: drug off (dE = bE), steady state.
 p1 = params(dWtEdge=0.5, mu=1e-4, dREdge=0.5)
 r1 = simulateChain(p1, seed=42, maxTime=40.0, recordEvery=80)
 
-# 2. Super-lethal: drug strong, mutation rate low. Biofilm extincts without rescue.
+# 2. Super-lethal: drug strong, mutation rate low, extinction trajectory
 p2 = params(dWtEdge=1.0, mu=1e-6, dREdge=0.3)
 r2 = simulateChain(p2, seed=42, maxTime=40.0, recordEvery=30)
 
@@ -50,8 +50,7 @@ for seed in range(200):
               f'nLinAtRescue={r["nLineagesAtRescueEdge"]}')
         break
 
-# 4. Core-delivery rescue. Harder to find -- stronger drug to push biofilm back
-# toward the core, giving core-born mutations time to drift out.
+# 4. Core-delivery rescue. Higher mu so mutations arise faster in the core, and higher dE so the boundary retreats faster and is more likely to pull a core-born mutant into the edge. Scan seeds for a clean core-delivery rescue where the biofilm survives meaningfully.
 p4 = params(dWtEdge=1.2, mu=5e-4, dREdge=0.3)
 r4 = None
 for seed in range(500):

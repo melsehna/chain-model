@@ -34,7 +34,7 @@ if best is None:
 
 seed, r = best
 fig, ax = plt.subplots(figsize=(10, 7))
-plotKymograph(r, params, f'soft-sweep rescue (seed={seed}, {r["nLineagesAtRescueEdge"]} lineages)', ax=ax)
+plotKymograph(r, params, f'Soft-Sweep Rescue (Seed={seed}, {r["nLineagesAtRescueEdge"]} Lineages)', ax=ax)
 plt.tight_layout()
 os.makedirs('figures/', exist_ok=True)
 plt.savefig('figures/kymo-softSweep.png', dpi=110, bbox_inches='tight')

@@ -162,8 +162,7 @@ def runTest(label, params, seed, useChain=True, debug=True, stopAtRescue=True):
 
 
 if __name__ == '__main__':
-    # Basic params: small biofilm, strong-ish treatment. Mutation rate high enough
-    # to get multiple mutations in short runs.
+    # Basic params: small biofilm, strong-ish treatment. Mutation rate high enough to get multiple mutations in short runs.
     chainParams = {
         'mu': 1e-3,
         'nInit': 200,
