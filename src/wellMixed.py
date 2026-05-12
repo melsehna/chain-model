@@ -82,7 +82,7 @@ def simulateWellMixed(params, seed=None, maxGenerations=np.inf,
 
     wt = nInit
     # Live R lineage counts; entries are dropped when count hits 0 (metadata
-    # is kept in `lineages`). r = sum(rLineages.values()).
+    # is kept in `lineages`). r = sum(rLineages.values())
     rLineages = {}
     r = 0
     N = wt + r
@@ -120,8 +120,7 @@ def simulateWellMixed(params, seed=None, maxGenerations=np.inf,
             terminationReason = 'nMaxExceeded'
             break
 
-        # Wilson density factor on R births only (WT births stay density-independent
-        # per Wilson 2017 / Uecker 2014 D=1 model).
+        # Wilson density factor on R births only (WT births stay density-independent per Wilson 2017 / Uecker 2014 D=1 model)
         densityFactor = max(0.0, 1.0 - (wt + r) / K)
         ratesList = (
             ('birthWt', bWt * wt),
@@ -202,7 +201,6 @@ def simulateWellMixed(params, seed=None, maxGenerations=np.inf,
 
     extinct = (N == 0)
 
-    # ----- Aggregate lineage statistics -----
     nLineagesAppeared = len(lineages)
     nLineagesExtinct = sum(1 for info in lineages.values() if info['liveCount'] == 0)
     nLineagesPresentAtEnd = sum(1 for info in lineages.values() if info['liveCount'] > 0)
@@ -210,8 +208,6 @@ def simulateWellMixed(params, seed=None, maxGenerations=np.inf,
         1 for info in lineages.values() if info['maxLiveCount'] >= kEst
     )
 
-    # ----- Rescue-specific stats -----
-    # Uses the snapshot taken at rescue trigger, for the same reason as chainModel.
     if rescued:
         nLineagesAtRescue = len(rescueRLineages)
         if rescueRLineages:

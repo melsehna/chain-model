@@ -117,9 +117,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
     generations = 0
     recordCounter = 0
 
-    # Phase 1 = N > l (core present, buffered decline). Phase 2 = N <= l (core
-    # exhausted, exponential collapse). phase1EndTime = first time N drops to l.
-    # Initialized to 0 if the run is "always Phase 2" (l >= nInit, e.g. chainWM).
+    # Phase 1 = N > l, Phase 2 = N <= l 
     phase1EndTime = 0.0 if nInit <= l else None
 
     rescued = False
@@ -133,17 +131,11 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
     nextLineage = 2
     mutationEvents = []
 
-    # Per-lineage bookkeeping. Entries are never removed; when a lineage goes
-    # extinct we just record deathTime and stop updating its count.
-    #   liveCount: current count in population (0 if extinct)
-    #   birthRegion: 'core' or 'edge' (compartment at mutation)
-    #   everReachedEdge: True iff the lineage has ever had >= 1 cell in the edge
+    # Per-lineage bookkeeping. Entries are never removed; when a lineage goes extinct we just record deathTime and stop updating its count. liveCount: current count in population (0 if extinct) birthRegion: 'core' or 'edge' (compartment at mutation) everReachedEdge: True iff the lineage has ever had >= 1 cell in the edge
+    
     lineages = {}
 
-    # Mirror of `cells` for R genotypes only: dict mapping lineage_id -> liveCount.
-    # Maintained incrementally; lineages[id]['liveCount'] reads from here.
-    # Use aux dict so we can drop zero keys without losing the metadata stored
-    # in `lineages` (birthRegion, birthTime, etc).
+    # Mirror of `cells` for R genotypes only: dict mapping lineage_id -> liveCount. Maintained incrementally; lineages[id]['liveCount'] reads from here. Use aux dict so we can drop zero keys without losing the metadata stored in `lineages` (birthRegion, birthTime, etc).
 
     def recordMutation(lineageId, bornInCore, atTime, atGeneration, position):
         region = 'core' if bornInCore else 'edge'
@@ -227,10 +219,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
 
         b = max(0, N - l)
 
-        # Wilson density factor on R births only (WT births stay density-independent
-        # per Wilson 2017 / Uecker 2014 D=1 model). Applied to R in both compartments
-        # using the global (wt+r)/K so the equilibrium m_eq = K*(1 - dR/bR) is
-        # well-defined for the entire simulated population.
+        # Wilson density factor on R births only (WT births stay density-independent per Wilson 2017 / Uecker 2014 D=1 model). Applied to R in both compartments using the global (wt+r)/K so the equilibrium m_eq = K*(1 - dR/bR) is well-defined for the entire simulated population.
         densityFactor = max(0.0, 1.0 - N / K)
 
         ratesList = (
@@ -294,8 +283,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
                     info['everReachedEdge'] = True
 
             if newB > b and p > b:
-                # The insert at p > b did not displace cells[b], which now sits
-                # just inside the new boundary and reclassifies edge -> core.
+                # The insert at p > b did not displace cells[b], which now sits just inside the new boundary and reclassifies edge -> core.
                 bt = cells[b]
                 if bt == 1:
                     wtEdge -= 1
@@ -303,8 +291,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
                 else:
                     rEdge -= 1
                     rCore += 1
-                    # bt is now in core, but this is a compartment move,
-                    # not a loss from edge-exposure history. No flag change.
+                    # bt is now in core, but this is a compartment move, not a loss from edge-exposure history. No flag change.
 
         else:
             if inCore:
@@ -338,8 +325,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
                 decLineage(deadGenotype, time, generations)
 
             if doTransition:
-                # An edge death at q >= b pops without displacing cells[b-1],
-                # which now sits in the edge and reclassifies core -> edge.
+                # An edge death at q >= b pops without displacing cells[b-1], which now sits in the edge and reclassifies core -> edge.
                 if btDeath == 1:
                     wtCore -= 1
                     wtEdge += 1
@@ -363,10 +349,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
             rescueTime = time
             rescueGeneration = generations
 
-            # Capture edge lineage counts at the rescue moment. Needed because
-            # with stopAtRescue=False the sim continues past rescue and the
-            # winning lineage drives the others out, which would corrupt any
-            # end-of-sim measurement of "lineages at rescue".
+            # Capture edge lineage counts at the rescue moment
             bAtRescue = max(0, N - l)
             rescueEdgeCounts = {}
             for c in cells[bAtRescue:]:
@@ -424,12 +407,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
         if info['birthRegion'] == 'edge' and info['maxLiveCount'] >= kEst
     )
 
-    # Phase 1 vs Phase 2 stratification of edge-born lineages. A Phase 1 birth
-    # faces WT resupply suppression (analytical claim of ~83x establishment
-    # reduction); a Phase 2 birth does not, so its establishment fraction
-    # should approach the well-mixed value. If phase1EndTime is None, the run
-    # rescued or extincted before Phase 2 ever started, so all edge births are
-    # Phase 1.
+    # Phase 1 vs Phase 2 stratification of edge-born lineages
     def _isPhase1(info):
         return phase1EndTime is None or info['birthTime'] < phase1EndTime
 
@@ -486,7 +464,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
     nLineagesPresentInCore = len(lineagesInCore)
     nLineagesPresentInEdge = len(lineagesInEdge)
 
-    # ----- Rescue-specific stats -----
+    # Rescue-specific stats
     # rescueEdgeCounts was captured at the moment rEdge first crossed rThreshold,
     # regardless of stopAtRescue. Using the snapshot gives correct lineage counts
     # at the rescue moment even when the simulation continues past rescue (in
