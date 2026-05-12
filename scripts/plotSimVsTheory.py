@@ -77,9 +77,9 @@ def panel_rescue_vs_dose(ax, summary, b_c):
                     marker='o', ms=4, lw=1, capsize=2,
                     color=CONDITION_COLORS[cond], label=f'{cond} (sim)')
 
-    ax.set_xlabel('dose (d_e)')
-    ax.set_ylabel('P(rescue)')
-    ax.set_title(f'Rescue probability: sim vs theory  (b_c={b_c})')
+    ax.set_xlabel(r'Dose $(d_e)$')
+    ax.set_ylabel(r'$P_{rescue}$')
+    ax.set_title(rf'Rescue Probability ($b_c$={b_c})')
     ax.set_yscale('log')
     ax.set_ylim(max(1e-4, ax.get_ylim()[0]), 1.1)
     ax.legend(fontsize=7, loc='lower right')
@@ -91,20 +91,20 @@ def panel_pathway(ax, df):
     if len(biofilmRescued) == 0:
         ax.text(0.5, 0.5, 'no biofilm rescues yet',
                 ha='center', va='center', transform=ax.transAxes)
-        ax.set_title('Pathway breakdown (biofilm)')
+        ax.set_title('Rescue Pathway')
         return
     pathway = (biofilmRescued.groupby('dose').rescueMode
                .value_counts(normalize=True)
                .unstack(fill_value=0).sort_index())
     if 'core' in pathway.columns:
         ax.plot(pathway.index, pathway['core'], 'o-',
-                label='core delivery', color='C3')
+                label='Core Delivery', color='C3')
     if 'edge' in pathway.columns:
         ax.plot(pathway.index, pathway['edge'], 'o-',
-                label='edge mutation', color='C4')
-    ax.set_xlabel('dose (d_e)')
-    ax.set_ylabel('Fraction of biofilm rescues')
-    ax.set_title('Pathway breakdown (biofilm)')
+                label='Edge Mutation', color='C4')
+    ax.set_xlabel(r'Dose $(d_e)$')
+    ax.set_ylabel('Fraction of Biofilm Rescues')
+    ax.set_title('Pathway Breakdown')
     ax.set_ylim(0, 1)
     ax.legend(fontsize=9)
     ax.grid(alpha=0.3)

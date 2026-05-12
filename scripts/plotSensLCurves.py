@@ -19,7 +19,6 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.normpath(os.path.join(THIS_DIR, '..'))
 
 
-# ---- style ---------------------------------------------------------------
 BASE_FONT = 28
 mpl.rcParams.update({
     'font.family':       'Gillius ADF',
@@ -34,14 +33,10 @@ mpl.rcParams.update({
 })
 
 
-# All five l values, color-coded along a sequential viridis gradient
-# (log-spaced in l) so the ordering of l is encoded by hue. Markers also
-# vary per l for greyscale-print fallback. Default l = 100 is emphasized
-# with a thicker line.
 _L_LIST = [25, 50, 100, 200, 400]
 _log_l = np.log(_L_LIST)
 _log_l_norm = (_log_l - _log_l.min()) / (_log_l.max() - _log_l.min())
-# Squeeze the colormap range to avoid the very bright yellow end of viridis.
+# Squeeze cmap range 
 _GRADIENT = plt.get_cmap('viridis')
 L_COLORS = {l: _GRADIENT(0.1 + 0.75 * p)
             for l, p in zip(_L_LIST, _log_l_norm)}
@@ -98,7 +93,7 @@ def plot_sensl(main_df, sl_df, outPath,
 
     fig, (ax_abs, ax_delta) = plt.subplots(1, 2, figsize=(17, 8))
 
-    # --- Panel A: absolute P(rescue) -------------------------------------
+    # panel A: absolute P(rescue)
     for l in l_values:
         sub = (sl_df[sl_df.l == l].groupby('dose').rescued.mean()
                .reset_index().sort_values('dose'))
@@ -112,7 +107,7 @@ def plot_sensl(main_df, sl_df, outPath,
                      ha='left', va='top')
     _style_axes(ax_abs)
 
-    # --- Panel B: delta = P_BF - P_WM ------------------------------------
+    # panel b: delta P(rescue)
     for l in l_values:
         sub = (sl_df[sl_df.l == l].groupby('dose').rescued.mean()
                .reset_index().sort_values('dose'))
@@ -127,7 +122,6 @@ def plot_sensl(main_df, sl_df, outPath,
                        ha='left', va='top')
     _style_axes(ax_delta)
 
-    # Shared legend below both panels.
     handles, labels = ax_abs.get_legend_handles_labels()
     fig.legend(
         handles, labels,
@@ -159,8 +153,7 @@ def crossover_dose(bf_p_by_dose, wm_p_by_dose):
     '''
     doses = sorted(bf_p_by_dose.index)
     diff = [bf_p_by_dose[d] - wm_p_by_dose[d] for d in doses]
-    # Walk from the highest dose down; find the last sampled dose at which
-    # the biofilm is still <= well-mixed.
+    # last sampled dose at which the Prescue(biofilm) <= well-mixed.
     last_below = None
     for i in range(len(doses) - 1, -1, -1):
         if diff[i] <= 0:

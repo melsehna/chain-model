@@ -270,8 +270,6 @@ def panel_agreement(df, outPath):
     ax.axhline(0, color='red', ls='--', alpha=0.5)
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel(r'$P_{\rm chainWM}(\mathrm{rescue}) - P_{\rm wellMixed}(\mathrm{rescue})$')
-    ax.set_title('Implementation agreement check\n'
-                 '(chainWM with l=2000 vs explicit wellMixed)')
     ax.grid(alpha=0.3)
     plt.tight_layout()
     plt.savefig(outPath, dpi=150, bbox_inches='tight')
@@ -280,8 +278,6 @@ def panel_agreement(df, outPath):
 
 
 def panel_mutation_supply(df, outPath):
-    '''narrative.tex Sec 4: biofilm should have ~1.8x more mutations than WM
-    (active core adds extra births). Plots mean total mutations per run.'''
     df = df.copy()
     df['nMutTotal'] = df['nMutCore'].fillna(0) + df['nMutEdge'].fillna(0)
     g = (df.groupby(['condition', 'dose'])
@@ -298,8 +294,7 @@ def panel_mutation_supply(df, outPath):
                     color=CONDITION_COLORS[cond], label=cond)
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel(r'$\langle$ R lineages produced per run $\rangle$')
-    ax.set_title('Mutation supply vs dose (narrative Sec 4)\n'
-                 'BF should exceed WM at active core (default $b_c=0.2$)')
+    ax.set_title(r'Mutation Supply vs Antibiotic Dose ($d_e$)')
     ax.legend()
     ax.grid(alpha=0.3)
     plt.tight_layout()
@@ -349,8 +344,6 @@ def panel_estab_phase(df, outPath):
                     color=col, label=grp)
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel('Establishment fraction (lineages reaching $k_{est}$)')
-    ax.set_title('Establishment by phase (narrative Sec 5)\n'
-                 'BF P1 << BF P2 ~ WM is the WT-resupply suppression signal')
     ax.set_yscale('log')
     ax.legend()
     ax.grid(alpha=0.3, which='both')
@@ -380,8 +373,7 @@ def panel_delivery(df, outPath):
                 color='C3', label='BF: core lineages reaching edge')
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel('Delivery fraction (nDelivered / nMutCore)')
-    ax.set_title('Core-to-edge delivery efficiency vs dose (narrative Sec 6)\n'
-                 'Drift suppression at low dose; efficient at high dose')
+    ax.set_title('Core-to-Edge Delivery Efficiency vs Dose')
     ax.set_ylim(0, 1)
     ax.legend()
     ax.grid(alpha=0.3)
@@ -408,9 +400,7 @@ def panel_bolus(df, outPath):
                 color='C5', label='mean delivery size (core-born)')
     ax.axhline(1.0, color='gray', ls=':', lw=1, label='single-cell delivery (no bolus)')
     ax.set_xlabel(r'dose $(d_e)$')
-    ax.set_ylabel(r'$\langle$ lineage size at first edge entry $\rangle$')
-    ax.set_title('Bolus size of core-delivered lineages vs dose (narrative Sec 8)\n'
-                 'Rising values are the bolus-advantage signature')
+    ax.set_ylabel(r'$\langle$ Lineage Size at First Edge Entry $\rangle$')
     ax.legend()
     ax.grid(alpha=0.3)
     plt.tight_layout()
@@ -444,8 +434,7 @@ def panel_rescue_time(df, outPath):
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel('Time to rescue (rescued runs only)')
     ax.set_yscale('log')
-    ax.set_title('Time to rescue vs dose (narrative "What we don\'t know")\n'
-                 'BF slower at low dose, comparable/faster at high dose')
+    ax.set_title('Time to Rescue vs Antibiotic Dose')
     ax.legend()
     ax.grid(alpha=0.3, which='both')
     plt.tight_layout()
@@ -508,8 +497,7 @@ def panel_double_edge_rescue(main_df, sensCore_df, outPath):
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel(r'$P(\mathrm{rescue})$')
     ax.set_yscale('log')
-    ax.set_title('Biofilm as a double-edged sword: P(rescue) crossover\n'
-                 r'Dormant ($b_c=0$) BF is uniformly worse; active BF crosses above WM with dose')
+    ax.set_title('P(rescue) Crossover')
     ax.legend(fontsize=8, ncol=2)
     ax.grid(alpha=0.3, which='both')
     plt.tight_layout()
@@ -545,8 +533,7 @@ def panel_double_edge_est(main_df, sensCore_df, outPath):
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel(r'$P(\mathrm{establishment} \mid \mathrm{edge\ mutation})$')
     ax.set_yscale('log')
-    ax.set_title('Per-mutation establishment: BF vs WM across dose and $b_c$\n'
-                 'WT resupply in Phase 1 keeps BF below WM at low dose; gap closes at high dose')
+    ax.set_title('Per-Mutation Establishment: BF vs WM Across Antibiotic Dose and $b_c$')
     ax.legend(fontsize=8, ncol=2)
     ax.grid(alpha=0.3, which='both')
     plt.tight_layout()
@@ -579,9 +566,9 @@ def panel_double_edge_bars(main_df, sensCore_df, outPath,
 
     for ax, metric, fn, ylabel, title in [
         (axes[0], 'rescue', _aggRescue, r'$P(\mathrm{rescue})$',
-         'P(rescue) at four extremes'),
+         'P(rescue) at Four Extremes'),
         (axes[1], 'estab',  _aggEstab,  r'$P(\mathrm{est} \mid \mathrm{edge\ mut})$',
-         'P(establishment) at four extremes'),
+         'P(establishment) at Four Extremes'),
     ]:
         bf_p, wm_p = [], []
         for dose, bc, _ in cells:
@@ -614,7 +601,7 @@ def panel_double_edge_bars(main_df, sensCore_df, outPath,
 
 
 def panel_sensL(df, outPath):
-    '''narrative.tex Sec 8: crossover dose depends on edge width l.'''
+    '''crossover dose depends on edge width l.'''
     s = (df.groupby(['l', 'dose'])
            .agg(n=('seed', 'count'), nRescued=('rescued', 'sum'))
            .reset_index())
@@ -633,8 +620,7 @@ def panel_sensL(df, outPath):
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel(r'$P(\mathrm{rescue})$')
     ax.set_yscale('log')
-    ax.set_title('Edge-width sensitivity (narrative Sec 8)\n'
-                 r'Crossover dose should shift with $l$')
+    ax.set_title('Sensitivity toEdge-width')
     ax.legend(fontsize=8)
     ax.grid(alpha=0.3, which='both')
     plt.tight_layout()

@@ -59,11 +59,13 @@ MU_DEFAULT = 1e-4
 # Phase grids
 BC_GRID = [0.0, 0.05, 0.1, 0.2, 0.5, 1.0]
 L_GRID = [10, 30, 100, 300]
-# Note: l = N_INIT (fully-mixed limit of the chain model) is omitted from
-# the phaseL grid because it duplicates the wellMixed control included in
-# the same sweep, but is much slower (no Phase 2 transition; entire
-# population is edge for the full sim). Use the wellMixed condition as
-# the l -> N_INIT reference instead.
+'''
+Note: l = N_INIT (fully-mixed limit of the chain model) is omitted from
+the phaseL grid because it duplicates the wellMixed control included in
+the same sweep, but is much slower (no Phase 2 transition; entire
+population is edge for the full sim). Use the wellMixed condition as
+the l -> N_INIT reference instead.
+'''
 MU_GRID = [1e-6, 1e-5, 1e-4, 1e-3]
 
 

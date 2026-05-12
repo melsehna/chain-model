@@ -28,7 +28,7 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.normpath(os.path.join(THIS_DIR, '..'))
 
 
-# ---- style (matches plotDoubleEdge.py) ----------------------------------
+
 BASE_FONT = 28
 mpl.rcParams.update({
     'font.family':         'Gillius ADF',
@@ -42,7 +42,7 @@ mpl.rcParams.update({
     'mathtext.fontset':    'stixsans',
 })
 
-# Three line styles distinguishable in greyscale: linestyle + marker + shade.
+
 STYLES = {
     'wm': dict(
         color='#000000', linestyle='-',  marker='o',

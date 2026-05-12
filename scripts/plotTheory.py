@@ -25,7 +25,6 @@ import matplotlib.ticker as ticker
 if not hasattr(np, 'trapezoid'):
     np.trapezoid = np.trapz  # numpy < 2.0 compatibility
 
-# ── Default simulation parameters ──────────────────────────────────────────
 N0      = 1000
 L       = 100
 B_E     = 1.0
@@ -42,7 +41,7 @@ B_C_VALS   = [0.0, 0.05, 0.1, 0.2, 0.4]
 CMAP_COLORS = plt.cm.viridis(np.linspace(0.1, 0.85, len(B_C_VALS)))
 
 
-# ── Pure-analytical helpers ─────────────────────────────────────────────────
+
 
 def lam_wm(s_e):
     return MU * B_E * N0 / s_e
@@ -57,7 +56,7 @@ def gamma_core_per_mu(s_e, b_c):
     return s_e * L * np.log1p(alpha(s_e, b_c))
 
 
-# ── Gambler's-ruin establishment probabilities ──────────────────────────────
+
 
 def _gamblers_ruin_P_arr(b_e, b_r, d_r, l, r_star):
     '''Compute the "scale function" array P[k-1] = prod_{j=1}^{k-1} r_j,
@@ -82,7 +81,6 @@ def p_est_wm_arr(b_r=B_R, d_r=D_R, r_star=R_STAR):
     return (1 - rho**k) / (1 - rho**r_star)
 
 
-# ── Bolus-delivery establishment ────────────────────────────────────────────
 
 def p_est_bolus(tau, b_c, p_bf):
     '''p_est for a bolus that survived drift time tau and now enters the BF
@@ -110,7 +108,6 @@ def P_rescue_core(s_e, b_c, p_bf, n_pts=400):
     return MU * b_c * np.trapezoid(psurv * pest, d)
 
 
-# ── Full approximate rescue probability (rare-mutation limit) ────────────────
 
 def P_rescue_bf_approx(s_e, b_c):
     p_bf  = p_est_bf_arr()
@@ -126,7 +123,6 @@ def P_rescue_wm_approx(s_e):
     return MU * B_E * N0 / s_e * p_wm1
 
 
-# ── Individual panel draw functions ─────────────────────────────────────────
 
 def draw_panel1(ax):
     '''P(rescue) upper bound (Lambda only) vs dose.'''
@@ -141,7 +137,7 @@ def draw_panel1(ax):
                label=rf'$s_e^*$ (default $b_c$)')
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel(r'$P(\mathrm{rescue})$ — upper bound $1-e^{-\Lambda}$')
-    ax.set_title('Rescue probability vs dose\n(mutation-supply upper bound)')
+    ax.set_title('Rescue Probability vs Dose')
     ax.set_ylim(0, 1)
     ax.legend(fontsize=7.5)
     ax.grid(alpha=0.3)
@@ -162,7 +158,7 @@ def draw_panel2(ax):
                 xytext=(B_C_DEF + 0.04, rat_def - 0.2), fontsize=9, color='C0')
     ax.set_xlabel(r'$b_c$ (core birth rate)')
     ax.set_ylabel(r'$\Lambda_{\rm BF}/\Lambda_{\rm WM}$')
-    ax.set_title('Mutation-supply advantage\n(dose-independent; linear in $b_c$)')
+    ax.set_title('Mutation-Supply Advantage')
     ax.legend(fontsize=9)
     ax.grid(alpha=0.3)
 
@@ -174,7 +170,7 @@ def draw_panel3(ax):
         ax.axhline(b_c * (N0 - L), color=col, ls=':', lw=1, alpha=0.6)
     ax.set_xlabel(r'dose $(d_e)$')
     ax.set_ylabel(r'$\Gamma_{\rm core}/\mu = s_e l\,\ln(1+\alpha)$')
-    ax.set_title('Core-delivery rate vs dose\n(solid: actual; dotted: naive no-drift)')
+    ax.set_title('Core-delivery Rate vs Dose')
     ax.legend(fontsize=9)
     ax.grid(alpha=0.3)
 
@@ -195,7 +191,7 @@ def draw_panel4(ax):
     ax.text(1.05, 0.92, r'$\alpha=1$', fontsize=8, color='gray')
     ax.set_xlabel(r'$\alpha = b_c(N_0-l)/(s_e\,l)$')
     ax.set_ylabel(r'$\langle P_{\rm survive}\rangle = \ln(1+\alpha)/\alpha$')
-    ax.set_title('Mean drift-survival probability')
+    ax.set_title('Mean Drift-Survival Probability')
     ax.legend(fontsize=7.5, loc='upper right')
     ax.set_ylim(0, 1.05)
     ax.grid(alpha=0.3, which='both')
@@ -207,9 +203,9 @@ def draw_panel5(ax):
     p_wm   = p_est_wm_arr()
 
     ax.semilogy(k_vals, p_bf, 'C0-o', ms=5, lw=2,
-                label=r'BF Phase 1 (WT resupply active)')
+                label=r'BF Phase 1 (Core Present)')
     ax.semilogy(k_vals, p_wm, 'k--s', ms=5, lw=2,
-                label=r'WM (declining WT pool)')
+                label=r'WM')
 
     ax.axhline(p_bf[0], color='C0', ls=':', lw=1, alpha=0.5)
     ax.axhline(p_wm[0], color='k',  ls=':', lw=1, alpha=0.5)
@@ -219,13 +215,13 @@ def draw_panel5(ax):
                 xy=(0.8, p_bf[0] * 1.05), xytext=(0.8, p_wm[0] * 0.95),
                 arrowprops=dict(arrowstyle='<->', color='red', lw=1.5))
     suppression = p_wm[0] / p_bf[0]
-    ax.text(0.3, np.sqrt(p_bf[0] * p_wm[0]),
-            f'{suppression:.0f}×\nsuppression', fontsize=8, color='red',
-            ha='center', va='center')
-    ax.set_xlabel(r'R cells in edge ($k$)')
-    ax.set_ylabel(r'$p_{\rm est}(k)$ — prob.\ of reaching $r^*=10$')
-    ax.set_title('Establishment suppression by WT resupply\n'
-                 r'($b_e=1,\,d_R=0.6,\,b_R=1,\,l=100$; dose-independent)')
+    # ax.text(0.3, np.sqrt(p_bf[0] * p_wm[0]),
+    #         f'{suppression:.0f}×\nsuppression', fontsize=8, color='red',
+    #         ha='center', va='center')
+    ax.set_xlabel(r'R Cells in Edge ($k$)')
+    ax.set_ylabel(r'$P_{\rm est}(k)$ — Prob.\ of Reaching $r^*=10$')
+    ax.set_title('Establishment Suppression by WT Resupply\n'
+                 r'$b_e=1,\,d_R=0.6,\,b_R=1,\,l=100$')
     ax.legend(fontsize=9)
     ax.grid(alpha=0.3, which='both')
 
@@ -245,14 +241,13 @@ def draw_panel6(ax):
     ax.axvline(1 + B_C_DEF * (N0 - L) / L, color='gray', ls=':', lw=1)
     ax.fill_between(DOSES, 0.001, 1.0, alpha=0.05, color='red')
     ax.fill_between(DOSES, 1.0, 100, alpha=0.05, color='green')
-    ax.text(1.1, 0.002,  'BF < WM\n(suppressed)', fontsize=8, color='red')
-    ax.text(2.2, 5.0,    'BF > WM\n(enhanced)',   fontsize=8, color='green')
-    ax.set_xlabel(r'dose $(d_e)$')
+    # ax.text(1.1, 0.002,  'BF < WM\n(suppressed)', fontsize=8, color='red')
+    # ax.text(2.2, 5.0,    'BF > WM\n(enhanced)',   fontsize=8, color='green')
+    ax.set_xlabel(r'Dose $(d_e)$')
     ax.set_ylabel(r'$P_{\rm BF}/P_{\rm WM}$ (approx.)')
-    ax.set_title('Rescue ratio BF / WM\n'
-                 '(suppression-corrected; includes drift, resupply, bolus)')
+    ax.set_title('Rescue Ratio BF / WM')
     ax.set_ylim(1e-3, 50)
-    ax.legend(fontsize=8, loc='upper left')
+    # ax.legend(fontsize=8, loc='upper left')
     ax.grid(alpha=0.3, which='both')
 
 
@@ -275,15 +270,14 @@ def main():
         'drift_survival',     'suppression_pest', 'suppression_pratio',
     ]
     titles = [
-        'Panel 1 — Rescue upper bound',
-        'Panel 2 — Mutation-supply ratio',
-        'Panel 3 — Core-delivery rate',
-        'Panel 4 — Drift-survival probability',
-        'Panel 5 — Establishment suppression',
-        'Panel 6 — Full rescue ratio',
+        'Panel 1: Rescue Upper Bound',
+        'Panel 2: Mutation-Supply Ratio',
+        'Panel 3: Core-Delivery Rate',
+        'Panel 4: Drift-Survival Probability',
+        'Panel 5: Establishment Suppression',
+        'Panel 6: Full Rescue Ratio',
     ]
 
-    # ── Individual panels ────────────────────────────────────────────────
     for fn, name in zip(draw_fns, names):
         print(f'  plotting {name}...')
         fig, ax = plt.subplots(figsize=(7, 5))
@@ -294,10 +288,9 @@ def main():
         plt.close()
         print(f'    saved {out}')
 
-    # ── Combined 2×3 figure ──────────────────────────────────────────────
     print('  plotting combined figure...')
     fig, axes = plt.subplots(2, 3, figsize=(20, 12))
-    fig.suptitle('Analytical theory: chain model predictions', fontsize=14)
+    # fig.suptitle('Analytical theory: chain model predictions', fontsize=14)
     for fn, ax, title in zip(draw_fns, axes.flat, titles):
         fn(ax)
         ax.set_title(title + '\n' + ax.get_title().split('\n')[0], fontsize=9)

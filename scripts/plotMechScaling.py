@@ -33,7 +33,7 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.normpath(os.path.join(THIS_DIR, '..'))
 
 
-# ---- aesthetics ---------------------------------------------------------
+
 BASE_FONT = 28
 mpl.rcParams.update({
     'font.family':       'Gillius ADF',
@@ -47,13 +47,10 @@ mpl.rcParams.update({
     'mathtext.fontset':  'stixsans',
 })
 
-# Convention across the writeup: l sweeps use viridis, b_c sweeps use plasma.
-# Keeping the two palettes distinct makes it obvious at a glance which
-# parameter a figure is sweeping.
+# Convention across the writeup: l sweeps use viridis, b_c sweeps use plasma
 _GRADIENT_L  = plt.get_cmap('viridis')
 _GRADIENT_BC = plt.get_cmap('plasma')
 
-# l palette (matches plotSensLCurves.py).
 _L_LIST = [25, 50, 100, 200, 400]
 _log_l = np.log(_L_LIST)
 _log_l_norm = (_log_l - _log_l.min()) / (_log_l.max() - _log_l.min())
@@ -73,7 +70,6 @@ def _l_style(l):
     )
 
 
-# b_c palette (matches plotSensCoreCurves.py).
 _BC_LIST = [0.0, 0.05, 0.1, 0.2, 0.4, 0.8]
 _bc_pos = np.linspace(0.1, 0.85, len(_BC_LIST))
 BC_COLORS = {bc: _GRADIENT_BC(p) for bc, p in zip(_BC_LIST, _bc_pos)}
@@ -125,7 +121,6 @@ def _effective_supply(df):
     return _mean_per_dose(sub, 'effective')
 
 
-# ---- figure 1: supply scaling -------------------------------------------
 
 def plot_supply_scaling(sl_df, sc_df, outPath):
     fig, (axL, axR) = plt.subplots(1, 2, figsize=(17, 8))
@@ -160,7 +155,7 @@ def plot_supply_scaling(sl_df, sc_df, outPath):
     print(f'wrote {outPath}')
 
 
-# ---- figure 2: 2x2 mechanism grid ---------------------------------------
+
 
 def plot_mech_grid(sl_df, sc_df, outPath):
     fig, axes = plt.subplots(2, 2, figsize=(17, 14))
@@ -212,7 +207,7 @@ def plot_mech_grid(sl_df, sc_df, outPath):
     print(f'wrote {outPath}')
 
 
-# ---- figure 3: effective supply -----------------------------------------
+
 
 def plot_effective_supply(sl_df, sc_df, outPath):
     fig, (axL, axR) = plt.subplots(1, 2, figsize=(17, 8))

@@ -24,7 +24,6 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.normpath(os.path.join(THIS_DIR, '..'))
 
 
-# ---- aesthetics (match the rest of the figures) -------------------------
 BASE_FONT = 28
 mpl.rcParams.update({
     'font.family':       'Gillius ADF',
@@ -38,17 +37,13 @@ mpl.rcParams.update({
     'mathtext.fontset':  'stixsans',
 })
 
-# Gradient over the swept b_c values. The dormant (b_c = 0) case is plotted
-# at the darkest end; the most-active b_c = 0.8 case at the lightest end.
-# Plasma palette --- b_c sweeps use plasma everywhere in this writeup, so
-# they read distinctly from the l sweeps, which use viridis.
+# Gradient over the swept b_c values
 _BC_LIST = [0.0, 0.05, 0.1, 0.2, 0.4, 0.8]
 _bc_pos = np.linspace(0.1, 0.85, len(_BC_LIST))
 _GRADIENT = plt.get_cmap('plasma')
 BC_COLORS = {bc: _GRADIENT(p) for bc, p in zip(_BC_LIST, _bc_pos)}
 
-# Default b_c (the main sweep used 0.2) gets emphasized with a thicker line
-# and slightly larger marker.
+# emphasize default b_c (main sweep used 0.2) 
 BC_MARKER = {0.0: 's', 0.05: 'v', 0.1: 'o', 0.2: '^', 0.4: 'D', 0.8: 'h'}
 BC_LINEWIDTH = {bc: (3.5 if bc == 0.2 else 2.2) for bc in _BC_LIST}
 BC_MARKERSIZE = {bc: (14 if bc == 0.2 else 11) for bc in _BC_LIST}
@@ -105,7 +100,7 @@ def plot_senscore(main_df, sc_df, outPath, bc_values=_BC_LIST):
 
     fig, (ax_abs, ax_delta) = plt.subplots(1, 2, figsize=(17, 8))
 
-    # --- Panel A: absolute P(rescue) -------------------------------------
+    # panel a: absolute prescue
     for bc in bc_values:
         sub = (sc_df[sc_df.bCoreRatio == bc].groupby('dose').rescued.mean()
                .reset_index().sort_values('dose'))
@@ -119,7 +114,7 @@ def plot_senscore(main_df, sc_df, outPath, bc_values=_BC_LIST):
                      ha='left', va='top')
     _style_axes(ax_abs)
 
-    # --- Panel B: delta --------------------------------------------------
+    # panel b: delta prescue
     for bc in bc_values:
         sub = (sc_df[sc_df.bCoreRatio == bc].groupby('dose').rescued.mean()
                .reset_index().sort_values('dose'))
@@ -133,7 +128,7 @@ def plot_senscore(main_df, sc_df, outPath, bc_values=_BC_LIST):
                        ha='left', va='top')
     _style_axes(ax_delta)
 
-    # Shared legend under both panels.
+    # legend
     handles, labels = ax_abs.get_legend_handles_labels()
     fig.legend(
         handles, labels,

@@ -24,7 +24,6 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.normpath(os.path.join(THIS_DIR, '..'))
 
 
-# ---- style ---------------------------------------------------------------
 # Min font size 28 everywhere; Gillius ADF text, stixsans math.
 BASE_FONT = 28
 mpl.rcParams.update({
@@ -45,7 +44,7 @@ COLOR_WM = '#bfbfbf'   # light grey
 EDGE     = 'black'
 
 
-# ---- data helpers --------------------------------------------------------
+
 
 def p_rescue(df):
     n = len(df)
@@ -58,7 +57,6 @@ def p_est(df):
     return nEst / nMut if nMut else float('nan')
 
 
-# ---- plot ---------------------------------------------------------------
 
 def plot_double_edge_combined(bf_low_df, bf_high_df, wm_df, metric_fn, ylabel,
                               outPath, lowDose=1.05, highDose=2.8,

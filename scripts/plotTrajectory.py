@@ -29,7 +29,6 @@ from chainModel import simulateChain
 from wellMixed import simulateWellMixed
 
 
-# ---- aesthetics (match plotDoubleEdge / plotDoseCurves) ------------------
 BASE_FONT = 28
 mpl.rcParams.update({
     'font.family':       'Gillius ADF',
@@ -47,7 +46,6 @@ COLOR_BF = '#3a3a3a'
 COLOR_WM = '#bfbfbf'
 
 
-# ---- simulation helpers --------------------------------------------------
 
 def bf_params(dose, l=100, bCore=0.2):
     return {
@@ -82,16 +80,18 @@ def wm_trajectory(params, seed, dt=0.1):
     p['nInit'] = params['nInit']
     cur_state_seed = seed
     cur_t = 0.0
-    # Use a single run and approximate via piecewise: simpler is to repeatedly
-    # advance with `maxTime` -- but we don't have a way to resume. Easier:
-    # rerun the full sim but capture intermediate states via a custom sampler.
-    # Since wellMixed is a pure birth-death process and doesn't expose a
-    # trajectory, we simulate the analytical curve instead: it's an exponential
-    # decay at rate s_e = dose - 1, perfectly deterministic in the mean for
-    # large N.  We use the stochastic seed only to randomize the extinction
-    # tail.
+    '''
+    Use a single run and approximate via piecewise: simpler is to repeatedly
+    advance with `maxTime` but we don't have a way to resume. Easier:
+    rerun the full sim but capture intermediate states via a custom sampler.
+    Since wellMixed is a pure birth-death process and doesn't expose a
+    trajectory, we simulate the analytical curve instead: it's an exponential
+    decay at rate s_e = dose - 1, perfectly deterministic in the mean for
+    large N.  We use the stochastic seed only to randomize the extinction
+    tail.
+    '''
     s_e = params['dWtEdge'] - params['bWtEdge']
-    # Analytical mean trajectory (deterministic except for the extinction tail).
+    # Analytical mean trajectory (deterministic except for the extinction tail)
     t_grid = np.linspace(0, 5.0 / s_e * np.log(params['nInit']), 400)
     N_grid = params['nInit'] * np.exp(-s_e * t_grid)
     return t_grid, N_grid
@@ -105,12 +105,12 @@ def mean_trajectory(simulator, params, n_seeds, recordEvery, t_grid):
         times, N = simulator(params, seed=k, recordEvery=recordEvery)
         if N[-1] == 0:
             extinct_t.append(times[-1])
-        # piecewise-constant interpolation: each snapshot holds until the next
+        # piecewise-constant interpolation
         N_at[k] = np.interp(t_grid, times, N, left=N[0], right=0.0)
     return N_at.mean(axis=0)
 
 
-# ---- plot ----------------------------------------------------------------
+
 
 def plot_trajectory(outPath, dose=1.05, l=100, bCore=0.2, n_seeds=20):
     # Biofilm: average across n_seeds.
@@ -126,10 +126,10 @@ def plot_trajectory(outPath, dose=1.05, l=100, bCore=0.2, n_seeds=20):
 
     bf_mean = mean_trajectory(chain_trajectory, bf_p, n_seeds, 200, t_grid)
 
-    # Well-mixed: use the analytical exponential decay over the same grid.
+    # wm: use analytical exponential decay over same grid.
     wm_s_e = dose - 1.0
     wm_N = bf_p['nInit'] * np.exp(-wm_s_e * t_grid)
-    # Truncate the wm curve once it falls below 0.5 (stochastic extinction).
+    # Truncate wm curve once it falls below 0.5 (stochastic extinction)
     wm_N[wm_N < 0.5] = np.nan
 
     fig, ax = plt.subplots(figsize=(12, 7.5))
@@ -137,20 +137,19 @@ def plot_trajectory(outPath, dose=1.05, l=100, bCore=0.2, n_seeds=20):
     ax.plot(t_grid, wm_N,   color=COLOR_WM, linewidth=3, label='well-mixed',
             zorder=2)
 
-    # Phase 1 / Phase 2 boundary on the biofilm curve.
+    # Phase 1 / Phase 2 boundary on the biofilm curve
     ax.axvline(T_1_analytic, color=COLOR_BF, linestyle=':', linewidth=2,
                alpha=0.7)
-    # Label Phase 1 and Phase 2 regions on the biofilm curve.
     y_label = bf_p['nInit'] * 0.45
     ax.text(T_1_analytic / 2, y_label,
-            'Phase 1\n(buffered decline)',
+            'Phase 1\n(Core Present)',
             ha='center', va='center', fontsize=BASE_FONT - 4, color=COLOR_BF)
     ax.text(T_1_analytic + (t_max - T_1_analytic) / 2, y_label,
-            'Phase 2\n(final collapse)',
+            'Phase 2\n(Core Lost)',
             ha='center', va='center', fontsize=BASE_FONT - 4, color=COLOR_BF)
 
-    ax.set_xlabel('time (edge generations)')
-    ax.set_ylabel('population size $N(t)$')
+    ax.set_xlabel('Time (Edge Generations)')
+    ax.set_ylabel('Population Size $N(t)$')
     ax.set_xlim(0, t_max)
     ax.set_ylim(0, bf_p['nInit'] * 1.05)
     ax.legend(frameon=False, loc='upper right')

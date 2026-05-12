@@ -25,7 +25,6 @@ from chainModel import simulateChain
 from kymograph import plotKymograph
 
 
-# ---- aesthetics (match the rest of the writeup figures) -----------------
 BASE_FONT = 28
 mpl.rcParams.update({
     'font.family':       'Gillius ADF',

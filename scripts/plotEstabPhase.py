@@ -23,7 +23,6 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.normpath(os.path.join(THIS_DIR, '..'))
 
 
-# ---- style ---------------------------------------------------------------
 BASE_FONT = 28
 mpl.rcParams.update({
     'font.family':       'Gillius ADF',
