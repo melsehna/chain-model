@@ -30,7 +30,7 @@
 \newcommand{\dCore}{d_c}
 \newcommand{\bR}{b_R}
 \newcommand{\dR}{d_R}
-\newcommand{\sR}{s_R}
+\newcommand{\wR}{w_R}
 
 \title{Spatial rescue in biofilms:\\
 a double-edged sword}
@@ -55,9 +55,7 @@ more often at high dose. When the interior is dormant, the biofilm
 has no rescue advantage at any dose and is uniformly less likely to evolve resistance than the well-mixed reference population.
 \end{abstract}
 
-% ---------------------------------------------------------------------------
 \section{The question}
-% ---------------------------------------------------------------------------
 
 The current antibiotic resistance crisis is a major public health threat, and biofilms are a key part of the problem. Biofilms are dense, surface-attached communities of bacteria that are common in nature and in infections. They are notoriously hard to kill with antibiotics, and they are thought to be responsible for a large fraction of chronic infections. Understanding how biofilms evolve resistance under antibiotic treatment is therefore an important question. Furthermore, treating infections with behavior-modifying interventions, such that a compound may induce increased biofilm formation, or increased dispersal (towards a well-mixed population), is an active area of research. The intuition is that while antibiotics induce high killing selective pressure, behavior-modifying interventions may not kill bacteria, but could reduce the population's ability to evolve antibiotic resistance by disrupting the spatial structure of the biofilm. To predict the evolutionary consequences of such interventions, we need to understand how the spatial structure of a biofilm affects the population's ability to evolve resistance in the first place, and whether applying such a treatment is likely to help or hurt the population's chances of survival when applied in conjunction with antibiotics. 
 
@@ -67,10 +65,8 @@ The naive intuition is that the refuge provided by a biofilm should help a popul
 
 
 
-% ---------------------------------------------------------------------------
 \section{The model}
 \label{sec:model}
-% ---------------------------------------------------------------------------
 
 The biofilm is a one-dimensional chain of cells. The outermost $l$ cells of the chain form the \textbf{edge}, where the antibiotic is
 present. Everything deeper forms the \textbf{core}, where the
@@ -88,7 +84,7 @@ compartment and its genotype.
     always net-dying under treatment.
     \item \textbf{Edge, R}: Resistant cells in the edge have birth
     rate $\bR = 1$ and death rate $\dR = 0.6$. Their net growth rate
-    $\sR = \bR - \dR = 0.4$ is positive, so once an R lineage
+    $\wR = \bR - \dR = 0.4$ is positive, so once an R lineage
     establishes, it grows.
     \item \textbf{Core, WT and R}: Cells in the core have balanced
     birth and death rates, $\bCore = \dCore$, so the core has no net
@@ -151,7 +147,7 @@ $l$              & $100$         & Edge width (cells exposed to drug) \\
 $\bEdge$         & $1.0$         & WT birth rate in edge (sets time unit) \\
 $\dEdge$         & dose (swept)  & WT death rate in edge; super-MIC is $\dEdge > 1$ \\
 $\bR$            & $1.0$         & R birth rate in edge \\
-$\dR$            & $0.6$         & R death rate in edge ($\sR = 0.4$) \\
+$\dR$            & $0.6$         & R death rate in edge ($\wR = 0.4$) \\
 $\bCore = \dCore$ & $0.2$ (swept) & Core birth/death rate (active by default; $0$ = dormant) \\
 $\mu$            & $10^{-4}$     & Mutation probability per birth \\
 $r_{\text{thr}}$ & $10$          & Resistant edge cells required to declare rescue \\
@@ -161,11 +157,9 @@ $r_{\text{thr}}$ & $10$          & Resistant edge cells required to declare resc
 ($\dEdge$), core activity ($\bCore$), and edge length ($l$).}
 \end{table}
 
-We sweep dose over $\dEdge \in \{1.05,\,1.1,\,1.2,\,1.4,\,1.6,\,1.9,\,
-2.3,\,2.8\}$, core activity over $\bCore \in \{0,\,0.05,\,0.1,\,0.2,\,0.4,\,0.8\}$, and edge length $l \in \{0, 25, 50, 100, 200, 400\}$ with $5{,}000$ independent runs at every parameter combination. The well-mixed
-reference is run at the same set of doses, also $5{,}000$ replicates per
-dose. Every run terminates naturally on either rescue ($r_{\text{edge}} \geq r_{\text{thr}}$) or extinction ($N = 0$); no
-artificial time or generation cap is applied.
+We sweep dose over $\dEdge \in \{1.05,\,1.1,\,1.2,\,1.4,\,1.6,\,1.9,\,2.3,\,2.8\}$, core activity over $\bCore \in \{0,\,0.05,\,0.1,\,0.2,\,0.4,\,0.8\}$, and edge length $l \in \{0, 25, 50, 100, 200, 400\}$ with $5{,}000$ independent runs at every parameter combination. The well-mixed reference is run at the same set of doses, also $5{,}000$ replicates per dose. Every run terminates naturally on either rescue ($r_{\text{edge}} \geq r_{\text{thr}}$) or extinction ($N = 0$); no artificial time or generation cap is applied. 
+
+During these sweeps, we hold $b_e, b_R, and d_R$ fixed at $1.0, 1.0, and 0.6$ respectively, whereas the swept parameter governing antibiotic dose is represented by $d_e$, which starts at a dose of $1.05$ (just above the WT birth rate $b_E = 1.0$) and goes up to $d_E = 2.8$ (such that at the highest dose, WT experiences 2.8 times more deaths than births in the edge). The core activity parameter $b_c$ is swept from $0$ (fully dormant) to $0.8$ (modeled such that cells in the core experience $b_c \cdot b_e$ activity), with the default value set at $0.2$, where both WT and R cells have the same birth and death rates in the core ($\bCore_WT = \dCore_R$) since we treat it as shielded from antibiotic selection. The edge length $l$ is swept from $0$ (no edge, fully well-mixed) to $400$ (thick edge, thin core), with the default value at $100$[].
 
 
 
@@ -195,28 +189,22 @@ simulation runs.}
 \label{fig:doubleedge}
 \end{figure}
 
-\paragraph{Panel A: dormant core.}
-When the interior cannot divide, the biofilm rescues less often than the
-well-mixed population at both doses. The well-mixed bar is taller in
-each subplot. The shielded interior does not buy any benefit when
-nothing is happening inside it---the spatial structure is purely a
-liability.
+\subsection{Figure 1 Panel A: dormant core.}
+Figure 1 Panel A shows us the result of 5,000 simulations per parameter combination, where we simulate a biofilm and a well-mixed population, such that the biofilm has zero turnover (no births or deaths) in the core, mimicking a completely dormant biofilm. The bar plot demonstrates that when the interior cannot divide, the biofilm rescues less often than the well-mixed population at both low and high antibiotic doses. This suggests that the shielded interior of a biofilm does not buy any benefit when the spatially protected core reservoir is not active. Thus, the "protective" spatial structure of a biofilm could be considered a liability preventing rescue by antibiotic resistance evolution if the core is dormant.
 
-\paragraph{Panel B: active core.}
-When the interior is dividing at a steady rate, the picture splits in
-two. At low dose, the biofilm still loses---just as in Panel A. But at
-high dose the bars flip: the biofilm rescues roughly \emph{twice} as
-often as the well-mixed reference. The same spatial structure that
-hurts at low dose now helps at high dose. This is the double-edged
-sword.
+This is likely due to the fact that without any births to generate new mutations in the core, the only source of resistance mutations is from the edge, where growth rates are higher. However, the edge is under much stronger selection pressure from the antibiotic compared to the core which does not experirence antibiotic selection, which may lead to a rapid decline in population size and therefore a lower probability of generating and fixing resistance mutations before extinction occurs. 
 
-\paragraph{What this means together.}
+In contrast, the well-mixed population has a more uniform exposure to the antibiotic, which may allow for a more gradual decline and a higher chance of resistance mutations arising and taking over before extinction.
+
+\subsection{Figure 1 Panel B: active core.}
+Figure 1 Panel B shows us that when the interior is dividing at a steady rate, the result is a flip in rescue probability depending on antibiotic dose (ie., selection pressure). At low dose / low selection pressure, the biofilm has lower probability of rescue compared to well-mixed, just as in Panel A. But at high dose the bars flip: the biofilm rescues roughly twice as often as the well-mixed reference. The same spatial structure that hurts at low dose now helps at high dose. Hence, the "double-edged sword" analogy.
+
+\subsection{Figure 1 Implications}
 The biofilm only wins under one specific combination: high dose plus an
-active core. Neither piece is enough on its own:
+active core. Thus, Figure 1 illustrates:
 \begin{itemize}
-    \item A dormant core never helps, no matter the dose.
-    \item An active core only helps at high dose; at low dose it still
-    loses.
+    \item A biofilm with a dormant core never rescues more than well-mixed, no matter the antibiotic dose.
+    \item An biofilm with an active core only rescues more than well-mixed at high dose; at low dose it still suppresses antibiotic resistance relative to well-mixed.
 \end{itemize}
 The two conditions have to coincide for the spatial structure to pay
 off.
@@ -742,20 +730,20 @@ of the active core's extra mutations is delivered before drift
 removes them, and the supply bonus finally translates into a rescue
 advantage. The crossover between these regimes is the bar-plot flip.
 
-% ---------------------------------------------------------------------------
 \section{A small per-mutation tax}
-\label{sec:tax}
-% ---------------------------------------------------------------------------
+% \label{sec:tax}
 
-\TODO{Brief treatment of the establishment penalty. Cite Panel B of
+\subsection{TODO}
+
+Brief treatment of the establishment penalty. Cite Panel B of
 Fig~\ref{fig:decomposition}: BF mutations establish less often than
 WM. Cause is two-part: (i) global N is preserved by the core during
 Phase 1, lowering the density factor on R births; (ii) WT
 competitors in the edge are continually replaced. Either way, the
-result is a flat $\sim 20\%$ tax that the supply boost has to overcome.}
+result is a flat $\sim 20\%$ tax that the supply boost has to overcome.
 
-% --- OLD Track 1 SECTION (kept for reference, no longer in writeup) -------
-\iffalse
+% % --- OLD Track 1 SECTION (kept for reference, no longer in writeup) -------
+% \iffalse
 
 The first track is the per-mutation deficit: every mutation in a
 biofilm has a worse chance of taking over than the same mutation in a
@@ -835,6 +823,6 @@ is active or dormant, so suppression alone would predict that an active
 biofilm should lose, just by a different margin. The second track---why
 an active core produces so many extra mutations, and what those
 mutations do at high dose---is the subject of the next section.
-\fi
+% \fi
 
 \end{document}

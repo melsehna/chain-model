@@ -1,0 +1,23 @@
+\section{The double-edged sword}
+\label{sec:doubleedge}
+
+Section~\ref{sec:intro} closed with a prediction (the refuge should help) and two distinct ways the prediction could be wrong. The refuge could be useless on its own, with the extra lifetime never translating into extra rescue. Or the refuge could be helpful only under specific conditions, say only when the antibiotic dose is high or only when the interior is metabolically active, so that the average effect across regimes hides a sharp contingency. These are different failure modes, and they imply different things about what spatial structure does for a population trying to evolve resistance. We want to distinguish them in a single experiment.
+
+The cleanest way to do that is to vary two knobs independently. The first knob is the antibiotic dose, which we sweep between a value just above the minimum inhibitory concentration ($\dEdge = 1.05$) and a value well above it ($\dEdge = 2.8$). The second is the metabolic activity of the interior, which we set to two values: $\bCore = 0$ (dormant; the interior is a passive refuge with no births and no deaths) and $\bCore = 0.8$ (active; the interior is dividing at a substantial fraction of the edge rate). At each of the four combinations we run $5{,}000$ independent simulations of the biofilm and $5{,}000$ of the well-mixed reference, and compute the fraction that rescue.
+
+Each of the two knobs isolates a different question. The dormant-core column ($\bCore = 0$) asks whether the geometric refuge by itself matters: with no births in the interior, the only thing the biofilm gains over the well-mixed reference is extra lifetime; does that alone help? The active-core column ($\bCore = 0.8$) asks whether what happens inside the refuge matters: with the interior dividing, the biofilm has extra cell divisions on top of the lifetime extension; do those help? And running both at low and high dose asks whether the answers depend on the selection pressure that is forcing rescue in the first place. Four cells of a $2 \times 2$ design, three live hypotheses tested at once.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{double_edge_rescue.png}
+\caption{Rescue probability for the biofilm (dark) versus the well-mixed reference (light), at low dose ($\dEdge = 1.05$, left columns) and high dose ($\dEdge = 2.8$, right columns). Panel A: dormant core ($\bCore = 0$). Panel B: active core ($\bCore = 0.8$). Each subplot uses its own y-axis scale. \emph{Parameters}: $\Nzero = 1000$, $l = 100$, $\mu = 10^{-4}$; each bar averages over $5{,}000$ independent simulation runs.}
+\label{fig:doubleedge}
+\end{figure}
+
+The result, shown in Figure~\ref{fig:doubleedge}, reduces to two clean observations rather than four panel-by-panel readings. First, the dormant-core column is uniformly low: at both low dose and high dose, the biofilm with a passive interior rescues less often than the well-mixed reference, with the dark bars sitting strictly below the light bars in Panel A. The geometric refuge by itself (extra lifetime, no extra divisions) does not give the biofilm a rescue advantage at any dose we tested. Whatever the shielded interior is buying the population in lifetime, it is not being converted into extra rescue probability when no division happens inside.
+
+Second, within the active-core column, the dose decides. With the interior dividing at $\bCore = 0.8$ (Panel B), the low-dose comparison still favors the well-mixed reference; but the high-dose comparison inverts, with the biofilm rescuing roughly twice as often as the well-mixed reference at $\dEdge = 2.8$. The same biofilm, with the same parameters, the same conveyor belt, and the same active core, is a net hindrance at low dose and a net help at high dose.
+
+Of the four cells of the $2 \times 2$, only one (high dose paired with an active interior) flips the comparison in the biofilm's favor. A dormant interior never helps regardless of dose; a high dose alone never helps if the interior cannot divide. The biofilm's advantage emerges only at the intersection of the two conditions; neither is sufficient on its own.
+
+This is the \emph{double-edged sword}. The same biofilm, the same spatial structure, the same conveyor belt, operating at different doses, with the comparison flipping from net-harmful to net-helpful as the dose crosses some threshold between $\dEdge = 1.05$ and $\dEdge = 2.8$. Spatial structure is neither friend nor foe; what it is depends on the regime. The rest of this writeup is about why.

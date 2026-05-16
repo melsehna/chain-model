@@ -1,0 +1,96 @@
+\section{The model}
+\label{sec:model}
+
+We model the biofilm as a one-dimensional chain of cells. Real biofilms are three-dimensional, but the central asymmetry we are after (drug-exposed surface versus shielded interior) does not need three dimensions to capture. One dimension keeps the dynamics tractable while preserving the feature that matters: cells at different positions face different antibiotic concentrations.
+
+\subsection{The chain and rates}
+\label{ssec:chain}
+
+The state of the population at any time $t$ is an ordered list of cells indexed $0, 1, \ldots, N(t) - 1$. Index $0$ is the deep interior; index $N(t) - 1$ is the outer surface. Each cell has a genotype, either wild-type (WT) or resistant (R), and a position determined by its index. The total chain length $N(t)$ changes as cells are born and die.
+
+Antibiotic exposure is a step function in position. The rightmost $l$ cells of the chain form the \textbf{edge}, the region where antibiotic concentration is lethal to WT. All cells with index $< N - l$ form the \textbf{core}, the shielded interior. The boundary between edge and core sits at position
+\begin{equation}
+b(t) \;=\; \max\bigl(0,\, N(t) - l\bigr),
+\label{eq:boundary}
+\end{equation}
+so as the population shrinks, the boundary retreats from the surface toward the interior. When $N(t) \le l$ the boundary collapses to $b = 0$, and the entire population is edge; no core remains. The flat step-function profile is a stylization of the real, smooth antibiotic gradient through a biofilm. Treating the boundary as sharp is the minimum-viable abstraction that captures the asymmetry; a smooth gradient would change quantitative numbers but not the qualitative dynamics we are after.
+
+Each cell has a birth rate and a death rate determined by its compartment and its genotype, summarized in Table~\ref{tab:rates}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+                & \multicolumn{2}{c}{Core ($i < b$)} & \multicolumn{2}{c}{Edge ($i \ge b$)} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+                & birth        & death        & birth        & death \\
+\midrule
+Wild-type (WT)  & $\bCore$     & $\dCore$     & $\bEdge$     & $\dEdge$ \\
+Resistant (R)   & $\bCore$     & $\dCore$     & $\bR$        & $\dR$ \\
+\bottomrule
+\end{tabular}
+\caption{Per-cell birth and death rates by compartment and genotype. The eight compartment-genotype-event combinations drive the Gillespie dynamics described in \S\ref{ssec:dynamics}.}
+\label{tab:rates}
+\end{table}
+
+The edge WT birth rate $\bEdge = 1$ sets the time unit. The edge WT death rate $\dEdge$ is the antibiotic dose, swept over values $\dEdge > \bEdge$ so WT cells in the edge are always net-dying under treatment. Resistant cells in the edge have $\bR = 1$ and $\dR = 0.6$, giving them a positive net growth rate $\sR = \bR - \dR = 0.4$ once they reach the drug-exposed surface; an R lineage that establishes in the edge grows deterministically to dominance. Cells in the core, regardless of genotype, have balanced rates $\bCore = \dCore$. The core has no net growth on its own, and WT and R are treated identically there because the shielded interior carries no selection. The default core rate is $\bCore = 0.2$, a slow but nonzero pace; the dormant-core limit is $\bCore = 0$, where the interior produces no births and no deaths at all. Comparing these two limits is one of the central experiments below.\footnote{To prevent unbounded post-rescue growth, R births in both compartments are multiplied by a Wilson-type density factor $\max(0,\, 1 - N/K)$, with $K = \Nzero$ throughout. WT births stay density-independent. The factor is approximately $1$ during the wild-type decline that we study, so it does not affect the dynamics of interest; it matters only once R has taken over.}
+
+\subsection{Dynamics}
+\label{ssec:dynamics}
+
+Events fire one at a time, sampled as a continuous-time Markov chain via the Gillespie algorithm. At each step we compute the total event rate $R_{\mathrm{tot}}$ across all eight compartment-genotype-event combinations in Table~\ref{tab:rates}, advance simulated time by an exponential draw with mean $1/R_{\mathrm{tot}}$, and pick which event fires from a categorical distribution with weights proportional to each event's rate.
+
+A birth event picks a parent uniformly at random within its compartment-genotype subgroup. The daughter is inserted adjacent to the parent (at the parent's position or one position to the right, each with probability $1/2$), and the chain grows by one. A death event picks a victim uniformly at random within its subgroup and removes it; the chain contracts by one.
+
+The boundary $b(t)$ is recomputed after every event according to Eq.~\eqref{eq:boundary}. When the population grows by one and the boundary moves outward, the cell that now sits at the new boundary position has crossed from edge into core; it is reclassified as a core cell. When the population shrinks and the boundary moves inward, the cell that now sits one position outside the new boundary has crossed from core into edge; it is reclassified as an edge cell. These reclassifications are not separate dynamical events: they are bookkeeping consequences of recomputing the boundary against a chain that has just changed length by one.
+
+This bookkeeping is the \textbf{conveyor belt} mechanism the rest of the writeup will refer to. As long as the core has cells in it, every edge death pulls an interior cell out to the surface, and every edge birth pushes an outer cell back into the interior. The result is that the edge holds exactly $l$ cells while the core has anything left to supply; the population is shrinking, but the surface layer is being continuously replaced from below.
+
+The conveyor belt produces two qualitatively different regimes of decline. While the core still has cells in it ($N(t) > l$), each edge death is replaced immediately by a core cell, so the edge stays at exactly $l$ cells. Only the $l$ edge cells contribute to net loss, at rate $\sE \cdot l$ per unit time, and the total population falls linearly. The duration of this buffered decline is
+\begin{equation}
+T_1 \;=\; \frac{\Nzero - l}{\sE \cdot l},
+\label{eq:T1}
+\end{equation}
+long at low dose (slow edge turnover gradually drains the core) and brief at high dose (fast edge turnover quickly burns through it). Once the core is exhausted ($N(t) \le l$), the edge is the entire remaining population, and there is no reservoir to draw on. The remaining $\le l$ cells decay exponentially at rate $\sE$, just as a well-mixed population would. The transition between these two regimes is sharp on the simulation timescale: it happens at the moment the last core cell is converted to edge. After that point, the dynamics on the chain are indistinguishable from those of a one-compartment well-mixed model with $N = l$.
+
+\subsection{Mutations, rescue, and initial condition}
+\label{ssec:mutations}
+
+Mutations are replication-linked: at each WT birth event, with probability $\mu$, the daughter is an R cell instead of WT; otherwise the daughter inherits the parent's genotype. Mutations are irreversible (no back-mutation from R to WT), so once a lineage is R, all of its descendants are R. Because mutations ride on births, they appear at specific spatial positions on the chain (the position of the dividing parent); a mutation born deep in the core enters the world at the core's spatial location and must be physically transported to the edge to come under selection.
+
+Every R lineage that ever appears is tagged with a unique identifier when its founder is born, and that identifier propagates to all descendants. This lets us follow each mutation individually: where it was born (core or edge), when it appeared, how its descendant population grew, whether it ever reached the edge, and whether it contributed to rescue. The per-lineage records produced by this tracking are the basis for most of the analyses in later sections.
+
+A run is declared rescued when the edge contains at least $r_{\mathrm{thr}} = 10$ resistant cells simultaneously. The choice of $r_{\mathrm{thr}} = 10$ is high enough to be well past the establishment bottleneck (the regime where a small R lineage might still go extinct by chance) but small enough that rescue is declared promptly after takeover begins. Once an R lineage is past establishment in the edge, where $\sR > 0$, it grows deterministically to dominance. Every simulation terminates naturally on one of two events: rescue ($\ge r_{\mathrm{thr}}$ R cells in the edge) or extinction ($N = 0$). There are no artificial time or generation caps. Both endpoints are guaranteed by the dynamics: either a successful resistant lineage establishes in time, or the wild-type population is driven to zero. The model cannot stall in between.
+
+Every simulation starts at $t = 0$ with $N = \Nzero$ wild-type cells and no resistant cells. Before $t = 0$ the population is at quasi-steady state, with balanced birth and death rates in both compartments ($\bEdge = \dEdge = 1$ pre-treatment in the edge, $\bCore = \dCore$ in the core), so the biofilm neither grows nor shrinks. At $t = 0$ the antibiotic switches on: the edge WT death rate jumps from $\bEdge = 1$ to its treatment value $\dEdge > 1$, and the population begins to decline. What we simulate is therefore the response of an already-mature biofilm to a step-function antibiotic challenge. Real treatments are gradual; this abstraction strips out the loading dynamics so that the rescue dynamics, the only thing we are studying, are not entangled with growth-phase or pharmacokinetic transients.
+
+\subsection{The well-mixed reference and parameters}
+\label{ssec:wm}
+
+To say whether the biofilm helps or hurts, we need a baseline. Our baseline is a well-mixed population of the same initial size $\Nzero$, governed by the edge rates alone: every cell is drug-exposed, none are shielded. This is the standard setting for evolutionary rescue (Wilson et al., 2017), and it is the natural null model, the same biofilm with all spatial structure removed. Operationally, the well-mixed reference is the chain model with $l \ge \Nzero$: when the edge is as wide as the entire population, no cell is ever in the core, the conveyor belt never engages, and the dynamics reduce to a one-compartment birth-death process on scalar counts. We also maintain an independent scalar-count implementation as a cross-check; the two agree statistically within sampling error, which serves as an internal consistency test on the chain model.
+
+Unless stated otherwise, all simulations use the parameters in Table~\ref{tab:params}. Time is measured in edge generations ($\bEdge = 1$). The dose sweep covers $\dEdge \in \{1.05,\,1.1,\,1.2,\,1.4,\,1.6,\,1.9,\,2.3,\,2.8\}$. The core-activity sweep covers $\bCore \in \{0,\,0.05,\,0.1,\,0.2,\,0.4,\,0.8\}$. The edge-width sweep covers $l \in \{25,\,50,\,100,\,200,\,400\}$. Every parameter combination is run with $5{,}000$ independent seeds; the well-mixed reference is run at the same dose points with the same seed count.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+Parameter & Value & Meaning \\
+\midrule
+$\Nzero$           & $1000$        & Initial population size \\
+$l$                & $100$         & Edge width (cells exposed to drug) \\
+$\bEdge$           & $1.0$         & WT birth rate in edge (sets time unit) \\
+$\dEdge$           & dose (swept)  & WT death rate in edge; super-MIC is $\dEdge > 1$ \\
+$\bR$              & $1.0$         & R birth rate in edge \\
+$\dR$              & $0.6$         & R death rate in edge ($\sR = 0.4$) \\
+$\bCore = \dCore$  & $0.2$ (swept) & Core birth/death rate ($0$ = dormant) \\
+$\mu$              & $10^{-4}$     & Mutation probability per birth \\
+$r_{\mathrm{thr}}$ & $10$          & Resistant edge cells required to declare rescue \\
+$K$                & $\Nzero$      & Density cap for R births (see footnote, \S\ref{ssec:chain}) \\
+\bottomrule
+\end{tabular}
+\caption{Default model parameters. The swept variables are dose ($\dEdge$), core activity ($\bCore$), and edge width ($l$).}
+\label{tab:params}
+\end{table}

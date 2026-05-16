@@ -1,0 +1,40 @@
+\documentclass[11pt]{article}
+
+\input{preamble}
+
+\title{Spatial rescue in biofilms:\\
+a double-edged sword}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent A biofilm under antibiotic treatment has a clear spatial
+asymmetry: cells on the surface are exposed to the drug, while cells
+in the deeper interior are shielded from it. We ask whether that
+shielded interior makes the population more likely to evolve drug
+resistance and survive, a process known as evolutionary rescue.
+Comparing a spatially structured biofilm model against a well-mixed
+population of the same initial size, and sweeping the antibiotic dose
+along with the metabolic activity of the interior, we find that the
+biofilm is a double-edged sword; it rescues less often than
+the well-mixed reference at low dose, but more often at high dose,
+and only when the interior is metabolically active. We explain this pattern as a consequence of two opposing effects of the spatial structure: a supply mechanism that generates resistant mutants in the interior yet is subject to drift since it is not exposed to the drug, and a delivery mechanism that transports those mutants to the surface where they can grow and establish but is tied to antibiotic dose via the velocity at which the biofilm deteriorates. Our results suggest that the spatial structure of biofilms can both hinder and facilitate evolutionary rescue, and that the balance between these effects depends on the antibiotic dose and the metabolic activity of the interior.
+
+\end{abstract}
+
+\input{sections/01_intro}
+\input{sections/02_model}
+\input{sections/03_headline}
+
+% Sections to come (placeholders, not yet drafted):
+%   04: full dose curves + supply-and-establishment decomposition
+%       (the framework that organizes everything below)
+%   05: sensitivity (l and b_c sweeps; crossover-dose summaries)
+%   06: supply mechanism (lifetime vs cell-time; active-core bonus)
+%   07: delivery (drift-limited core delivery; bolus)
+%   08: per-mutation tax (conveyor belt + density factor)
+
+\end{document}

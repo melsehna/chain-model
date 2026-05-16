@@ -1,0 +1,40 @@
+% Preamble for writeup_v3.
+% Shared packages, fonts, hyperref config, and notation shortcuts.
+
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+% Figures live at chain-model/figures/ and chain-model/figures/panels/;
+% this file is at chain-model/writing/writeup_v3/, so paths are two levels up.
+\graphicspath{{../../figures/}{../../figures/panels/}}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{enumitem}
+
+\geometry{margin=1.2in}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=blue!60!black,
+    urlcolor=blue!60!black
+}
+
+% Match the figure typography: Computer Modern Sans Serif throughout.
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[T1]{fontenc}
+
+% Notation shortcuts.
+\newcommand{\Nzero}{N_0}
+\newcommand{\bEdge}{b_e}
+\newcommand{\dEdge}{d_e}
+\newcommand{\bCore}{b_c}
+\newcommand{\dCore}{d_c}
+\newcommand{\bR}{b_R}
+\newcommand{\dR}{d_R}
+\newcommand{\sR}{s_R}
+\newcommand{\sE}{s_e}
+
+% Inline TODO marker for stub sections.
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: }#1\textbf{]}}}
