@@ -1,0 +1,13 @@
+\section{Supply and establishment}
+\label{sec:supplyestab}
+
+Section~\ref{sec:doubleedge} ended by separating rescue into two requirements: a resistance mutation has to arise (supply), and once it does, it has to grow to dominance in the drug-exposed edge, where antibiotic selection makes resistance an advantage (establishment). To understand where the dose-dependent flip in Figure~\ref{fig:doubleedge} comes from, we measure each requirement separately. The comparison between biofilm and well-mixed then splits into two pieces: how many mutations each population produces, and what fraction of those mutations establish in the edge.
+
+Before splitting rescue into its two pieces, we first check that the bar-plot flip is a continuous feature of the dose response, not an artifact of sampling at two specific doses. Figure~\ref{fig:dosecurves} shows the three populations across the full dose sweep, with the active-core biofilm drawn at our default $\bCore = 0.2$ rather than the more extreme $\bCore = 0.8$ used in Figure~\ref{fig:doubleedge}. The active-core biofilm crosses the well-mixed reference smoothly near $\dEdge \approx 1.4$ and stays above it at every higher dose; the dormant-core biofilm sits below the well-mixed reference at every dose and never crosses. The crossover is therefore structural, visible even at the more modest active value.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\textwidth]{dose_curves_rescue.png}
+\caption{Probability of rescue versus dose for the three populations: well-mixed reference (open circles), biofilm with a dormant core ($\bCore = 0$, open squares), and biofilm with an active core ($\bCore = 0.2$, filled triangles). Each point averages $5{,}000$ independent simulations; the y-axis is on a log scale. \emph{Parameters}: $\Nzero = 1000$, $l = 100$, $\mu = 10^{-4}$.}
+\label{fig:dosecurves}
+\end{figure}

@@ -4,6 +4,8 @@
 \usepackage{amsmath, amssymb}
 \usepackage{geometry}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing}
 % Figures live at chain-model/figures/ and chain-model/figures/panels/;
 % this file is at chain-model/writing/writeup_v3/, so paths are two levels up.
 \graphicspath{{../../figures/}{../../figures/panels/}}
@@ -22,6 +24,10 @@
 }
 
 % Match the figure typography: Computer Modern Sans Serif throughout.
+% \renewcommand{\familydefault}{\sfdefault}
+% \usepackage[T1]{fontenc}
+
+% arial font
 \renewcommand{\familydefault}{\sfdefault}
 \usepackage[T1]{fontenc}
 
