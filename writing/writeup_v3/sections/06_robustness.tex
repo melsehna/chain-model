@@ -1,0 +1,15 @@
+\section{Robustness of the rescue flip}
+\label{sec:robustness}
+
+Sections~\ref{sec:doubleedge} through~\ref{sec:reachingedge} have built and tested the rescue flip at one specific parameter combination ($\Nzero = 1000$, $l = 100$, $\mu = 10^{-4}$). A reader who has accepted the race mechanism in Section~\ref{sec:reachingedge} would reasonably ask whether the rescue flip is a robust qualitative feature of the model, or an artifact of this one setting. We sweep the three parameters held fixed in those sections (edge width $l$, core activity $\bCore$, and mutation rate $\mu$) and ask two questions of each sweep: does the flip persist across the parameter range, and does the crossover dose shift in ways the race mechanism from Section~\ref{sec:reachingedge} would predict?
+
+Figure~\ref{fig:sensL} sweeps the edge width $l$ across $\{25, 50, 100, 200, 400\}$, holding all other parameters at their defaults. Panel A shows the dose curves for the biofilm at each $l$ alongside the well-mixed reference; Panel B shows the corresponding $\Delta P(\mathrm{rescue}) = P_{\mathrm{BF}} - P_{\mathrm{WM}}$. The flip persists across a sixteen-fold change in edge width. At smaller $l$ the flip is sharper: the crossover happens at lower dose ($\dEdge \approx 1.2$ at $l = 25$) and the high-dose advantage is larger ($\Delta P \approx 0.015$ at $\dEdge = 2.8$, $l = 25$). At larger $l$ the flip is muted: at $l = 400$, the biofilm and well-mixed populations are essentially indistinguishable across the entire dose range.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{sensL_curves.png}
+\caption{Sensitivity of the rescue flip to edge width $l$. Panel A: $P(\mathrm{rescue})$ vs dose for the biofilm at five values of $l \in \{25, 50, 100, 200, 400\}$ and the well-mixed reference (open circles, dashed). Panel B: difference relative to the well-mixed reference, $\Delta P(\mathrm{rescue}) = P_{\mathrm{BF}} - P_{\mathrm{WM}}$, with the dotted horizontal line at zero marking the no-difference baseline. Each point averages $5{,}000$ independent simulations per parameter combination. \emph{Parameters}: $\Nzero = 1000$, $\bCore = 0.2$, $\mu = 10^{-4}$.}
+\label{fig:sensL}
+\end{figure}
+
+Both shifts can be read through the race mechanism from Section~\ref{sec:reachingedge}. Smaller $l$ has two competing effects on the race. The boundary speed is $\sE \cdot l$, so smaller $l$ slows boundary retreat in absolute cell terms, which by itself would reduce the fraction of core mutations that reach the edge. But smaller $l$ also makes the core larger relative to the total population (it is $\Nzero - l$ cells), which means more core births per unit time and a longer Phase 1 over which to produce them: the duration $T_1 = (\Nzero - l) / (\sE \cdot l)$ increases as $l$ decreases. The larger pool of core mutations more than compensates for the slower boundary retreat. The net effect tilts the race toward the biofilm at smaller $l$, which is what Panel B shows.
