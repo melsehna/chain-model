@@ -1,0 +1,40 @@
+# HTCondor submit file for Figure 4 Panel B targeted re-sweep, wellMixed branch.
+#
+# Boosts wellMixed runs from 5000 to 20000 seeds per dose (seeds 5000-19799
+# in 75 batches of 200). Output files land under main_ prefix in results/,
+# alongside the existing main sweep results.
+#
+# Generate panel4BMain.txt first:  python genPanel4BExtraJobs.py
+# Then submit:                     condor_submit sweepPanel4BMain.sub
+
+universe   = vanilla
+executable = runBatch.sh
+
+request_cpus   = 1
+request_memory = 1024MB
+request_disk   = 200MB
+
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage        = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
+
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../../src/chainModel.py, ../../src/wellMixed.py, runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+output = logs/panel4BMain_$(Cluster).$(Process).out
+error  = logs/panel4BMain_$(Cluster).$(Process).err
+log    = logs/panel4BMain_$(Cluster).$(Process).log
+
+# Arguments: condition dose seedStart seedCount mu bCoreRatio outFile
+arguments              = $(condition) $(dose) $(seedStart) 200 1e-4 0.2 main_$(condition)_dose$(dose)_s$(seedStart).csv
+transfer_output_files  = main_$(condition)_dose$(dose)_s$(seedStart).csv
+transfer_output_remaps = "main_$(condition)_dose$(dose)_s$(seedStart).csv = results/main_$(condition)_dose$(dose)_s$(seedStart).csv"
+
+queue condition, dose, seedStart from panel4BMain.txt
