@@ -5,15 +5,19 @@ Serif, min font 28, black / dark-grey / light-grey palette, no error
 bars):
 
     figures/panels/dose_curves_rescue.png
-        P(rescue) vs dose. Three lines: biofilm with dormant core,
-        biofilm with active core, well-mixed reference. Generalizes the
-        four-corner bar plot to the full swept dose range.
+        Two-panel stacked. Panel A: absolute P(rescue) vs dose, three
+        lines (biofilm dormant core, biofilm active core, well-mixed).
+        Panel B: delta P(rescue) = P_BF - P_WM vs dose, two lines
+        (biofilm dormant, biofilm active), with a horizontal reference
+        line at zero.
 
     figures/panels/decomposition.png
-        Two-panel decomposition of P(rescue):
-            (left)  mean total R lineages per run vs dose
-            (right) per-mutation establishment fraction vs dose
-        Same three conditions.
+        Two side-by-side panels, ratio / delta only (absolute values
+        not shown). Panel A: supply ratio S_BF / S_WM vs dose, log y.
+        Panel B: delta per-mutation establishment P_est_BF - P_est_WM
+        vs dose, linear y. Both panels show two lines (biofilm dormant,
+        biofilm active) with a reference line at the no-difference
+        value (y=1 for the ratio, y=0 for the delta).
 '''
 import argparse
 import os
@@ -26,7 +30,6 @@ import matplotlib.pyplot as plt
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.normpath(os.path.join(THIS_DIR, '..'))
-
 
 
 BASE_FONT = 28
@@ -82,26 +85,64 @@ def p_est(df):
     return nEst / nMut if nMut > 0 else float('nan')
 
 
+def _delta_by_dose(bf_df, wm_df, fn):
+    '''Aligned series of fn(bf) - fn(wm) at each shared dose.'''
+    bf_g = _by_dose(bf_df, fn)
+    wm_g = _by_dose(wm_df, fn)
+    m = pd.merge(bf_g, wm_g, on='dose', suffixes=('_bf', '_wm'))
+    m = m.sort_values('dose')
+    return m['dose'].values, (m['value_bf'] - m['value_wm']).values
+
+
+def _ratio_by_dose(bf_df, wm_df, fn):
+    '''Aligned series of fn(bf) / fn(wm) at each shared dose.'''
+    bf_g = _by_dose(bf_df, fn)
+    wm_g = _by_dose(wm_df, fn)
+    m = pd.merge(bf_g, wm_g, on='dose', suffixes=('_bf', '_wm'))
+    m = m.sort_values('dose')
+    return m['dose'].values, (m['value_bf'] / m['value_wm']).values
+
+
 def _style_axes(ax):
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.tick_params(axis='both', which='major', length=6, width=1.2)
 
 
-def plot_dose_curves_rescue(wm_df, bf_dormant_df, bf_active_df, outPath):
-    fig, ax = plt.subplots(figsize=(12, 7.5))
+def _panel_label(ax, letter, dx=-0.13):
+    ax.annotate(letter, xy=(dx, 1.02), xycoords='axes fraction',
+                fontsize=BASE_FONT + 8, fontweight='bold',
+                ha='left', va='top')
 
+
+def plot_dose_curves_rescue(wm_df, bf_dormant_df, bf_active_df, outPath):
+    fig, axes = plt.subplots(2, 1, figsize=(12, 14), sharex=True,
+                             gridspec_kw={'height_ratios': [1.15, 1]})
+
+    # Panel A: absolute P(rescue).
+    axA = axes[0]
     for df, key in [(wm_df, 'wm'),
                     (bf_dormant_df, 'bf_dormant'),
                     (bf_active_df, 'bf_active')]:
         g = _by_dose(df, p_rescue)
-        ax.plot(g.dose, g.value, **STYLES[key])
+        axA.plot(g.dose, g.value, **STYLES[key])
+    axA.set_yscale('log')
+    axA.set_ylabel(r'$P(\mathrm{rescue})$')
+    axA.legend(frameon=False, loc='lower left')
+    _panel_label(axA, 'A')
+    _style_axes(axA)
 
-    ax.set_yscale('log')
-    ax.set_xlabel(r'dose $d_e$')
-    ax.set_ylabel(r'$P(\mathrm{rescue})$')
-    ax.legend(frameon=False, loc='lower left')
-    _style_axes(ax)
+    # Panel B: delta P(rescue).
+    axB = axes[1]
+    for df, key in [(bf_dormant_df, 'bf_dormant'),
+                    (bf_active_df, 'bf_active')]:
+        dose, delta = _delta_by_dose(df, wm_df, p_rescue)
+        axB.plot(dose, delta, **STYLES[key])
+    axB.axhline(0, color='gray', linestyle=':', linewidth=1.5)
+    axB.set_xlabel(r'dose $d_e$')
+    axB.set_ylabel(r'$\Delta P(\mathrm{rescue})$')
+    _panel_label(axB, 'B')
+    _style_axes(axB)
 
     plt.tight_layout()
     plt.savefig(outPath, dpi=200, bbox_inches='tight')
@@ -112,34 +153,31 @@ def plot_dose_curves_rescue(wm_df, bf_dormant_df, bf_active_df, outPath):
 def plot_decomposition(wm_df, bf_dormant_df, bf_active_df, outPath):
     fig, axes = plt.subplots(1, 2, figsize=(17, 7.5))
 
-    # Panel A: mutation supply.
+    # Panel A: delta of mutation supply, symlog y to span both the
+    # near-zero dormant line and the large positive active line.
     axL = axes[0]
-    for df, key in [(wm_df, 'wm'),
-                    (bf_dormant_df, 'bf_dormant'),
+    for df, key in [(bf_dormant_df, 'bf_dormant'),
                     (bf_active_df, 'bf_active')]:
-        g = _by_dose(df, total_mutations)
-        axL.plot(g.dose, g.value, **STYLES[key])
-    axL.set_yscale('log')
+        dose, delta = _delta_by_dose(df, wm_df, total_mutations)
+        axL.plot(dose, delta, **STYLES[key])
+    axL.axhline(0, color='gray', linestyle=':', linewidth=1.5)
+    axL.set_yscale('symlog', linthresh=0.05)
     axL.set_xlabel(r'dose $d_e$')
-    axL.set_ylabel('mean R mutations per run')
+    axL.set_ylabel(r'$\Delta S = S_{\mathrm{BF}} - S_{\mathrm{WM}}$')
     axL.legend(frameon=False, loc='upper right')
-    axL.annotate('A', xy=(-0.18, 1.02), xycoords='axes fraction',
-                 fontsize=BASE_FONT + 8, fontweight='bold', ha='left', va='top')
+    _panel_label(axL, 'A', dx=-0.20)
     _style_axes(axL)
 
-    # Panel B: per-mutation establishment.
+    # Panel B: delta per-mutation establishment, linear y.
     axR = axes[1]
-    for df, key in [(wm_df, 'wm'),
-                    (bf_dormant_df, 'bf_dormant'),
+    for df, key in [(bf_dormant_df, 'bf_dormant'),
                     (bf_active_df, 'bf_active')]:
-        g = _by_dose(df, p_est)
-        # _by_dose with p_est can drop dose values where nMut=0 because
-        # of the apply pattern; reindex to keep a continuous line.
-        axR.plot(g.dose, g.value, **STYLES[key])
+        dose, delta = _delta_by_dose(df, wm_df, p_est)
+        axR.plot(dose, delta, **STYLES[key])
+    axR.axhline(0, color='gray', linestyle=':', linewidth=1.5)
     axR.set_xlabel(r'dose $d_e$')
-    axR.set_ylabel(r'$P(\mathrm{est} \mid \mathrm{edge\ mutation})$')
-    axR.annotate('B', xy=(-0.18, 1.02), xycoords='axes fraction',
-                 fontsize=BASE_FONT + 8, fontweight='bold', ha='left', va='top')
+    axR.set_ylabel(r'$\Delta P(\mathrm{est} \mid \mathrm{edge\ mut})$')
+    _panel_label(axR, 'B', dx=-0.20)
     _style_axes(axR)
 
     plt.tight_layout()
@@ -154,7 +192,7 @@ def main():
     p.add_argument('--sensCoreCsv', default=os.path.join(REPO_ROOT, 'figures', 'sensCore.csv'))
     p.add_argument('--outDir',      default=os.path.join(REPO_ROOT, 'figures', 'panels'))
     p.add_argument('--lowCore',     type=float, default=0.0)
-    p.add_argument('--highCore',    type=float, default=0.8)
+    p.add_argument('--highCore',    type=float, default=0.2)
     args = p.parse_args()
 
     os.makedirs(args.outDir, exist_ok=True)
