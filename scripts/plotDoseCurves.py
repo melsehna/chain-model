@@ -163,7 +163,7 @@ def plot_decomposition(wm_df, bf_dormant_df, bf_active_df, outPath):
     axL.axhline(0, color='gray', linestyle=':', linewidth=1.5)
     axL.set_yscale('symlog', linthresh=0.05)
     axL.set_xlabel(r'dose $d_e$')
-    axL.set_ylabel(r'$\Delta S = S_{\mathrm{BF}} - S_{\mathrm{WM}}$')
+    axL.set_ylabel(r'$\Delta M = M_{\mathrm{BF}} - M_{\mathrm{WM}}$')
     axL.legend(frameon=False, loc='upper right')
     _panel_label(axL, 'A', dx=-0.20)
     _style_axes(axL)
