@@ -194,6 +194,15 @@ def main_cli():
     main_df = pd.read_csv(args.mainCsv, low_memory=False)
     sc_df   = pd.read_csv(args.sensCoreCsv, low_memory=False)
 
+    # For visual consistency, cap all curves at the same seed count.
+    # bCore=0 and bCore=0.2 in sensCore have been boosted to 100k for
+    # Figure 4 Panel B; the other bCore values are at 20k after the §6
+    # boost. Subsetting both inputs to seed < 20000 puts every curve on
+    # equal footing in this figure.
+    SEED_CAP = 20000
+    main_df = main_df[main_df.seed < SEED_CAP]
+    sc_df   = sc_df[sc_df.seed < SEED_CAP]
+
     plot_senscore(main_df, sc_df,
                    os.path.join(args.outDir, 'sensCore_curves.png'))
     plot_crossover_vs_bc(main_df, sc_df,

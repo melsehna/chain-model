@@ -1,0 +1,39 @@
+# HTCondor submit file for §6 sensL targeted boost.
+#
+# Boosts biofilm runs at 5 l values × 8 doses from 5000 to 20000 seeds
+# per (l, dose) combination (seeds 5000-19799 in 75 batches of 200).
+# Output files land under sensL_ prefix in results/.
+#
+# Generate sensLExtraJobs.txt first:  python genSensExtraJobs.py
+# Then submit:                        condor_submit sweepSensLExtra.sub
+
+universe   = vanilla
+executable = runBatch.sh
+
+request_cpus   = 1
+request_memory = 1024MB
+request_disk   = 200MB
+
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage        = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
+
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../../src/chainModel.py, ../../src/wellMixed.py, runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+output = logs/sensLExtra_$(Cluster).$(Process).out
+error  = logs/sensLExtra_$(Cluster).$(Process).err
+log    = logs/sensLExtra_$(Cluster).$(Process).log
+
+arguments              = biofilm $(dose) $(seedStart) 200 1e-4 0.2 sensL_dose$(dose)_l$(lVal)_s$(seedStart).csv $(lVal)
+transfer_output_files  = sensL_dose$(dose)_l$(lVal)_s$(seedStart).csv
+transfer_output_remaps = "sensL_dose$(dose)_l$(lVal)_s$(seedStart).csv = results/sensL_dose$(dose)_l$(lVal)_s$(seedStart).csv"
+
+queue dose, seedStart, lVal from sensLExtraJobs.txt
