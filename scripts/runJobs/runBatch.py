@@ -83,6 +83,10 @@ def main():
                         '(default 3, error rate (dR/bR)^kEst; 8 gives ~1.7%%). The '
                         'nSurvived* columns give the exact criterion (never went extinct), '
                         'which is only unbiased in runs that are not truncated at rescue.')
+    p.add_argument('--tracer', action='store_true',
+                   help='neutral-marker mode: R gets the WT edge rates and rescue is '
+                        'disabled, so runs go to extinction. Measures supply and delivery '
+                        'without truncation bias or selection on the marker.')
     p.add_argument('--densityForm', choices=['linear', 'step', 'none'], default='linear',
                    help="shape of the density factor on R births: 'linear' (Wilson, current), "
                         "'step' (K acts as a ceiling only), 'none' (no cap)")
@@ -111,6 +115,13 @@ def main():
     if args.K is not None:
         params['K'] = args.K
     params['densityForm'] = args.densityForm
+    if args.tracer:
+        # R becomes a neutral label: identical rates to WT in every compartment,
+        # so the population trajectory is that of a pure-WT run and nothing selects
+        # on the marker. Core R rates already default to the WT core rates.
+        params['bREdge'] = params['bWtEdge']
+        params['dREdge'] = params['dWtEdge']
+
     with open(args.out, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow([
@@ -124,7 +135,7 @@ def main():
             'phase1EndTime',
             'nMutEdgePhase1', 'nMutEdgePhase2',
             'nEstEdgePhase1', 'nEstEdgePhase2',
-            'K', 'densityForm', 'kEst',
+            'K', 'densityForm', 'kEst', 'tracer',
             'nSurvivedEdge', 'nSurvivedCore',
         ])
 
@@ -133,7 +144,8 @@ def main():
             seed = args.seedStart + seedOffset
             r = simulator(params, seed=seed, maxTime=args.maxTime,
                           recordEvery=args.recordEvery,
-                          stopAtRescue=True,
+                          stopAtRescue=not args.tracer,
+                          rThreshold=float('inf') if args.tracer else 10,
                           kEst=args.kEst)
             if r['terminationReason'] not in ('rescue', 'extinction'):
                 unexpectedTerm += 1
@@ -191,7 +203,7 @@ def main():
                 nMutEdgeP1, nMutEdgeP2,
                 nEstEdgeP1, nEstEdgeP2,
                 args.K if args.K is not None else params.get('nInit', ''),
-                args.densityForm, args.kEst,
+                args.densityForm, args.kEst, int(args.tracer),
                 nSurvEdge, nSurvCore,
             ])
 
