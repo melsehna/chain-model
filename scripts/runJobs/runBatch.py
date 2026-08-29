@@ -68,6 +68,13 @@ def main():
     p.add_argument('--l', dest='lVal', type=int, default=None,
                    help='override edge width l for biofilm condition '
                         '(default: 100 for biofilm, 2000 for chainWM, ignored for wellMixed)')
+    p.add_argument('--K', type=float, default=None,
+                   help='carrying capacity for the Wilson density factor on R births '
+                        '(default: nInit, i.e. current behavior). Pass a large value '
+                        '(e.g. 1e9) to switch the factor off.')
+    p.add_argument('--densityForm', choices=['linear', 'step', 'none'], default='linear',
+                   help="shape of the density factor on R births: 'linear' (Wilson, current), "
+                        "'step' (K acts as a ceiling only), 'none' (no cap)")
     p.add_argument('--maxTime', type=float, default=float('inf'),
                    help='hard time cap (default inf); model terminates naturally on rescue or extinction')
     p.add_argument('--out', required=True)
@@ -90,6 +97,9 @@ def main():
         simulator = simulateWellMixed
         isChain = False
 
+    if args.K is not None:
+        params['K'] = args.K
+    params['densityForm'] = args.densityForm
     with open(args.out, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow([
@@ -103,6 +113,7 @@ def main():
             'phase1EndTime',
             'nMutEdgePhase1', 'nMutEdgePhase2',
             'nEstEdgePhase1', 'nEstEdgePhase2',
+            'K', 'densityForm',
         ])
 
         unexpectedTerm = 0
@@ -161,6 +172,8 @@ def main():
                 phase1End,
                 nMutEdgeP1, nMutEdgeP2,
                 nEstEdgeP1, nEstEdgeP2,
+                args.K if args.K is not None else params.get('nInit', ''),
+                args.densityForm,
             ])
 
     print(f'Wrote {args.seedCount} rows to {args.out}', file=sys.stderr)

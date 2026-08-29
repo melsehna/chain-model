@@ -74,6 +74,9 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
         dWtEdge              WT death rate in edge (the sweep variable)
         bREdge, dREdge       R birth/death rates in edge
         bRCore, dRCore       R rates in core (default = WT core rates; neutral)
+        K                    carrying capacity for the density factor on R births
+        densityForm          'linear' (default, Wilson), 'step' (K as a ceiling
+                             only), or 'none' (no cap)
 
     Rescue: rEdge >= rThreshold (default 10). Defaults stop only on rescue
     (if stopAtRescue) or extinction (N=0); maxGenerations and maxTime default
@@ -100,6 +103,9 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
     bRE   = float(params['bREdge'])
     dRE   = float(params['dREdge'])
     K     = float(params.get('K', nInit))  # Wilson carrying capacity for R births
+    densityForm = params.get('densityForm', 'linear')
+    if densityForm not in ('linear', 'step', 'none'):
+        raise ValueError(f"densityForm must be 'linear', 'step' or 'none', got {densityForm!r}")
 
     if nMax is None:
         nMax = 10 * nInit
@@ -219,8 +225,16 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
 
         b = max(0, N - l)
 
-        # Wilson density factor on R births only (WT births stay density-independent per Wilson 2017 / Uecker 2014 D=1 model). Applied to R in both compartments using the global (wt+r)/K so the equilibrium m_eq = K*(1 - dR/bR) is well-defined for the entire simulated population.
-        densityFactor = max(0.0, 1.0 - N / K)
+        # Density factor on R births only (WT births stay density-independent per Wilson 2017 / Uecker 2014 D=1 model). Applied to R in both compartments using the global (wt+r)/K.
+        # 'linear' is Wilson's logistic factor: it scales R growth across the whole density range, so with K = nInit a core R cell (bRC = dRC nominally) is subcritical at every N, and no R grows anywhere until N < K*(1 - dR/bR). Equilibrium after rescue is K*(1 - dR/bR).
+        # 'step' treats K as a ceiling only: no effect below it, births blocked at it. Core R stays exactly critical and edge R keeps sR = bR - dR throughout the decline; the rescued population saturates at K.
+        # 'none' removes the cap entirely; only safe when runs stop at rescue.
+        if densityForm == 'linear':
+            densityFactor = max(0.0, 1.0 - N / K)
+        elif densityForm == 'step':
+            densityFactor = 1.0 if N < K else 0.0
+        else:
+            densityFactor = 1.0
 
         ratesList = (
             ('birthWtCore', bWtC * wtCore),

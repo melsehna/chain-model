@@ -58,7 +58,10 @@ def simulateWellMixed(params, seed=None, maxGenerations=np.inf,
         bREdge     R birth rate
         dREdge     R death rate
         K          (optional) carrying capacity for the Wilson density factor
-                   on R births: birthR_rate = bR * r * max(0, 1 - (w+r)/K).
+                   on R births: birthR_rate = bR * r * f(w+r), with f set by
+                   densityForm: 'linear' (default, Wilson) f = max(0, 1 - N/K);
+                   'step' f = 1 below K and 0 at it; 'none' f = 1. Must match the
+                   chain model's setting for chainWM/wellMixed to be comparable.
                    WT births stay density-independent. Default: nInit.
 
     Rescue: r >= rThreshold (default 10).
@@ -76,6 +79,9 @@ def simulateWellMixed(params, seed=None, maxGenerations=np.inf,
     bR    = float(params['bREdge'])
     dR    = float(params['dREdge'])
     K     = float(params.get('K', nInit))  # Wilson carrying capacity for R births
+    densityForm = params.get('densityForm', 'linear')
+    if densityForm not in ('linear', 'step', 'none'):
+        raise ValueError(f"densityForm must be 'linear', 'step' or 'none', got {densityForm!r}")
 
     if nMax is None:
         nMax = 10 * nInit
@@ -121,7 +127,12 @@ def simulateWellMixed(params, seed=None, maxGenerations=np.inf,
             break
 
         # Wilson density factor on R births only (WT births stay density-independent per Wilson 2017 / Uecker 2014 D=1 model)
-        densityFactor = max(0.0, 1.0 - (wt + r) / K)
+        if densityForm == 'linear':
+            densityFactor = max(0.0, 1.0 - (wt + r) / K)
+        elif densityForm == 'step':
+            densityFactor = 1.0 if (wt + r) < K else 0.0
+        else:
+            densityFactor = 1.0
         ratesList = (
             ('birthWt', bWt * wt),
             ('birthR',  bR  * r * densityFactor),
