@@ -1,0 +1,38 @@
+# Full re-run of all four sweeps under the corrected model.
+#   densityForm = step (K is a ceiling on R births, not a gradient), K = nInit
+#   kEst = 8 (count-based establishment); nSurvived* columns carry the exact criterion
+#
+# Generate args first:  python3 genFixedSweepJobs.py
+# Then submit:          condor_submit sweepFixed.sub
+
+universe   = vanilla
+executable = runBatch.sh
+
+request_cpus   = 1
+request_memory = 1024MB
+request_disk   = 200MB
+
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage        = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
+
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../../src/chainModel.py, ../../src/wellMixed.py, runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+output = logs/fx_$(Cluster).$(Process).out
+error  = logs/fx_$(Cluster).$(Process).err
+log    = logs/fx_$(Cluster).$(Process).log
+
+# condition dose seedStart seedCount mu bCoreRatio outFile l K densityForm [extra flags]
+arguments              = $(condition) $(dose) $(seedStart) 200 $(mu) $(bCore) $(prefix)_$(tag)_dose$(dose)_s$(seedStart).csv $(lVal) 1000 step --kEst 8
+transfer_output_files  = $(prefix)_$(tag)_dose$(dose)_s$(seedStart).csv
+transfer_output_remaps = "$(prefix)_$(tag)_dose$(dose)_s$(seedStart).csv = results/$(prefix)_$(tag)_dose$(dose)_s$(seedStart).csv"
+
+queue condition, dose, seedStart, mu, bCore, lVal, prefix, tag from fixedSweepJobs.txt

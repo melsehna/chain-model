@@ -72,6 +72,17 @@ def main():
                    help='carrying capacity for the Wilson density factor on R births '
                         '(default: nInit, i.e. current behavior). Pass a large value '
                         '(e.g. 1e9) to switch the factor off.')
+    p.add_argument('--recordEvery', type=int, default=10**9,
+                   help='trajectory snapshot interval. Batch runs write no trajectory to '
+                        'CSV, so this defaults to effectively off; chainModel copies the '
+                        'whole cell array every recordEvery events, which dominates memory '
+                        'on long runs (a 350k-event run stores ~7000 snapshots at the '
+                        'simulator default of 50).')
+    p.add_argument('--kEst', type=int, default=3,
+                   help='count-based establishment criterion: lineage max live count '
+                        '(default 3, error rate (dR/bR)^kEst; 8 gives ~1.7%%). The '
+                        'nSurvived* columns give the exact criterion (never went extinct), '
+                        'which is only unbiased in runs that are not truncated at rescue.')
     p.add_argument('--densityForm', choices=['linear', 'step', 'none'], default='linear',
                    help="shape of the density factor on R births: 'linear' (Wilson, current), "
                         "'step' (K acts as a ceiling only), 'none' (no cap)")
@@ -113,14 +124,17 @@ def main():
             'phase1EndTime',
             'nMutEdgePhase1', 'nMutEdgePhase2',
             'nEstEdgePhase1', 'nEstEdgePhase2',
-            'K', 'densityForm',
+            'K', 'densityForm', 'kEst',
+            'nSurvivedEdge', 'nSurvivedCore',
         ])
 
         unexpectedTerm = 0
         for seedOffset in range(args.seedCount):
             seed = args.seedStart + seedOffset
             r = simulator(params, seed=seed, maxTime=args.maxTime,
-                          stopAtRescue=True)
+                          recordEvery=args.recordEvery,
+                          stopAtRescue=True,
+                          kEst=args.kEst)
             if r['terminationReason'] not in ('rescue', 'extinction'):
                 unexpectedTerm += 1
                 print(f'WARN seed={seed} terminationReason={r["terminationReason"]} '
@@ -130,6 +144,8 @@ def main():
                 nMutEdge       = r['nLineagesAppearedEdge']
                 nEstEdge       = r['nLineagesEstablishedEdge']
                 nEstCore       = r['nLineagesEstablishedCore']
+                nSurvEdge      = nMutEdge - r['nLineagesExtinctEdge']
+                nSurvCore      = nMutCore - r['nLineagesExtinctCore']
                 nDelivered     = r['nLineagesReachedEdge']
                 meanDelSize    = r['meanDeliverySizeCore']
                 bCoreRatioOut  = args.bCoreRatio
@@ -146,6 +162,8 @@ def main():
                 nMutEdge       = r['nLineagesAppeared']
                 nEstEdge       = r['nLineagesEstablished']
                 nEstCore       = 0
+                nSurvEdge      = nMutEdge - r['nLineagesExtinct']
+                nSurvCore      = 0
                 nDelivered     = 0
                 meanDelSize    = None
                 bCoreRatioOut  = ''  # N/A for wellMixed
@@ -173,7 +191,8 @@ def main():
                 nMutEdgeP1, nMutEdgeP2,
                 nEstEdgeP1, nEstEdgeP2,
                 args.K if args.K is not None else params.get('nInit', ''),
-                args.densityForm,
+                args.densityForm, args.kEst,
+                nSurvEdge, nSurvCore,
             ])
 
     print(f'Wrote {args.seedCount} rows to {args.out}', file=sys.stderr)
