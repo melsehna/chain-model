@@ -1,0 +1,39 @@
+# Post-mortem on the old density rule: densityForm = linear, K = nInit, kEst = 8.
+# Dormant core throughout, so supply matches well-mixed and any rescue difference
+# is per-mutation conversion. Tests whether the old deficit scales with the time
+# the population spends above the gate at N = K(1 - dR/bR) = 400, i.e. with 1/l.
+#
+# Generate args first:  python3 genLinearCheckJobs.py
+# Then submit:          condor_submit sweepLinearCheck.sub
+
+universe   = vanilla
+executable = snapshots/linCheck/runBatch.sh
+
+request_cpus   = 1
+request_memory = 1024MB
+request_disk   = 200MB
+
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage        = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
+
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = snapshots/linCheck/chainModel.py, snapshots/linCheck/wellMixed.py, snapshots/linCheck/runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+output = logs/lin_$(Cluster).$(Process).out
+error  = logs/lin_$(Cluster).$(Process).err
+log    = logs/lin_$(Cluster).$(Process).log
+
+# condition dose seedStart seedCount mu bCoreRatio outFile l K densityForm [extra flags]
+arguments              = $(condition) $(dose) $(seedStart) 200 1e-4 $(bCore) linL_$(tag)_dose$(dose)_s$(seedStart).csv $(lVal) 1000 linear --kEst 8
+transfer_output_files  = linL_$(tag)_dose$(dose)_s$(seedStart).csv
+transfer_output_remaps = "linL_$(tag)_dose$(dose)_s$(seedStart).csv = results/linL_$(tag)_dose$(dose)_s$(seedStart).csv"
+
+queue condition, dose, seedStart, bCore, lVal, tag from linearCheckJobs.txt
