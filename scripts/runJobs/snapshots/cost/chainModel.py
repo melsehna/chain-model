@@ -92,12 +92,6 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
     rng = np.random.default_rng(seed)
 
     mu    = float(params['mu'])
-    # Mutation rate for births in the core. Defaults to mu. Setting it to 0 leaves
-    # the core fully active (cells still divide and die, so the conveyor still
-    # sweeps edge-born lineages inward) while producing no core-born lineages at
-    # all: no core-born rescue can end the run early, so edge-born lineages are no
-    # longer censored by someone else winning the race.
-    muCore = float(params.get('muCore', mu))
     nInit = int(params['nInit'])
     l     = params.get('l')
     l     = None if l is None else int(l)
@@ -296,7 +290,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
                 wtN, rN = wtEdge, rEdge
             idx = pickPosition(cells, rng, cStart, cEnd, isWt, wtN, rN)
 
-            if isWt and rng.random() < (muCore if inCore else mu):
+            if isWt and rng.random() < mu:
                 daughterGenotype = nextLineage
                 recordMutation(nextLineage, inCore, time, generations, idx)
                 nextLineage += 1
@@ -584,7 +578,6 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
         'nLineagesEstablishedEdge': nLineagesEstablishedEdge,
         'nLineagesEdgeBornEnteredCore': nLineagesEdgeBornEnteredCore,
         'nSweepsEdgeBorn': nSweepsEdgeBorn,
-        'muCore': muCore,
         'l': l,
         'phase1EndTime': phase1EndTime,
         'nLineagesAppearedEdgePhase1': nLineagesAppearedEdgePhase1,

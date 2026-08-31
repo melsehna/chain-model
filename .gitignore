@@ -18,8 +18,8 @@ scripts/runJobs/logs/
 figures/legacy/
 
 # Generated job lists (output of scripts/runJobs/gen*Jobs.py)
-sensitivity*Jobs.txt
-sweepMainJobs.txt
+*Jobs.txt
+stepOnlyJobs.txt
 
 # Build artifacts
 *.tar.gz

@@ -1,14 +1,14 @@
 \section{The model}
 \label{sec:model}
 
-We model the biofilm as a one-dimensional chain of cells. Real biofilms are three-dimensional, but the central asymmetry we are after (drug-exposed surface versus shielded interior) does not need three dimensions to capture. One dimension keeps the dynamics tractable while preserving the feature that matters: cells at different positions face different antibiotic concentrations.
+We model the biofilm as a one-dimensional chain of cells. Real biofilms are three-dimensional, but the central asymmetry we are after (drug-exposed surface versus shielded interior) does not need three dimensions to capture. One dimension keeps the dynamics tractable while preserving the feature that matters: cells at different radial distances from the center of a biofilm  face different antibiotic concentrations.
 
 \subsection{The chain and rates}
 \label{ssec:chain}
 
-The state of the population at any time $t$ is an ordered list of cells indexed $0, 1, \ldots, N(t) - 1$. Index $0$ is the deep interior; index $N(t) - 1$ is the outer surface. Each cell has a genotype, either wild-type (WT) or resistant (R), and a position determined by its index. As per convention with evolutionary rescue, the population starts at $t = 0$ with $N(0) = \Nzero$ WT cells and no resistant cells. The population then evolves under antibiotic pressure, which begins at time $t = 0$, with births and deaths changing the chain's length and composition over time. 
+The state of the population at any time $t$ is an ordered list of cells indexed $0, 1, \ldots, N(t) - 1$. Index increases with radial distance from the center of the biofilm, such that index $0$ is the deep interior and index $N(t) - 1$ is the outer surface. Each cell has a genotype, either wild-type (WT) or resistant (R), and a position determined by its index. As per convention with evolutionary rescue models, the population starts at $t = 0$ with $N(0) = \Nzero$ WT cells and no drug-resistant cells. The population then evolves under antibiotic pressure, which begins at time $t = 0$, with births and deaths changing the population size, modeled as linear length, and genotype frequencies over time. 
 
-Antibiotic exposure is a step function in position. At any given population size $N(t)$, the rightmost $l$ cells of the chain form the edge, the region where antibiotic concentration is lethal to WT. In this model, we assume $l$ to be a fixed integer parameter describing the width of the edge, or the thickness of the drug-exposed layer. All cells with index $< N(t) - l$ form the core, the shielded interior. The boundary between edge and core sits at position
+Antibiotic exposure is modeled as a step function in position, as the population is modeled as a single linear chain, where each individual cell has a position along the chain. At any given population size $N(t)$, the rightmost $l$ cells of the chain form the edge, the region where antibiotic concentration is lethal to WT. In this model, we assume $l$ to be a fixed integer parameter describing the width of the edge, or the thickness of the drug-exposed layer. All cells with index $< N(t) - l$ form the core, the shielded interior. The boundary between edge and core sits at position
 \begin{equation}
 b(t) \;=\; \max\bigl(0,\, N(t) - l\bigr),
 \label{eq:boundary}

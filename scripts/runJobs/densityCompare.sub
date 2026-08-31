@@ -1,0 +1,35 @@
+# Density-regime comparison at l = 50, two doses, 500 seeds per cell.
+# Generate args first:  python3 genDensityCompareJobs.py
+# Then submit:          condor_submit densityCompare.sub
+
+universe   = vanilla
+executable = runBatch.sh
+
+request_cpus   = 1
+request_memory = 1024MB
+request_disk   = 200MB
+
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage        = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
+
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../../src/chainModel.py, ../../src/wellMixed.py, runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+output = logs/dens_$(Cluster).$(Process).out
+error  = logs/dens_$(Cluster).$(Process).err
+log    = logs/dens_$(Cluster).$(Process).log
+
+# condition dose seedStart seedCount mu bCoreRatio outFile l K
+arguments              = $(condition) $(dose) $(seedStart) 100 1e-4 $(bCore) dens_$(tag)_dose$(dose)_K$(kTag)_s$(seedStart).csv $(lVal) $(kVal) $(densityForm)
+transfer_output_files  = dens_$(tag)_dose$(dose)_K$(kTag)_s$(seedStart).csv
+transfer_output_remaps = "dens_$(tag)_dose$(dose)_K$(kTag)_s$(seedStart).csv = results/dens_$(tag)_dose$(dose)_K$(kTag)_s$(seedStart).csv"
+
+queue condition, dose, seedStart, bCore, lVal, kVal, densityForm, kTag, tag from densityCompareJobs.txt

@@ -92,12 +92,6 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
     rng = np.random.default_rng(seed)
 
     mu    = float(params['mu'])
-    # Mutation rate for births in the core. Defaults to mu. Setting it to 0 leaves
-    # the core fully active (cells still divide and die, so the conveyor still
-    # sweeps edge-born lineages inward) while producing no core-born lineages at
-    # all: no core-born rescue can end the run early, so edge-born lineages are no
-    # longer censored by someone else winning the race.
-    muCore = float(params.get('muCore', mu))
     nInit = int(params['nInit'])
     l     = params.get('l')
     l     = None if l is None else int(l)
@@ -185,8 +179,6 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
             'liveCount': 1,
             'maxLiveCount': 1,
             'everReachedEdge': not bornInCore,  # edge-born starts in edge
-            'everEnteredCore': bornInCore,      # core-born starts in core
-            'nSweptToCore': 0,                  # edge -> core reclassifications of this lineage's cells
             'deliverySize': 1 if not bornInCore else None,  # set on first edge entry for core-born
             'deathTime': None,
             'deathGeneration': None,
@@ -296,7 +288,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
                 wtN, rN = wtEdge, rEdge
             idx = pickPosition(cells, rng, cStart, cEnd, isWt, wtN, rN)
 
-            if isWt and rng.random() < (muCore if inCore else mu):
+            if isWt and rng.random() < mu:
                 daughterGenotype = nextLineage
                 recordMutation(nextLineage, inCore, time, generations, idx)
                 nextLineage += 1
@@ -313,9 +305,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
 
             if p < newB:
                 if daughterGenotype == 1: wtCore += 1
-                else:
-                    rCore += 1
-                    lineages[daughterGenotype]['everEnteredCore'] = True
+                else:                     rCore += 1
             else:
                 if daughterGenotype == 1: wtEdge += 1
                 else:                     rEdge += 1
@@ -335,11 +325,7 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
                 else:
                     rEdge -= 1
                     rCore += 1
-                    # bt is now in core, but this is a compartment move, not a loss from edge-exposure history. No everReachedEdge change.
-                    # It does matter when R is not neutral in the core (bRCore < dRCore): the conveyor is pushing the lineage into a compartment where it decays.
-                    infoSwept = lineages[bt]
-                    infoSwept['everEnteredCore'] = True
-                    infoSwept['nSweptToCore'] += 1
+                    # bt is now in core, but this is a compartment move, not a loss from edge-exposure history. No flag change.
 
         else:
             if inCore:
@@ -478,17 +464,6 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
         and info['maxLiveCount'] >= kEst
     )
 
-    # Edge-born lineages the conveyor pushed into the core at least once, and the
-    # total number of such sweeps. Only informative when R is costed in the core.
-    nLineagesEdgeBornEnteredCore = sum(
-        1 for info in lineages.values()
-        if info['birthRegion'] == 'edge' and info['everEnteredCore']
-    )
-    nSweepsEdgeBorn = sum(
-        info['nSweptToCore'] for info in lineages.values()
-        if info['birthRegion'] == 'edge'
-    )
-
     # Core-born lineages that ever reached the edge (either by core->edge boundary
     # flow, or by edge birth after arrival -- either way, everReachedEdge is set).
     nLineagesReachedEdge = sum(
@@ -582,9 +557,6 @@ def simulateChain(params, seed=None, maxGenerations=np.inf, maxTime=np.inf,
         'nLineagesEstablished': nLineagesEstablished,
         'nLineagesEstablishedCore': nLineagesEstablishedCore,
         'nLineagesEstablishedEdge': nLineagesEstablishedEdge,
-        'nLineagesEdgeBornEnteredCore': nLineagesEdgeBornEnteredCore,
-        'nSweepsEdgeBorn': nSweepsEdgeBorn,
-        'muCore': muCore,
         'l': l,
         'phase1EndTime': phase1EndTime,
         'nLineagesAppearedEdgePhase1': nLineagesAppearedEdgePhase1,

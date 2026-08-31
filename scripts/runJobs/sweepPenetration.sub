@@ -1,0 +1,40 @@
+# Dose-dependent penetration depth: l = lambdaPen * ln(dose / MIC).
+# Runs against snapshots/penetration/ so later edits to src/ cannot change
+# the meaning of jobs still sitting in the queue.
+#
+# Generate args first:  python3 genPenetrationJobs.py
+# Then submit:          condor_submit sweepPenetration.sub
+
+universe   = vanilla
+executable = snapshots/penetration/runBatch.sh
+
+request_cpus   = 1
+request_memory = 2048MB
+request_disk   = 200MB
+
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage        = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
+
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = snapshots/penetration/chainModel.py, snapshots/penetration/wellMixed.py, snapshots/penetration/runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+output = logs/pen_$(Cluster).$(Process).out
+error  = logs/pen_$(Cluster).$(Process).err
+log    = logs/pen_$(Cluster).$(Process).log
+
+# condition dose seedStart seedCount mu bCoreRatio outFile l K densityForm [flags]
+# the positional l is a placeholder; --lambdaPen overrides it and the CSV records
+# the realised value.
+arguments              = biofilm $(dose) $(seedStart) 200 1e-4 $(bCore) fxPen_$(tag)_dose$(dose)_s$(seedStart).csv 100 1000 step --kEst 8 --lambdaPen $(lambdaPen)
+transfer_output_files  = fxPen_$(tag)_dose$(dose)_s$(seedStart).csv
+transfer_output_remaps = "fxPen_$(tag)_dose$(dose)_s$(seedStart).csv = results/fxPen_$(tag)_dose$(dose)_s$(seedStart).csv"
+
+queue dose, seedStart, bCore, lambdaPen, tag from penetrationJobs.txt

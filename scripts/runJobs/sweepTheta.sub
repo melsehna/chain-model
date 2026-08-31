@@ -1,0 +1,38 @@
+# Theta-targeted tracer grid: delivery fraction vs theta, several routes per theta.
+#   densityForm = step (K is a ceiling on R births, not a gradient), K = nInit
+#   kEst = 8 (count-based establishment); nSurvived* columns carry the exact criterion
+#
+# Generate args first:  python3 genFixedSweepJobs.py
+# Then submit:          condor_submit sweepFixed.sub
+
+universe   = vanilla
+executable = runBatch.sh
+
+request_cpus   = 1
+request_memory = 1024MB
+request_disk   = 200MB
+
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage        = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
+
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = ../../src/chainModel.py, ../../src/wellMixed.py, runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+output = logs/th_$(Cluster).$(Process).out
+error  = logs/th_$(Cluster).$(Process).err
+log    = logs/th_$(Cluster).$(Process).log
+
+# condition dose seedStart seedCount mu bCoreRatio outFile l K densityForm [extra flags]
+arguments              = $(condition) $(dose) $(seedStart) 200 $(mu) $(bCore) fxTheta_$(thTag)_$(tag)_dose$(dose)_s$(seedStart).csv $(lVal) 1000 step --kEst 8 --tracer
+transfer_output_files  = fxTheta_$(thTag)_$(tag)_dose$(dose)_s$(seedStart).csv
+transfer_output_remaps = "fxTheta_$(thTag)_$(tag)_dose$(dose)_s$(seedStart).csv = results/fxTheta_$(thTag)_$(tag)_dose$(dose)_s$(seedStart).csv"
+
+queue condition, dose, seedStart, mu, bCore, lVal, thTag, tag from thetaGridJobs.txt

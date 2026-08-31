@@ -91,16 +91,6 @@ def main():
                    help='neutral-marker mode: R gets the WT edge rates and rescue is '
                         'disabled, so runs go to extinction. Measures supply and delivery '
                         'without truncation bias or selection on the marker.')
-    p.add_argument('--muCore', type=float, default=None,
-                   help='mutation rate for core births (default: same as --mu). Set to 0 '
-                        'to keep the core active but produce no core-born lineages, which '
-                        'removes both the extra supply and the early-stop censoring of '
-                        'edge-born lineages, leaving only the conveyor sweeping them inward.')
-    p.add_argument('--costR', type=float, default=0.0,
-                   help='fitness cost of resistance, expressed only where the drug is '
-                        'absent: bRCore = bWtCore * (1 - costR), dRCore unchanged. 0 (default) '
-                        'is the neutral-core behavior. No effect on wellMixed or on any '
-                        'condition without a core.')
     p.add_argument('--densityForm', choices=['linear', 'step', 'none'], default='linear',
                    help="shape of the density factor on R births: 'linear' (Wilson, current), "
                         "'step' (K acts as a ceiling only), 'none' (no cap)")
@@ -125,21 +115,6 @@ def main():
         params = buildWellMixedParams(args.dose, args.mu)
         simulator = simulateWellMixed
         isChain = False
-
-    if args.muCore is not None:
-        if not isChain:
-            sys.exit('--muCore applies to the chain conditions only')
-        params['muCore'] = args.muCore
-
-    if args.costR:
-        if not isChain:
-            sys.exit('--costR applies to the chain conditions only (wellMixed has no core)')
-        if not 0.0 <= args.costR <= 1.0:
-            sys.exit(f'--costR must be in [0, 1], got {args.costR}')
-        # Cost is paid only in the drug-free compartment: R births in the core are
-        # slowed, R deaths are not. Edge rates (the resistant phenotype under drug)
-        # are untouched, so s_R in the edge keeps its meaning.
-        params['bRCore'] = params['bWtCore'] * (1.0 - args.costR)
 
     if args.K is not None:
         params['K'] = args.K
@@ -169,9 +144,8 @@ def main():
             'phase1EndTime',
             'nMutEdgePhase1', 'nMutEdgePhase2',
             'nEstEdgePhase1', 'nEstEdgePhase2',
-            'K', 'densityForm', 'kEst', 'tracer', 'lambdaPen', 'costR', 'muCore',
+            'K', 'densityForm', 'kEst', 'tracer', 'lambdaPen',
             'nSurvivedEdge', 'nSurvivedCore',
-            'nEdgeBornEnteredCore', 'nSweepsEdgeBorn',
         ])
 
         # simulateWellMixed keeps no trajectory, so it has no recordEvery argument.
@@ -195,8 +169,6 @@ def main():
                 nEstCore       = r['nLineagesEstablishedCore']
                 nSurvEdge      = nMutEdge - r['nLineagesExtinctEdge']
                 nSurvCore      = nMutCore - r['nLineagesExtinctCore']
-                nEdgeBornCore  = r['nLineagesEdgeBornEnteredCore']
-                nSweeps        = r['nSweepsEdgeBorn']
                 nDelivered     = r['nLineagesReachedEdge']
                 meanDelSize    = r['meanDeliverySizeCore']
                 bCoreRatioOut  = args.bCoreRatio
@@ -215,8 +187,6 @@ def main():
                 nEstCore       = 0
                 nSurvEdge      = nMutEdge - r['nLineagesExtinct']
                 nSurvCore      = 0
-                nEdgeBornCore  = 0
-                nSweeps        = 0
                 nDelivered     = 0
                 meanDelSize    = None
                 bCoreRatioOut  = ''  # N/A for wellMixed
@@ -246,10 +216,7 @@ def main():
                 args.K if args.K is not None else params.get('nInit', ''),
                 args.densityForm, args.kEst, int(args.tracer),
                 args.lambdaPen if args.lambdaPen is not None else '',
-                args.costR,
-                args.muCore if args.muCore is not None else args.mu,
                 nSurvEdge, nSurvCore,
-                nEdgeBornCore, nSweeps,
             ])
 
     print(f'Wrote {args.seedCount} rows to {args.out}', file=sys.stderr)

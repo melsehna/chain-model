@@ -1,0 +1,39 @@
+# Core-only cost of resistance: bRCore = bWtCore * (1 - costR), edge rates untouched.
+#   densityForm = step, K = nInit, kEst = 8, matching the fx* sweeps
+# c = 0 is not run here; those points are the fxCore sweep, and the well-mixed
+# reference is fxMain (cost-free by construction, having no core).
+#
+# Generate args first:  python3 genCostJobs.py
+# Then submit:          condor_submit sweepCost.sub
+
+universe   = vanilla
+executable = snapshots/cost/runBatch.sh
+
+request_cpus   = 1
+request_memory = 1024MB
+request_disk   = 200MB
+
+requirements             = (Arch == "X86_64")
++JobDurationCategory     = "Medium"
++ProjectName             = "EvolSims"
++SingularityImage        = "/cvmfs/singularity.opensciencegrid.org/htc/rocky:9"
+
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = snapshots/cost/chainModel.py, snapshots/cost/wellMixed.py, snapshots/cost/runBatch.py
+
+max_retries = 3
+on_exit_hold        = (ExitBySignal == True) || (ExitCode != 0)
+on_exit_hold_reason = strcat("Job failed: ExitCode=", ExitCode, " ExitBySignal=", ExitBySignal)
+periodic_release    = (NumJobStarts < JobMaxRetries) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+output = logs/cost_$(Cluster).$(Process).out
+error  = logs/cost_$(Cluster).$(Process).err
+log    = logs/cost_$(Cluster).$(Process).log
+
+# condition dose seedStart seedCount mu bCoreRatio outFile l K densityForm [extra flags]
+arguments              = $(condition) $(dose) $(seedStart) 200 $(mu) $(bCore) fxCost_$(tag)_dose$(dose)_s$(seedStart).csv $(lVal) 1000 step --kEst 8 --costR $(costR)
+transfer_output_files  = fxCost_$(tag)_dose$(dose)_s$(seedStart).csv
+transfer_output_remaps = "fxCost_$(tag)_dose$(dose)_s$(seedStart).csv = results/fxCost_$(tag)_dose$(dose)_s$(seedStart).csv"
+
+queue condition, dose, seedStart, mu, bCore, lVal, costR, tag from costJobs.txt
